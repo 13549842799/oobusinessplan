@@ -1,11 +1,16 @@
 <template>
   <div class="node">
-    <span><el-checkbox :true-label="1" :false-label="0" v-model="auth_.delflag" /></span>
+    <span><el-checkbox @click="checkNode" :true-label="1" :false-label="0" v-model="auth_.delflag" /></span>
     <span>{{node_[label] ? node_[label] : '无'}}</span>
-    <span v-if="hasChilds" class="selectAll el-icon-star-off" @click="selectAll"></span>
+    <el-tooltip class="item" effect="dark" :content="selAll ? '取消全选' : '全选'" placement="top-start">
+      <span v-if="hasChilds" class="selectAll el-icon-star-on" @click="selectAll"></span>
+    </el-tooltip>
+    <el-tooltip class="item" effect="dark" :content="remAll ? '取消全不选' : '全不选'" placement="top-start">
+      <span v-if="hasChilds" class="selectAll el-icon-star-off" @click="removeAll"></span>
+    </el-tooltip>
     <div class="slot">
-      <span @click="alterType">{{typeName}}</span>
-      <span>{{levelName}}</span>
+      <span @click="alterStatus('type')">{{typeName}}</span>
+      <span @click="alterStatus('level')">{{levelName}}</span>
     </div>
     <div class="childNode" v-if="hasChilds">
       <node
@@ -26,8 +31,10 @@ export default {
   props: ['node', 'rule'],
   data () {
     return {
-      node_: null,
-      auth_: null
+      node_: null,  // 资源
+      auth_: null,  // 资源对应的权限
+      selAll: false, // 当前节点是否开启 全选 子节点
+      remAll: false  // 当前节点是否开启 全不选 子节点
     }
   },
   computed: {
@@ -62,25 +69,71 @@ export default {
   created () {
     this.node_ = util.newObj(this.node)
     this.auth_ = this.node_.authority
+    if (this.auth_.type === null) {
+      this.auth_.type = 1
+    }
+    if (this.auth_.level === null) {
+      this.auth_.level = 1
+    }
   },
   methods: {
-    alterType () {
+    /** 修改 */
+    alterStatus (field) {
       let v = this
       console.log(v.auth_.delflag)
       if (!v.auth_.delflag) {
         v.auth_.delflag = 1
       }
-      v.auth_.type = v.auth_.type === 1 ? 2 : 1
+      v.auth_[field] = v.auth_[field] === 1 ? 2 : 1
     },
+    /** 全选/取消全选 */
     selectAll () {
       let v = this
-      if (!v.auth_.delflag) {
-        v.auth_.delflag = 1
+      v.selAll = !v.selAll
+      v.remAll = false      
+      v.operationNode(true, v.selAll, 1)
+    },
+    /** 全不选/取消全不选 */
+    removeAll () {
+      let v = this
+      v.remAll = !v.remAll
+      v.selAll = false
+      v.operationNode(false, v.remAll, 0)
+    },
+    operationNode (type, flag, val) {
+      let v = this
+      let del = type ? !v.auth_.delflag : v.auth_.delflag
+      if (flag) {
+        if (del) {
+          v.auth_.delflag = val
+        }
+      } else {
+        v.auth_.delflag = v.node.authority.delflag
       }
       let cs = this.$refs.child
-      $.each(cs, (i, v) => {
-        v.selectAll()
+      $.each(cs, (i, val) => {
+        val.operationNode(type, flag, val)
       })
+    },
+    checkNode () {
+      v.auth_.delflag = v.auth_.delflag ? 0 : 1
+      if (!v.auth_.delflag && v.hasChilds) {
+        v.operationNode(false, true, 0)
+      }
+    },
+    nodes (roleId) {
+      let l = []
+      let v = this
+      if (!(v.node.authority.delflag === v.auth_.delflag ||  (v.node.authority.delflag === null && v.auth_.delflag === 0))) {
+        v.auth_.reid = v.node_.id
+        v.auth_.roid = roleId
+        l.push(v.auth_)
+      }
+      let ns = v.$refs.child
+      $.each(ns, (i, n) => {
+       l.push(n.nodes(roleId))
+      })
+      return l
     }
   }
 }

@@ -92,8 +92,7 @@
       </form-item>
     </div>
     <Dialog title="权限设置" ref="dialog">
-      <authsTree :tree="authsList.authsTree" :defaultCheck="authsList.defCheck" :save="save" :rule="defaultProps">
-      </authsTree>
+      <authsTree :roleId="node.id"></authsTree>
     </Dialog>
   </div>
 </template>
@@ -135,14 +134,8 @@ export default {
         children: 'childs'
       },
       node: {}, // 当前选中的节点
-      form: {}, // 表单对象
-      authsList: {
-        authsTree: [],
-        defCheck: []
-      }
+      form: {} // 表单对象
     }
-  },
-  computed: {
   },
   watch: {
     'filterText': function (val) {
@@ -195,13 +188,6 @@ export default {
     authoritySet () {
       let v = this
       v.$refs.dialog.visable = true
-      http.$get(base.orgin + '/api/authority/auth/tree.re', {roleId: v.node.id}).then(res => {
-        v.simpleDealResult(res.status, function () {
-          v.authsList.authsTree = []
-          v.authsList.authsTree = res.data
-          console.log('少女祈祷中', v.authsList.authsTree)
-        }, res.message)
-      })
     },
     submit () {
       let v = this
@@ -241,14 +227,6 @@ export default {
       let v = this
       v.form = {}
       v.setReadStatus()
-    },
-    save (checkNode, halfNode) {
-      console.log('save', checkNode)
-      console.log('save', halfNode)
-      // let formArr = []
-      if (checkNode && checkNode.length > 0) {
-        $.each(checkNode, n => {})
-      }
     }
   },
   created () {

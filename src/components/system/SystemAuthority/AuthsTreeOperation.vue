@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="treeContent">
-      <template v-if="myTree.length > 0" >
-        <node :rule="myRule" v-for="n in myTree" :key="n.id" :node="n">
+      <template v-if="rule.length > 0" >
+        <node :rule="rule" v-for="n in rule" :key="n.id" :node="n" ref="child">
         </node>
       </template>
       <template v-else>
@@ -17,63 +17,53 @@
 
 <script>
 import $ from 'jquery'
+import http from '@/http.js'
 import node from '@/components/common/tree/Node'
 import myButton from '@/components/common/tree/TreeButton'
+import base from '@/base_variable'
+import commonM from '@/components/common/commonMixins'
+
+const prefix = base.orgin + '/api/authority/auth'
 
 export default {
   components: {node, myButton},
-  props: {
-    tree: Array,
-    defaultCheck: Array,
-    save: Function,
-    rule: Object
-  },
+  mixins: [commonM],
+  props: ['roleId'],
   data () {
     return {
-      checkNode: [],
-      halfNode: [],
-      auths: null
-    }
-  },
-  methods: {
-    selectNode (data, status) {
-      this.checkNode = status.checkedNodes
-      this.halfNode = status.halfCheckedNodes
-      console.log(this.checkNode)
-      if (this.auths === null) {
-        this.auths = this.checkArr
+      tree: [],
+      rule: {
+        label: 'name',
+        value: 'id',
+        children: 'childs'
       }
     }
   },
-  computed: {
-    myRule () {
-      return this.rule ? this.rule : {label: 'label', children: 'childs', value: 'id'}
-    },
-    myTree () {
-      return this.tree ? this.tree : []
-    },
-    checkArr () {
+  created () {
+    http.$get(prefix + '/tree.re', {roleId: v.roleId}).then(res => {
+      v.simpleDealResult(res.status, function () {
+        v.tree = []
+        v.tree = res.data
+        console.log('少女祈祷中', v.tree)
+      }, res.message)
+    })
+  },
+  methods: {
+    save () {
+      let v = this
       let arr = []
-      $.each(this.defaultCheck, f => {
-        arr.push(f.reid)
+      let ns = v.$refs.child
+      $.each(ns, (i, n) => {
+        arr.push(n.nodes(v.roleId))
       })
-      return arr
-    },
-    treeArray () {
-      let arr = {}
-      $.each(this.tree, (l, v) => {
-        dg(v, arr)
+      http.$post(prefix, arr).then(res => {
+        v.simpleDealResult(res.status, function () {
+          
+          return '权限操作成功'
+        }, res.message)
       })
-      return arr
     }
   }
-}
-
-function dg (n, arr) {
-  arr[n.id] = n
-  $.each(n.childs, (i, v) => {
-    dg(v, arr)
-  })
 }
 
 </script>
