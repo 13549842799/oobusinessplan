@@ -1,6 +1,6 @@
 <template>
   <div class="node">
-    <span><el-checkbox @click="checkNode" :true-label="1" :false-label="0" v-model="auth_.delflag" /></span>
+    <span><el-checkbox @change="checkNode" :true-label="1" :false-label="0" v-model="auth_.delflag" /></span>
     <span>{{node_[label] ? node_[label] : '无'}}</span>
     <el-tooltip class="item" effect="dark" :content="selAll ? '取消全选' : '全选'" placement="top-start">
       <span v-if="hasChilds" class="selectAll el-icon-star-on" @click="selectAll"></span>
@@ -31,10 +31,10 @@ export default {
   props: ['node', 'rule'],
   data () {
     return {
-      node_: null,  // 资源
-      auth_: null,  // 资源对应的权限
+      node_: null, // 资源
+      auth_: null, // 资源对应的权限
       selAll: false, // 当前节点是否开启 全选 子节点
-      remAll: false  // 当前节点是否开启 全不选 子节点
+      remAll: false // 当前节点是否开启 全不选 子节点
     }
   },
   computed: {
@@ -68,7 +68,7 @@ export default {
   },
   created () {
     this.node_ = util.newObj(this.node)
-    this.auth_ = this.node_.authority
+    this.auth_ = util.newObj(this.node_.authority)
     if (this.auth_.type === null) {
       this.auth_.type = 1
     }
@@ -90,7 +90,7 @@ export default {
     selectAll () {
       let v = this
       v.selAll = !v.selAll
-      v.remAll = false      
+      v.remAll = false
       v.operationNode(true, v.selAll, 1)
     },
     /** 全不选/取消全不选 */
@@ -116,22 +116,33 @@ export default {
       })
     },
     checkNode () {
-      v.auth_.delflag = v.auth_.delflag ? 0 : 1
+      let v = this
+      // v.auth_.delflag = v.auth_.delflag ? 0 : 1
       if (!v.auth_.delflag && v.hasChilds) {
         v.operationNode(false, true, 0)
       }
+      console.log(v.auth_.delflag)
+      console.log(v.node.authority.delflag)
     },
     nodes (roleId) {
       let l = []
       let v = this
-      if (!(v.node.authority.delflag === v.auth_.delflag ||  (v.node.authority.delflag === null && v.auth_.delflag === 0))) {
+      console.log('1', v.auth_.delflag)
+      console.log('2', v.node.authority.delflag)
+      console.log(v.node.name)
+      if (!(v.node.authority.delflag === v.auth_.delflag || (v.node.authority.delflag === null && v.auth_.delflag === 0))) {
         v.auth_.reid = v.node_.id
         v.auth_.roid = roleId
         l.push(v.auth_)
+        console.log('进入添加权限中', v.auth_)
       }
       let ns = v.$refs.child
       $.each(ns, (i, n) => {
-       l.push(n.nodes(roleId))
+        let son = n.nodes(roleId)
+        if (son.length > 0) {
+          l = l.concat(son)
+          console.log('凭借数组', l)
+        }    
       })
       return l
     }

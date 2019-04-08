@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="treeContent">
-      <template v-if="rule.length > 0" >
-        <node :rule="rule" v-for="n in rule" :key="n.id" :node="n" ref="child">
+      <template v-if="tree.length > 0" >
+        <node :rule="rule" v-for="n in tree" :key="n.id" :node="n" ref="child">
         </node>
       </template>
       <template v-else>
@@ -40,6 +40,7 @@ export default {
     }
   },
   created () {
+    let v = this
     http.$get(prefix + '/tree.re', {roleId: v.roleId}).then(res => {
       v.simpleDealResult(res.status, function () {
         v.tree = []
@@ -54,11 +55,14 @@ export default {
       let arr = []
       let ns = v.$refs.child
       $.each(ns, (i, n) => {
-        arr.push(n.nodes(v.roleId))
+        let temp = n.nodes(v.roleId)
+        if (temp.length > 0) {
+          arr = arr.concat(temp)
+        }     
       })
-      http.$post(prefix, arr).then(res => {
+      console.log('少女的数组', arr)
+      http.$post(prefix + '/add.do', JSON.stringify(arr)).then(res => {
         v.simpleDealResult(res.status, function () {
-          
           return '权限操作成功'
         }, res.message)
       })
