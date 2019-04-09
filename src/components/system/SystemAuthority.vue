@@ -8,7 +8,7 @@
       <roles-manager></roles-manager>
     </el-tab-pane>
     <el-tab-pane label="用户管理">
-      <div class="tap">用户管理</div>
+      <users-manager></users-manager>
     </el-tab-pane>
     <el-tab-pane label="参数设置">
       <div class="tap">参数设置</div>
@@ -20,11 +20,13 @@
 <script>
 import resourcesOption from './SystemAuthority/ResourcesOption'
 import rolesManager from './SystemAuthority/RolesManager'
+import usersManager from './SystemAuthority/UserManager'
 
 export default {
   components: {
     resourcesOption,
-    rolesManager
+    rolesManager,
+    usersManager
   },
   created () {
   },
