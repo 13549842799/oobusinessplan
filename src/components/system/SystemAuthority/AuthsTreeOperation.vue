@@ -58,7 +58,7 @@ export default {
         let temp = n.nodes(v.roleId)
         if (temp.length > 0) {
           arr = arr.concat(temp)
-        }     
+        }
       })
       console.log('少女的数组', arr)
       http.$post(prefix + '/add.do', JSON.stringify(arr)).then(res => {
