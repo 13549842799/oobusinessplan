@@ -1,5 +1,5 @@
 <template>
-    
+  <div>日记模块</div>
 </template>
 
 <script>

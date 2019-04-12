@@ -4,6 +4,9 @@ import Home from '@/components/Home'
 import Login from '@/Login'
 import IndexPage from '@/components/Index'
 import SystemAuthority from '@/components/system/SystemAuthority'
+import Article from '@/components/my/article/Article'
+import Diary from '@/components/my/article/Diary'
+import Classify from '@/components/my/article/Classify'
 
 Vue.use(Router)
 
@@ -23,6 +26,23 @@ export default new Router({
           path: 'System/Authority',
           name: 'systemAuthority',
           component: SystemAuthority
+        },
+        {
+          path: 'My/Article',
+          name: 'personalArticle',
+          component: Article,
+          children: [
+            {
+              path: 'Diary',
+              name: 'diary',
+              component: Diary
+            },
+            {
+              path: 'Classify/:type',
+              name: 'classify',
+              component: Classify
+            }
+          ]
         }
       ]
     },
