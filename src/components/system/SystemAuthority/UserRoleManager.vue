@@ -105,7 +105,7 @@ import $ from 'jquery'
 import util from '@/components/common/objUtil'
 
 function pageAdminRole (v, param) {
-  let p = util.newObj(param)
+  let p = util.newNotNullObject(param, [null])
   p.state = p.state === -1 ? null : p.state
   http.$get(base.adminUrl + '/adminsys/admins.re', p).then(res => {
     v.simpleDealResult(res.status, function () {
