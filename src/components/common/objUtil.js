@@ -20,10 +20,11 @@ function newObj (o) {
 function newNotNullObject (o, arr, karr) {
   let v = {}
   $.each(o, k => {
-    if (!arr.includes(o[k]) && !karr.includes(k)) {
+    if ($.inArray(o[k], arr) < 0 && $.inArray(k, karr) < 0) {
       v[k] = o[k]
     }
   })
+  return v
 }
 
 export default {
