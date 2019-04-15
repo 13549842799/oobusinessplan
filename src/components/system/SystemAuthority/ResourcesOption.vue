@@ -236,6 +236,7 @@ export default {
           v.simpleDealResult(res.status, function () {
             let n = res.data
             n.list = n.type === 1 ? n.childs = [] : null
+            createPath(n, v.parentIdArr)
             let mes = '<' + n.name + '>节点创建成功'
             v.form = {}
             v.node = n
@@ -276,6 +277,20 @@ export default {
       v.setReadStatus()
     }
   }
+}
+
+/**
+ * 补充节点的path属性
+ */
+function createPath (node, parentIdArr) {
+  if (!node.pid || !parentIdArr || parentIdArr.length === 0) {
+    return node.id
+  }
+  node.path = ''
+  for (let i = 0; i < parentIdArr.length; i++) {
+    node.path += parentIdArr[i] + ','
+  }
+  node.path += node.id
 }
 
 function fullModuleTree (v, path) {

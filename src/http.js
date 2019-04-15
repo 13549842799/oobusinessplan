@@ -18,6 +18,10 @@ function $patch (url, params) {
   return $http(obj)
 }
 
+function $delete (url, params) {
+  return $http({url, params, type: 'DELETE', dataType: 'JSON'})
+}
+
 function dealContentType (httpAttr, params) {
   if (params === null) {
     return
@@ -74,6 +78,7 @@ export default {
   $get,
   $post,
   $patch,
+  $delete,
   headers,
   $setHeadersFromLocal,
   $getlocal,

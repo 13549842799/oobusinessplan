@@ -1,14 +1,18 @@
 <template>
   <!-- <div>{{$route.params.type}}</div> -->
   <div>
+    <el-breadcrumb style="margin-top:10px;" separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item>日记管理</el-breadcrumb-item>
+      <el-breadcrumb-item>分类管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="classify_head">
       <el-input
         style="width:200px;"
         placeholder="请输入内容"
-        v-model="page.searchText"
+        v-model="page.name"
         clearable>
       </el-input>
-      <el-button style="margin-left: 30px;" icon="el-icon-search" type="primary">搜索</el-button>
+      <el-button style="margin-left: 30px;" icon="el-icon-search" type="primary" @click="searchPageByCondition">搜索</el-button>
       <div style="float:right;">
         <el-button type="text" @click="addClassify">添加分类</el-button>
       </div>
@@ -25,11 +29,18 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in page.list" :key="index">
-            <td>{{index}}</td>
-            <td style="text-align:left;">{{item.name}}</td>
+            <td>{{index + 1}}</td>
+            <td style="text-align:left;">
+              <template v-if="editStatus != item.id">{{item.name}}</template>
+              <template v-else>
+                <input type="text" v-model="editName" />
+                <el-button size="mini" type="text" @click="saveEdit(item)">保存</el-button>
+                <el-button size="mini" type="text" @click="cancelEdit(item)">取消</el-button>
+              </template>
+            </td>
             <td>
-              <el-button type="text">编辑</el-button>
-              <el-button type="text">删除</el-button>
+              <el-button type="text" @click="edit(item)">编辑</el-button>
+              <el-button type="text" @click="checkArticleCount(item)">删除</el-button>
             </td>
             <td>{{item.count}}</td>
           </tr>
@@ -56,12 +67,14 @@ import http from '@/http.js'
 import base from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import pagePlug from '@/components/common/page'
+import util from '@/components/common/objUtil'
 
 export default {
   mixins: [commonM, pagePlug],
   data () {
     return {
-      childType: null
+      editStatus: 0,
+      editName: null
     }
   },
   created () {
@@ -77,7 +90,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
-        let param = JSON.stringify({childtype: 1, name: value})
+        let param = JSON.stringify({childType: v.page.childType, name: value})
         http.$post(base.classifyUrl + '/add.do', param).then(res => {
           v.simpleDealResult(res.status, function () {
             v.page.list.push(res.data)
@@ -95,6 +108,59 @@ export default {
           message: '取消输入'
         })
       })
+    },
+    edit (item) {
+      let v = this
+      v.editName = item.name
+      v.editStatus = item.id
+    },
+    saveEdit (item) {
+      let v = this
+      let n = util.newNotNullObject(item, [null], ['creator', 'createTime'])
+      n.name = v.editName
+      http.$post(base.classifyUrl + '/edit.do', JSON.stringify(n)).then(res => {
+        v.simpleDealResult(res.status, function () {
+          item.name = n.name
+          v.cancelEdit(item)
+        }, '编辑失败' + res.message)
+      })
+    },
+    cancelEdit (item) {
+      let v = this
+      v.editName = null
+      v.editStatus = 0
+    },
+    checkArticleCount (item) {
+      let v = this
+      if (item.count === 0) {
+        v.deleteClassify(item)
+      } else {
+        this.$confirm('此分类还存在' + item.count + '篇日记, 是否继续? 删除后原文章将转到默认分类中', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          v.deleteClassify(item)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
+    },
+    deleteClassify (item) {
+      let v = this
+      http.$delete(base.classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
+        v.simpleDealResult(res.status, function () {
+          v.page.list.splice(item, 1)
+          v.page.total--
+          return '删除成功'
+        }, '删除失败' + res.message)
+      })
+    },
+    searchPageByCondition () {
+      this.searchPage({value: [null], key: ['list']})
     }
   }
 }

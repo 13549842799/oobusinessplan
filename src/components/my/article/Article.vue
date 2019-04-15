@@ -41,6 +41,7 @@ export default {
     }
   },
   created () {
+    this.$router.push({name: 'classify', params: {type: '1'}})
   },
   methods: {
     handleSelect (key, keyPath) {
