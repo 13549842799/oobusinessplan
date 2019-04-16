@@ -5,7 +5,7 @@ import Login from '@/Login'
 import IndexPage from '@/components/Index'
 import SystemAuthority from '@/components/system/SystemAuthority'
 import Article from '@/components/my/article/Article'
-import Diary from '@/components/my/article/Diary'
+import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 
 Vue.use(Router)

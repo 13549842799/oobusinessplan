@@ -1,7 +1,7 @@
 <template>
   <!-- <div>{{$route.params.type}}</div> -->
   <div>
-    <el-breadcrumb style="margin-top:10px;" separator-class="el-icon-arrow-right">
+    <el-breadcrumb v-if="name != null" style="margin-top:10px;" separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>{{name}}</el-breadcrumb-item>
       <el-breadcrumb-item>分类管理</el-breadcrumb-item>
     </el-breadcrumb>

@@ -4,7 +4,7 @@
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
         <el-submenu index="1">
           <template slot="title">日记管理</template>
-          <el-menu-item index="1-1"><router-link to="Article/Diary">所有日记</router-link></el-menu-item>
+          <el-menu-item index="1-1"><router-link :to="{name: 'diary'}">所有日记</router-link></el-menu-item>
           <el-menu-item index="1-2"><router-link :to="{name: 'classify', params: {type: '1'}}">分类管理</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="2">

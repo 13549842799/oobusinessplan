@@ -1,7 +1,6 @@
 /**
  * 分页的方法
  */
-import commonM from '@/components/common/commonMixins'
 import util from '@/components/common/objUtil'
 import http from '@/http.js'
 
