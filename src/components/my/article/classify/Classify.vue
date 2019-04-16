@@ -2,7 +2,7 @@
   <!-- <div>{{$route.params.type}}</div> -->
   <div>
     <el-breadcrumb style="margin-top:10px;" separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>日记管理</el-breadcrumb-item>
+      <el-breadcrumb-item>{{name}}</el-breadcrumb-item>
       <el-breadcrumb-item>分类管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="classify_head">
@@ -49,8 +49,8 @@
           <tr><th colspan=4 style="text-align: right">
             <el-pagination
               layout="prev, pager, next"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
+              @size-change="page.handleSizeChange"
+              @current-change="page.handleCurrentChange"
               :current-page.sync="page.pageNum"
               :page-size="page.pageSize"
               :total="page.total">
@@ -66,22 +66,27 @@
 import http from '@/http.js'
 import base from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
-import pagePlug from '@/components/common/page'
+import {MyPage} from '@/components/common/page'
 import util from '@/components/common/objUtil'
 
+const nameArr = ['日记管理', '总结管理', '备忘管理', '灵感管理', '小说管理']
+
 export default {
-  mixins: [commonM, pagePlug],
+  mixins: [commonM],
   data () {
     return {
+      page: new MyPage(),
       editStatus: 0,
-      editName: null
+      editName: null,
+      name: null
     }
   },
   created () {
     let v = this
     v.page.childType = v.$route.params.type
+    v.name = nameArr[v.page.childType - 1]
     v.page.requestUrl = base.classifyUrl + '/list.re'
-    v.searchPage({value: [null]})
+    v.page.searchPage({value: [null]})
   },
   methods: {
     addClassify () {
@@ -160,8 +165,17 @@ export default {
       })
     },
     searchPageByCondition () {
-      this.searchPage({value: [null], key: ['list']})
+      this.page.searchPage({value: [null], key: ['list']})
     }
+  },
+  beforeRouteUpdate (to, from, next) {
+    let v = this
+    v.page = new MyPage()
+    v.page.requestUrl = base.classifyUrl + '/list.re'
+    v.page.childType = to.params.type
+    v.searchPageByCondition()
+    console.log(v.page.childType)
+    v.name = nameArr[v.page.childType - 1]
   }
 }
 </script>

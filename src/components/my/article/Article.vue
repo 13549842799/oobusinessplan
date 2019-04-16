@@ -10,7 +10,7 @@
         <el-submenu index="2">
           <template slot="title">总结管理</template>
           <el-menu-item index="2-1">所有总结</el-menu-item>
-          <el-menu-item index="2-2"><router-link :to="{name: 'classify', params: {type: '2'}}">分类管理</router-link></el-menu-item>
+          <el-menu-item index="2-2"><router-link to="/My/Article/Classify/2">分类管理</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="3">
           <template slot="title">备忘管理</template>
@@ -41,7 +41,7 @@ export default {
     }
   },
   created () {
-    this.$router.push({name: 'classify', params: {type: '1'}})
+    this.$router.push({name: 'classify', params: {type: '0'}})
   },
   methods: {
     handleSelect (key, keyPath) {
