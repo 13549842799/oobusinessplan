@@ -34,7 +34,7 @@
 
 <script>
 import http from './http'
-import base from './base_variable'
+import {baseUrl, adminUrl} from './base_variable'
 import $ from 'jquery'
 
 export default {
@@ -68,7 +68,7 @@ export default {
     },
     login () {
       let Login = this
-      http.$post(base.orgin + '/api/admin/loginAsyn.do', Login.params).then(function (response) {
+      http.$post(adminUrl + '/loginAsyn.do', Login.params).then(function (response) {
         if (response.status === 200) {
           let data = response.data
           localStorage.setItem('X-user', data.session.name)
@@ -83,7 +83,7 @@ export default {
   },
   created () {
     let Login = this
-    http.$get(base.orgin + '/api/webMessage/weblist.do').then(function (response) {
+    http.$get(baseUrl + '/api/webMessage/weblist.do').then(function (response) {
       Login.list = response.data
       if (Login.list[0]) {
         Login.selected = Login.list[0]

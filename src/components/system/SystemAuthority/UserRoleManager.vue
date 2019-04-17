@@ -98,7 +98,7 @@
 
 <script>
 import http from '@/http.js'
-import base from '@/base_variable'
+import {adminUrl, roleUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import Dialog from '@/components/common/Dialog'
 import $ from 'jquery'
@@ -106,7 +106,7 @@ import util from '@/components/common/objUtil'
 
 function pageAdminRole (v, param) {
   let p = util.newNotNullObject(param, [null, -1])
-  http.$get(base.adminUrl + '/adminsys/admins.re', p).then(res => {
+  http.$get(adminUrl + '/adminsys/admins.re', p).then(res => {
     v.simpleDealResult(res.status, function () {
       v.adminlist = res.data.list
       v.page.total = res.data.total
@@ -141,7 +141,7 @@ export default {
   created () {
     let v = this
     pageAdminRole(v, v.page)
-    http.$get(base.roleUrl + '/list.re').then(res => {
+    http.$get(roleUrl + '/list.re').then(res => {
       v.simpleDealResult(res.status, function () {
         $.each(res.data, (i, val) => {
           v.dialog.hasRoles.push({rid: val.id, state: val.state, name: val.name})
@@ -209,7 +209,7 @@ export default {
         v.$refs.mydialog.visable = false
         return
       }
-      http.$post(base.roleUrl + '/addToUser.do', JSON.stringify(newr)).then(res => {
+      http.$post(roleUrl + '/addToUser.do', JSON.stringify(newr)).then(res => {
         v.simpleDealResult(res.status, function () {
           row.roles = res.data
           v.$refs.mydialog.visable = false

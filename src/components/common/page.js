@@ -5,9 +5,13 @@ import util from '@/components/common/objUtil'
 import http from '@/http.js'
 
 export class MyPage {
-  constructor () {
+  constructor (size) {
     this.pageNum = 1
-    this.pageSize = 15
+    if (size) {
+      this.pageSize = size
+    } else {
+      this.pageSize = 15
+    }
     this.total = 1
     this.list = []
     this.requestUrl = null
@@ -33,10 +37,10 @@ export class MyPage {
       f = filter
     }
     let p = this
+    this.pageNum = 1
     if (params) {
       p = params
     }
-    console.log('url:', this.requestUrl)
     p = util.newNotNullObject(p, f.value, f.key)
     http.$get(this.requestUrl, p).then(res => {
       this.list = res.data.list
