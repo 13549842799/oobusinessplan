@@ -100,7 +100,7 @@
 <script>
 import $ from 'jquery'
 import http from '@/http.js'
-import base from '@/base_variable'
+import {roleUrl} from '@/base_variable'
 // import $ from 'jquery'
 import {formGroup} from '@/components/common/FormJs'
 import listUI from '@/components/common/List'
@@ -110,10 +110,8 @@ import commonM from '@/components/common/commonMixins'
 import authsTree from '@/components/system/SystemAuthority/AuthsTreeOperation'
 import Dialog from '@/components/common/Dialog'
 
-const prefix = base.orgin + '/api/authority/roles'
-
 const commonUrl = {
-  roleList (params) { return http.$get(prefix + '/list.re', params) }
+  roleList (params) { return http.$get(roleUrl + '/list.re', params) }
 }
 
 export default {
@@ -157,7 +155,7 @@ export default {
       let v = this
       let n = v.node
       console.log('少女祈祷中', n.id)
-      http.$patch(prefix + '/' + n.id + '/state.do', null).then(res => {
+      http.$patch(roleUrl + '/' + n.id + '/state.do', null).then(res => {
         v.simpleDealResult(res.status, function () {
           n.state = n.state ? 0 : 1
           let mess = n.state ? '成功启用' : '成功禁用'
@@ -193,7 +191,7 @@ export default {
       let v = this
       let params = util.newObj(v.form)
       if (v.canAdd) {
-        http.$post(prefix + '/add.do', JSON.stringify(params)).then(res => {
+        http.$post(roleUrl + '/add.do', JSON.stringify(params)).then(res => {
           v.simpleDealResult(res.status, function () {
             let n = res.data
             let mes = '<' + n.name + '>角色创建成功'
@@ -208,7 +206,7 @@ export default {
         })
         return
       }
-      http.$patch(prefix + '/edit.do', JSON.stringify(params)).then(res => {
+      http.$patch(roleUrl + '/edit.do', JSON.stringify(params)).then(res => {
         let newNode = res.data
         v.simpleDealResult(res.status, function () {
           $.each(modelObj, k => {

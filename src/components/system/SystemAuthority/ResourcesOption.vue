@@ -111,17 +111,15 @@
 
 <script>
 import http from '@/http.js'
-import base from '@/base_variable'
+import {resouUrl} from '@/base_variable'
 import $ from 'jquery'
 import {formGroup} from '@/components/common/FormJs'
 import commonM from '@/components/common/commonMixins'
 import pModel from '@/components/common/PageStatusCommon'
 import util from '@/components/common/objUtil'
 
-const prefix = base.orgin + '/api/authority/resource'
-
 let commonUrl = {
-  resourceTree (params) { return http.$get(prefix + '/tree.re', params) }
+  resourceTree (params) { return http.$get(resouUrl + '/tree.re', params) }
 }
 
 export default {
@@ -179,7 +177,7 @@ export default {
     updateState () {
       let v = this
       let n = v.node
-      http.$post(prefix + '/state.do', {id: n.id}).then(res => {
+      http.$post(resouUrl + '/state.do', {id: n.id}).then(res => {
         v.simpleDealResult(res.status, function () {
           n.state = n.state ? 0 : 1
           let mess = n.state ? '成功启用' : '成功禁用'
@@ -213,7 +211,7 @@ export default {
     remove () {
       let v = this
       v.deleteTip = false
-      http.$post(prefix + '/delete.do', {id: v.node.id}).then(res => {
+      http.$post(resouUrl + '/delete.do', {id: v.node.id}).then(res => {
         v.simpleDealResult(res.status, function () {
           let name = v.node.name
           v.$refs.tree.remove(v.node.id)
@@ -232,7 +230,7 @@ export default {
         params.key = params.request_url
       }
       if (v.canAdd) {
-        http.$post(prefix + '/add.do', params).then(res => {
+        http.$post(resouUrl + '/add.do', params).then(res => {
           v.simpleDealResult(res.status, function () {
             let n = res.data
             n.list = n.type === 1 ? n.childs = [] : null
@@ -249,7 +247,7 @@ export default {
         })
         return
       }
-      http.$post(prefix + '/update.do', params).then(res => {
+      http.$post(resouUrl + '/update.do', params).then(res => {
         let newNode = res.data
         v.simpleDealResult(res.status, function () {
           if (v.node.pid === v.parentIdArr[v.parentIdArr.length - 1]) {

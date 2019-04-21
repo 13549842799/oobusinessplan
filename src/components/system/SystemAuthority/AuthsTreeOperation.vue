@@ -20,10 +20,8 @@ import $ from 'jquery'
 import http from '@/http.js'
 import node from '@/components/common/tree/Node'
 import myButton from '@/components/common/tree/TreeButton'
-import base from '@/base_variable'
+import {authUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
-
-const prefix = base.orgin + '/api/authority/auth'
 
 export default {
   components: {node, myButton},
@@ -41,7 +39,7 @@ export default {
   },
   created () {
     let v = this
-    http.$get(prefix + '/tree.re', {roleId: v.roleId}).then(res => {
+    http.$get(authUrl + '/tree.re', {roleId: v.roleId}).then(res => {
       v.simpleDealResult(res.status, function () {
         v.tree = []
         v.tree = res.data
@@ -61,7 +59,7 @@ export default {
         }
       })
       console.log('少女的数组', arr)
-      http.$post(prefix + '/add.do', JSON.stringify(arr)).then(res => {
+      http.$post(authUrl + '/add.do', JSON.stringify(arr)).then(res => {
         v.simpleDealResult(res.status, function () {
           return '权限操作成功'
         }, res.message)

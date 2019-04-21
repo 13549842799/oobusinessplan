@@ -7,6 +7,7 @@ import SystemAuthority from '@/components/system/SystemAuthority'
 import Article from '@/components/my/article/Article'
 import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
+import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
 
 Vue.use(Router)
 
@@ -50,6 +51,12 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/My/Article/Diary/edit/:diaryOrder?',
+      name: 'diaryEdit',
+      component: DiaryEdit,
+      props: true
     }
   ]
 })

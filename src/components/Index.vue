@@ -50,7 +50,7 @@
 <script>
 import $ from 'jquery'
 import http from './../http'
-import base from './../base_variable'
+import {adminUrl, resouUrl} from './../base_variable'
 import sideMenu from './SideMenu'
 import router from './../router'
 
@@ -100,7 +100,7 @@ export default {
     // 设置头信息 header
     http.$setHeadersFromLocal()
     //  初始化个人信息
-    http.$get(base.orgin + '/api/admin/admin_main.do',
+    http.$get(adminUrl + '/admin_main.do',
       {'accountname': http.getUser()}).then(function (response) {
       if (response.status === 200) {
         v.loginInfo = response.data
@@ -110,7 +110,7 @@ export default {
       console.log(error)
     })
     //  初始化左侧列表
-    http.$get(base.orgin + '/api/authority/resource/resources.re').then(function (response) {
+    http.$get(resouUrl + '/resources.re').then(function (response) {
       if (response.status === 200) {
         console.log(v.leftside)
         v.leftside.items = response.data

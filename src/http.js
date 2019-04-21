@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import axios from 'axios'
 
 var headers = {}
 
@@ -73,6 +74,12 @@ var $http = function (params) {
   return new Http(params)
 }
 
+var axiDel = function () {
+  return axios.create({
+    headers: headers
+  })
+}
+
 export default {
   $http,
   $get,
@@ -83,5 +90,6 @@ export default {
   $setHeadersFromLocal,
   $getlocal,
   getUser,
-  getToken
+  getToken,
+  axiDel
 }

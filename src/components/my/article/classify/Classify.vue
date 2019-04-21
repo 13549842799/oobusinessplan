@@ -64,7 +64,7 @@
 
 <script>
 import http from '@/http.js'
-import base from '@/base_variable'
+import {classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import {MyPage} from '@/components/common/page'
 import util from '@/components/common/objUtil'
@@ -85,7 +85,7 @@ export default {
     let v = this
     v.page.childType = v.$route.params.type
     v.name = nameArr[v.page.childType - 1]
-    v.page.requestUrl = base.classifyUrl + '/list.re'
+    v.page.requestUrl = classifyUrl + '/list.re'
     v.page.searchPage({value: [null]})
   },
   methods: {
@@ -96,7 +96,7 @@ export default {
         cancelButtonText: '取消'
       }).then(({ value }) => {
         let param = JSON.stringify({childType: v.page.childType, name: value})
-        http.$post(base.classifyUrl + '/add.do', param).then(res => {
+        http.$post(classifyUrl + '/add.do', param).then(res => {
           v.simpleDealResult(res.status, function () {
             v.page.list.push(res.data)
             v.page.total++
@@ -123,7 +123,7 @@ export default {
       let v = this
       let n = util.newNotNullObject(item, [null], ['creator', 'createTime'])
       n.name = v.editName
-      http.$post(base.classifyUrl + '/edit.do', JSON.stringify(n)).then(res => {
+      http.$post(classifyUrl + '/edit.do', JSON.stringify(n)).then(res => {
         v.simpleDealResult(res.status, function () {
           item.name = n.name
           v.cancelEdit(item)
@@ -156,7 +156,7 @@ export default {
     },
     deleteClassify (item) {
       let v = this
-      http.$delete(base.classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
+      http.$delete(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
         v.simpleDealResult(res.status, function () {
           v.page.list.splice(item, 1)
           v.page.total--
@@ -171,7 +171,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     let v = this
     v.page = new MyPage()
-    v.page.requestUrl = base.classifyUrl + '/list.re'
+    v.page.requestUrl = classifyUrl + '/list.re'
     v.page.childType = to.params.type
     v.searchPageByCondition()
     console.log(v.page.childType)
