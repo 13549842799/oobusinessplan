@@ -28,19 +28,20 @@
           type="success">
           {{l.name}}
         </el-tag>
-        <el-button v-if="!labelStatus" class="el-icon-plus"
-          size="mini" circle type="success" @click="labelStatus = true">
+        <el-button v-if="!labelEdit.labelStatus" class="el-icon-plus"
+          size="mini" circle type="success" @click="labelEdit.labelStatus = true">
         </el-button>
         <el-autocomplete
-          v-if="labelStatus"
+          v-if="labelEdit.labelStatus"
           class="inline-input"
-          v-model="labelName"
+          v-model="labelEdit.labelName"
+          valueKey="name"
           :fetch-suggestions="querySearch"
           placeholder="请选择标签或创建标签名"
           @select="handleSelect"
           @blur="addLabel">
         </el-autocomplete>
-        <div style="text-align:center;"><el-button>保存</el-button></div>
+        <div style="text-align:center;"><el-button @click="saveDiary">保存</el-button></div>
       </div>
   </div>
 </template>
@@ -49,6 +50,7 @@
 import http from '@/http.js'
 import {diaryUrl, labelUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
+import $ from 'jquery'
 
 export default {
   mixins: [commonM],
@@ -61,38 +63,40 @@ export default {
       editorOption: {
         placeholder: '请输入内容'
       },
-      labelStatus: false,
-      labelName: null,
-      labels: [],
-      labelSelfs: []
+      labelEdit: {
+        labelName: null, // 输入的标签名
+        labelStatus: false, // 按钮和select的状态
+        labels: [] // 当前用户创建过的所有标签内
+      },
+      labelSelfs: []// 当前文章被标上的标签
     }
   },
   methods: {
     onEditorBlur (e) {
-      console.log(e)
+      // console.log(e)
     },
     onEditorFocus (e) {
-      console.log(e)
+      // console.log(e)
     },
     onEditorReady (e) {
-      console.log(e)
+      // console.log(e)
     },
     querySearch (queryString, cb) {
-      var restaurants = this.restaurants
+      var restaurants = this.labelEdit.labels
       var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
     createFilter (queryString) {
       return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+        return (restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
     },
     loadAllLabels () {
       let v = this
-      http.$get(labelUrl + '/list.re').then(res => {
+      http.$get(labelUrl + '/list.re', {status: 1}).then(res => {
         v.simpleDealResult(res.status, () => {
-          this.labels = res.data
+          this.labelEdit.labels = res.data === null ? [] : res.data
         })
       })
       // return [
@@ -105,13 +109,28 @@ export default {
     handleSelect (item) {
       console.log(item)
     },
-    addLabel () {
+    addLabel (e) {
       let v = this
-      if (v.labelName !== null && v.labelName.replace(/(^\s*)|(\s*$)/g, '') !== '') {
-        
+      if (v.labelEdit.labelName !== null && $.trim(v.labelEdit.labelName) !== '') {
+        let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
+        if (arr.length === 0) {
+          http.$post(labelUrl + '/add.do', JSON.stringify({name: v.labelEdit.labelName})).then(res => {
+            v.labelEdit.labels.push(res.data)
+            v.labelSelfs.push(res.data)
+          })
+        } else {
+          v.labelSelfs.push(arr[0])
+        }
       }
-      v.labelStatus = false
-    }
+      v.labelEdit.labelStatus = false
+      v.labelEdit.labelName = null
+    },
+    checkLabelExists (name) {
+      return (l) => {
+        return l.name === name
+      }
+    },
+    saveDiary () {}
   },
   computed: {
     editor () {
