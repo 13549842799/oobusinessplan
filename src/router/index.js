@@ -8,6 +8,7 @@ import Article from '@/components/my/article/Article'
 import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
+import Test from '@/components/my/article/diary/Test'
 
 Vue.use(Router)
 
@@ -42,6 +43,11 @@ export default new Router({
               path: 'Classify/:type',
               name: 'classify',
               component: Classify
+            },
+            {
+              path: 'Test',
+              name: 'test',
+              component: Test
             }
           ]
         }

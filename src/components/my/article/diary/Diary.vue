@@ -68,6 +68,7 @@
         :total="page.total">
       </el-pagination>
     </div>
+    <router-link :to="{name: 'test'}"></router-link>
   </div>
 </template>
 
