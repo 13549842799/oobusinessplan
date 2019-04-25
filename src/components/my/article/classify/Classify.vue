@@ -171,7 +171,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     let v = this
     v.page = new MyPage()
-    v.page.requestUrl = classifyUrl + '/list.re'
+    v.page.requestUrl = classifyUrl + '/page.re'
     v.page.childType = to.params.type
     v.searchPageByCondition()
     console.log(v.page.childType)

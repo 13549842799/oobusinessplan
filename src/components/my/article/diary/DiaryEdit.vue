@@ -20,37 +20,73 @@
         </quill-editor>
       </div>
       <div class="diary_edit_foot">
-        <span>标签：</span>
-        <el-tag
-          v-for="l in labelSelfs"
-          :key="l.name"
-          closable
-          type="success">
-          {{l.name}}
-        </el-tag>
-        <el-button v-if="!labelEdit.labelStatus" class="el-icon-plus"
-          size="mini" circle type="success" @click="labelEdit.labelStatus = true">
-        </el-button>
-        <el-autocomplete
-          v-if="labelEdit.labelStatus"
-          class="inline-input"
-          v-model="labelEdit.labelName"
-          valueKey="name"
-          :fetch-suggestions="querySearch"
-          placeholder="请选择标签或创建标签名"
-          @select="handleSelect"
-          @blur="addLabel">
-        </el-autocomplete>
-        <div style="text-align:center;"><el-button @click="saveDiary">保存</el-button></div>
+        <div>
+          <span>标签：</span>
+          <el-tag
+            style="margin-right: 10px;"
+            v-for="l in labelSelfs"
+            :key="l.name"
+            closable
+            type="success">
+            {{l.name}}
+          </el-tag>
+          <el-button v-if="!labelEdit.labelStatus" class="el-icon-plus"
+            size="mini" circle type="success" @click="labelEdit.labelStatus = true">
+          </el-button>
+          <template v-if="labelEdit.labelStatus">
+          <el-autocomplete
+            class="inline-input"
+            v-model="labelEdit.labelName"
+            valueKey="name"
+            :fetch-suggestions="querySearch"
+            placeholder="请选择标签或创建标签名">
+          </el-autocomplete>
+          <el-button type="text" size="mini" @click="addLabel">添加</el-button>
+          </template>
+          <div style="float:right;">
+            <span>日记日期&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <el-date-picker
+              v-model="diaryDate"
+              align="right"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </div>
+        </div>
+        <div>
+          <span>分类：</span>
+          <el-select v-model="classify" filterable placeholder="请选择">
+            <el-option
+              v-for="item in classifies"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
+        <div>
+          <span>保存类型&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <el-radio-group v-model="status" size="small">
+            <el-radio :label="1" border>存为草稿</el-radio>
+            <el-radio :label="2" border>私密发布</el-radio>
+            <el-radio :label="3" border>发布</el-radio>
+          </el-radio-group>
+        </div>
+        <div style="text-align:center;">
+          <el-button @click="saveDiary">保存</el-button>
+          <el-button @click="goBack">返回</el-button>
+        </div>
       </div>
   </div>
 </template>
 
 <script>
 import http from '@/http.js'
-import {diaryUrl, labelUrl} from '@/base_variable'
+import {diaryUrl, labelUrl, classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import $ from 'jquery'
+import {arrToStr} from '@/components/common/commonUtil'
 
 export default {
   mixins: [commonM],
@@ -68,12 +104,42 @@ export default {
         labelStatus: false, // 按钮和select的状态
         labels: [] // 当前用户创建过的所有标签内
       },
-      labelSelfs: []// 当前文章被标上的标签
+      labelSelfs: [], // 当前文章被标上的标签
+      classifies: [], // 分类数组
+      classify: null, // 选中的分类的id
+      status: 1,
+      pickerOptions1: {
+        disabledDate (time) {
+          return time.getTime() > Date.now()
+        },
+        shortcuts: [{
+          text: '今天',
+          onClick (picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick (picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '一周前',
+          onClick (picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      },
+      diaryDate: null
     }
   },
   methods: {
     onEditorBlur (e) {
-      // console.log(e)
+      console.log(e)
+      console.log(this.content)
     },
     onEditorFocus (e) {
       // console.log(e)
@@ -107,9 +173,13 @@ export default {
       // ]
     },
     handleSelect (item) {
-      console.log(item)
+      let v = this
+      console.log(v.labelSelfs.includes(item))
+      v.labelEdit.labelStatus = false
+      v.labelEdit.labelName = null
     },
     addLabel (e) {
+      console.log('进入blur事件')
       let v = this
       if (v.labelEdit.labelName !== null && $.trim(v.labelEdit.labelName) !== '') {
         let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
@@ -130,7 +200,36 @@ export default {
         return l.name === name
       }
     },
-    saveDiary () {}
+    saveDiary () {
+      let v = this
+      if ($.trim(v.title).length === 0) {
+        v.$message({message: '请输入标题', type: 'warning'})
+        return
+      }
+      // 获取标签id字符串
+      let labelIds = arrToStr(v.labelEdit.labels, 'id')
+      let params = {
+        id: v.id,
+        title: v.title,
+        content: v.content,
+        classify: v.classify,
+        date: v.diaryDate,
+        labels: labelIds,
+        status: v.status
+      }
+      http.$post(diaryUrl + '/addOrUpdate.do', JSON.stringify(params)).then(res => {
+        v.simpleDealResult(res.status, () => {
+          if (v.id === null) {
+            v.id = res.data.id
+          }
+          return '日记保存成功'
+        }, res.message)
+      })
+    },
+    goBack () {
+      console.log('进入路由')
+      this.$router.push({name: 'diary'})
+    }
   },
   computed: {
     editor () {
@@ -139,14 +238,21 @@ export default {
   },
   created () {
     let v = this
+    // 获取所有的分类
+    http.$get(classifyUrl + '/list.re', {childType: 1}).then(res => {
+      v.classifies = res.data
+    })
     if (!v.diaryOrder) {
       return
     }
+    // 获取日记内容
     http.$get(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
       v.simpleDealResult(res.status, () => {
+        v.id = res.id
         v.title = res.title
         v.labelSelfs = res.labels
         v.content = res.content
+        v.diaryDate = res.date
       })
     })
   },
@@ -183,5 +289,9 @@ export default {
 
 .diary_edit_foot span {
   font-size: 16px;
+}
+
+.diary_edit_foot > div {
+  margin-bottom: 10px;
 }
 </style>
