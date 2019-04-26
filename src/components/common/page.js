@@ -15,6 +15,10 @@ export class MyPage {
     this.total = 1
     this.list = []
     this.requestUrl = null
+    this.filter = {
+      value: [],
+      key: [['requestUrl', 'list']]
+    }
   }
   handleSizeChange (val) {
   }
@@ -23,8 +27,14 @@ export class MyPage {
     this.searchPage()
   }
   addNextLine (val) {
-    this.list.push(val)
-    this.total++
+    if (this.list.length < this.pageSize) {
+      this.list.push(val)
+    } else {
+      this.list = []
+      list.push(val)
+      this.pageNum++
+      this.total++
+    }
   }
   searchPage (filter, params) {
     let f = {value: [], key: ['requestUrl', 'list']}
@@ -46,5 +56,24 @@ export class MyPage {
       this.list = res.data.list
       this.total = res.data.total
     })
+  }
+  /**
+   * 移除一行
+   * 1.移除最后一行
+   * 2.移除非最后一行
+   * @param {*} o 
+   */
+  removeLine (o) {
+    let index = this.list.indexOf(o)
+    if (index < 0) {
+      return
+    }
+    if (index === this.list.length - 1) {   
+      if (this.list.length === 1 && this.total > 1) {
+        
+      }
+      this.list.splice(index, 1)
+    }
+      
   }
 }

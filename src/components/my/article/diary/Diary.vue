@@ -68,14 +68,13 @@
         :total="page.total">
       </el-pagination>
     </div>
-    <router-link :to="{name: 'test'}"></router-link>
   </div>
 </template>
 
 <script>
 import diaryList from '@/components/my/article/diary/DiaryList'
 import {MyPage} from '@/components/common/page'
-import {diaryUrl} from '@/base_variable'
+import {diaryUrl, classifyUrl} from '@/base_variable'
 import http from '@/http.js'
 import commonM from '@/components/common/commonMixins'
 // import axios from 'axios'
@@ -122,18 +121,18 @@ export default {
     }
   },
   created () {
-    console.log(this.statuss)
-    this.page.list = [
-      {id: 1, name: '测试日记', status: 1, createTime: '2019年10月10日', labels: ['测试', '空白'], content: ''},
-      {id: 2, name: '今天日记', status: 2, createTime: '2019年11月10日', labels: ['愉悦', '成功', '偷税']},
-      {id: 3, name: '今天日记', status: 2, createTime: '2019年11月10日', labels: ['愉悦', '成功', '偷税']},
-      {id: 4, name: '今天日记', status: 2, createTime: '2019年11月10日', labels: ['愉悦', '成功', '偷税']},
-      {id: 5, name: '今天日记', status: 2, createTime: '2019年11月10日', labels: ['愉悦', '成功', '偷税']}
-    ]
+  },
+  mounted () {
+    let v = this
+    console.log(v)
+    // 获取分类列表
+    http.$get(classifyUrl + '/list.re', {childType: 1}).then(res => {
+      v.options = res.data !== null && res.data.length > 0 ? res.data : []
+    })
+    // 获取日记列表
     this.page.total = 5
-    this.options = [{id: 1, name: '默认分类'}, {id: 2, name: '个人分类'}, {id: 3, name: '私人分类'}, {id: 4, name: '超级分类'}]
     this.page.requestUrl = diaryUrl + '/list.re'
-    // this.page.searchPage()
+    this.page.searchPage()
   },
   methods: {
     searchDiary () {

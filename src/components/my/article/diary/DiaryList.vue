@@ -9,8 +9,8 @@
         <span>{{diary.date ? diary.date : diary.createTime}}</span>
       </div>
       <div>
-        <template v-if="diary.labels">
-          <el-tag size="mini" v-for="(l, index) in diary.labels" :key="index" style="margin-left: 10px;" type="success">{{l}}</el-tag>
+        <template v-if="diary.labelList">
+          <el-tag size="mini" v-for="(l, index) in diary.labelList" :key="index" style="margin-left: 10px;" type="success">{{l.name}}</el-tag>
         </template>
       </div>
       <div style="float:right">

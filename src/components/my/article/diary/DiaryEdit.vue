@@ -1,83 +1,87 @@
 <template>
-  <div class="diary_edit">
-      <div class="diary_edit_head">
-        <el-input
-          placeholder="请输入标题"
-          v-model="title"
-          clearable>
-        </el-input>
-      </div>
-      <div class="diary_edit_content">
-        <quill-editor
-          style="height: 90%;"
-          v-model="content"
-          :options="editorOption"
-          ref="quillEditor"
-          @blur="onEditorBlur($event)"
-          @focus="onEditorFocus($event)"
-          @ready="onEditorReady($event)"
-        >
-        </quill-editor>
-      </div>
-      <div class="diary_edit_foot">
-        <div>
-          <span>标签：</span>
-          <el-tag
-            style="margin-right: 10px;"
-            v-for="l in labelSelfs"
-            :key="l.name"
-            closable
-            type="success">
-            {{l.name}}
-          </el-tag>
-          <el-button v-if="!labelEdit.labelStatus" class="el-icon-plus"
-            size="mini" circle type="success" @click="labelEdit.labelStatus = true">
-          </el-button>
-          <template v-if="labelEdit.labelStatus">
-          <el-autocomplete
-            class="inline-input"
-            v-model="labelEdit.labelName"
-            valueKey="name"
-            :fetch-suggestions="querySearch"
-            placeholder="请选择标签或创建标签名">
-          </el-autocomplete>
-          <el-button type="text" size="mini" @click="addLabel">添加</el-button>
-          </template>
-          <div style="float:right;">
-            <span>日记日期&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <el-date-picker
-              v-model="diaryDate"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-              :picker-options="pickerOptions1">
-            </el-date-picker>
+  <div class="back_ground">
+    <div class="diary_content">
+      <div class="diary_edit">
+          <div class="diary_edit_head">
+            <el-input
+              placeholder="请输入标题"
+              v-model="title"
+              clearable>
+            </el-input>
           </div>
-        </div>
-        <div>
-          <span>分类：</span>
-          <el-select v-model="classify" filterable placeholder="请选择">
-            <el-option
-              v-for="item in classifies"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </div>
-        <div>
-          <span>保存类型&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <el-radio-group v-model="status" size="small">
-            <el-radio :label="1" border>存为草稿</el-radio>
-            <el-radio :label="2" border>私密发布</el-radio>
-            <el-radio :label="3" border>发布</el-radio>
-          </el-radio-group>
-        </div>
-        <div style="text-align:center;">
-          <el-button @click="saveDiary">保存</el-button>
-          <el-button @click="goBack">返回</el-button>
-        </div>
+          <div class="diary_edit_content">
+            <quill-editor
+              style="height: 90%;"
+              v-model="content"
+              :options="editorOption"
+              ref="quillEditor"
+              @blur="onEditorBlur($event)"
+              @focus="onEditorFocus($event)"
+              @ready="onEditorReady($event)"
+            >
+            </quill-editor>
+          </div>
+          <div class="diary_edit_foot">
+            <div>
+              <span>标签：</span>
+              <el-tag
+                style="margin-right: 10px;"
+                v-for="l in labelSelfs"
+                :key="l.name"
+                closable
+                type="success">
+                {{l.name}}
+              </el-tag>
+              <el-button v-if="!labelEdit.labelStatus" class="el-icon-plus"
+                size="mini" circle type="success" @click="labelEdit.labelStatus = true">
+              </el-button>
+              <template v-if="labelEdit.labelStatus">
+              <el-autocomplete
+                class="inline-input"
+                v-model="labelEdit.labelName"
+                valueKey="name"
+                :fetch-suggestions="querySearch"
+                placeholder="请选择标签或创建标签名">
+              </el-autocomplete>
+              <el-button type="text" size="mini" @click="addLabel">添加</el-button>
+              </template>
+              <div style="float:right;">
+                <span>日记日期&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <el-date-picker
+                  v-model="diaryDate"
+                  align="right"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions1">
+                </el-date-picker>
+              </div>
+            </div>
+            <div>
+              <span>分类：</span>
+              <el-select v-model="classify" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in classifies"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </div>
+            <div>
+              <span>保存类型&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <el-radio-group v-model="status" size="small">
+                <el-radio :label="0" border>存为草稿</el-radio>
+                <el-radio :label="1" border>私密发布</el-radio>
+                <el-radio :label="2" border>发布</el-radio>
+              </el-radio-group>
+            </div>
+            <div style="text-align:center;">
+              <el-button @click="saveDiary">保存</el-button>
+              <el-button @click="goBack">返回</el-button>
+            </div>
+          </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -86,7 +90,7 @@ import http from '@/http.js'
 import {diaryUrl, labelUrl, classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import $ from 'jquery'
-import {arrToStr} from '@/components/common/commonUtil'
+import {arrToStr, dateFormat} from '@/components/common/commonUtil'
 
 export default {
   mixins: [commonM],
@@ -107,7 +111,7 @@ export default {
       labelSelfs: [], // 当前文章被标上的标签
       classifies: [], // 分类数组
       classify: null, // 选中的分类的id
-      status: 1,
+      status: 0,
       pickerOptions1: {
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -179,7 +183,6 @@ export default {
       v.labelEdit.labelName = null
     },
     addLabel (e) {
-      console.log('进入blur事件')
       let v = this
       if (v.labelEdit.labelName !== null && $.trim(v.labelEdit.labelName) !== '') {
         let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
@@ -207,13 +210,13 @@ export default {
         return
       }
       // 获取标签id字符串
-      let labelIds = arrToStr(v.labelEdit.labels, 'id')
+      let labelIds = arrToStr(v.labelSelfs, 'id')
       let params = {
         id: v.id,
         title: v.title,
         content: v.content,
         classify: v.classify,
-        date: v.diaryDate,
+        date: dateFormat('yyyy-MM-dd', v.diaryDate),
         labels: labelIds,
         status: v.status
       }
@@ -227,8 +230,7 @@ export default {
       })
     },
     goBack () {
-      console.log('进入路由')
-      this.$router.push({name: 'diary'})
+      this.$router.go(-1)
     }
   },
   computed: {
@@ -264,6 +266,23 @@ export default {
 </script>
 
 <style scoped>
+.back_ground {
+  position:absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+.diary_content {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 1200px;
+  height: 1200px;
+  margin: 0 auto;
+}
+
 .diary_edit {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
