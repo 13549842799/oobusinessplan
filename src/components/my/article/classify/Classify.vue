@@ -99,7 +99,6 @@ export default {
         http.$post(classifyUrl + '/add.do', param).then(res => {
           v.simpleDealResult(res.status, function () {
             v.page.list.push(res.data)
-            v.page.total++
             return '新增分类: ' + value
           }, '添加失败' + res.message)
           this.$message({

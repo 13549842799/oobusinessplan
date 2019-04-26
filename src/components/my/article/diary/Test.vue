@@ -1,7 +1,7 @@
 <template>
   <div class="back_ground">
     <div class="diary_content">
-        asdfasdfasdfasd
+        
     </div>
   </div>
 </template>

@@ -37,7 +37,7 @@ export class MyPage {
     }
   }
   searchPage (filter, params) {
-    let f = {value: [], key: ['requestUrl', 'list']}
+    let f = this.filter
     if (filter) {
       if (filter.key) {
         filter.key = filter.key.concat(f.key)
