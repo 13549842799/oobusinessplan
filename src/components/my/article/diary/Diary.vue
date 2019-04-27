@@ -164,7 +164,7 @@ export default {
       }).then(() => {
         http.$delete(diaryUrl + '/s/' + d.id + '/delete.do').then(res => {
           v.simpleDealResult(res.status, () => {
-            
+            v.page.removeLine(d)
             return '删除成功'
           }, res.message)
         })

@@ -272,6 +272,8 @@ export default {
   top: 0;
   width: 100%;
   z-index: 999;
+  background: rgb(140, 197, 255);
+  padding-top: 10px;
 }
 
 .diary_content {
@@ -288,10 +290,12 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
-  height: 800px;
+  height: 850px;
   background: #ffffff;
   position: relative;
   padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
 }
 
 .diary_edit_head {
