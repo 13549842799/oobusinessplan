@@ -244,18 +244,21 @@ export default {
     http.$get(classifyUrl + '/list.re', {childType: 1}).then(res => {
       v.classifies = res.data
     })
+    console.log(v.diaryOrder)
     if (!v.diaryOrder) {
       return
     }
     // 获取日记内容
     http.$get(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
       v.simpleDealResult(res.status, () => {
-        v.id = res.id
-        v.title = res.title
-        v.labelSelfs = res.labels
-        v.content = res.content
-        v.diaryDate = res.date
-      })
+        v.id = res.data.id
+        v.title = res.data.title
+        v.labelSelfs = res.data.labelList
+        v.content = res.data.content
+        v.diaryDate = res.data.date
+        v.classify = res.data.classify
+        v.status = res.data.status
+      }, res.message)
     })
   },
   mounted () {

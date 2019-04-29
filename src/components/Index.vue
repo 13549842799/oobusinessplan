@@ -102,6 +102,7 @@ export default {
     //  初始化个人信息
     http.$get(adminUrl + '/admin_main.do',
       {'accountname': http.getUser()}).then(function (response) {
+      console.log('测试个人信息', response)
       if (response.status === 200) {
         v.loginInfo = response.data
         console.log(v.loginInfo)

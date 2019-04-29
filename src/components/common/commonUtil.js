@@ -27,6 +27,9 @@ const dateFormat = function (fmt, date) { // author: meizz
   if (date === null || date === undefined) {
     return null
   }
+  if (typeof (date) === 'string') {
+    return date
+  }
   let o = {
     'M+': date.getMonth() + 1, // 月份
     'd+': date.getDate(), // 日

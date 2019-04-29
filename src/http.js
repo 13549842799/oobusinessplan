@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import axios from 'axios'
+import {loginUrl} from '@/base_variable'
 
 var headers = {}
 
@@ -64,7 +65,17 @@ class Http {
     }
   }
   then (succ, err) {
-    this.p.success = succ
+    this.p.success = function (res) {
+      console.log('少女插眼中')
+      if (res.status === 400) {
+        window.location.href = loginUrl
+        return
+      }
+      console.log(succ)
+      console.log(this)
+      succ(res)
+      console.log('结束')
+    }
     this.p.error = err
     $.ajax(this.p)
   }

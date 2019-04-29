@@ -149,7 +149,9 @@ export default {
       console.log('进入新的路径')
       this.$router.push({name: 'diaryEdit'})
     },
-    editDiary (d) {},
+    editDiary (d) {
+      this.$router.push({name: 'diaryEdit', params: {diaryOrder: d.id}})
+    },
     deleteDiary (d) {
       if (!d && d.id == null) {
         this.$message({
