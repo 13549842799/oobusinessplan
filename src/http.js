@@ -66,15 +66,11 @@ class Http {
   }
   then (succ, err) {
     this.p.success = function (res) {
-      console.log('少女插眼中')
       if (res.status === 400) {
         window.location.href = loginUrl
         return
       }
-      console.log(succ)
-      console.log(this)
       succ(res)
-      console.log('结束')
     }
     this.p.error = err
     $.ajax(this.p)
@@ -85,10 +81,8 @@ var $http = function (params) {
   return new Http(params)
 }
 
-var axiDel = function () {
-  return axios.create({
-    headers: headers
-  })
+var axiDel = function (url, params) {
+  return axios.delete(url, {params: params, headers: headers})
 }
 
 export default {
