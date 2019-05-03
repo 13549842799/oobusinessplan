@@ -47,14 +47,6 @@
         </tbody>
         <tfoot>
           <tr><th colspan=4 style="text-align: right">
-            <el-pagination
-              layout="prev, pager, next"
-              @size-change="page.handleSizeChange"
-              @current-change="page.handleCurrentChange"
-              :current-page.sync="page.pageNum"
-              :page-size="page.pageSize"
-              :total="page.total">
-            </el-pagination>
           </th></tr>
         </tfoot>
       </table>
@@ -63,6 +55,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import http from '@/http.js'
 import {classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
@@ -75,7 +68,7 @@ export default {
   mixins: [commonM],
   data () {
     return {
-      page: new MyPage(),
+      page: new MyPage(7),
       editStatus: 0,
       editName: null,
       name: null
@@ -87,6 +80,26 @@ export default {
     v.name = nameArr[v.page.childType - 1]
     v.page.requestUrl = classifyUrl + '/list.re'
     v.page.searchPage({value: [null]})
+  },
+  mounted () {
+    let v = this
+    $('.classify_content').on('mousewheel DOMMouseScroll', mouseScroll
+    
+    
+    
+    )
+    $('.classify_content').scroll(function () {
+      let scrollHeight = $(this).eq(0).prop('scrollHeight')
+      let divHeight = $('.classify_content').height()
+      let scrollTop = $('.classify_content').scrollTop()
+      if (scrollTop === 0) {
+        console.log('滚动到顶部了')
+      }
+      // 滚动高度 = div高度 + 滚动条头部离顶部的最大距离
+      if ((divHeight + scrollTop) >= scrollHeight) {
+        v.page.appendNextPage()
+      }
+    })
   },
   methods: {
     addClassify () {
@@ -113,11 +126,17 @@ export default {
         })
       })
     },
+    /**
+     * 打开编辑模式
+     */
     edit (item) {
       let v = this
       v.editName = item.name
       v.editStatus = item.id
     },
+    /**
+     * 发送edit请求
+     */
     saveEdit (item) {
       let v = this
       let n = util.newNotNullObject(item, [null], ['creator', 'createTime'])
@@ -155,7 +174,14 @@ export default {
     },
     deleteClassify (item) {
       let v = this
-      http.$delete(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
+      // http.$delete(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
+      //   v.simpleDealResult(res.status, function () {
+      //     v.page.list.splice(item, 1)
+      //     v.page.total--
+      //     return '删除成功'
+      //   }, '删除失败' + res.message)
+      // })
+      http.axiDel(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
         v.simpleDealResult(res.status, function () {
           v.page.list.splice(item, 1)
           v.page.total--
@@ -169,14 +195,18 @@ export default {
   },
   beforeRouteUpdate (to, from, next) {
     let v = this
-    v.page = new MyPage()
+    v.page = new MyPage(7)
     v.page.requestUrl = classifyUrl + '/page.re'
     v.page.childType = to.params.type
     v.searchPageByCondition()
-    console.log(v.page.childType)
     v.name = nameArr[v.page.childType - 1]
   }
 }
+
+let mouseScroll = function (e) {
+
+}
+
 </script>
 
 <style scoped>
@@ -189,6 +219,7 @@ export default {
 .classify_content {
   width: 100%;
   height: 350px;
+  overflow-y: hidden;
 }
 
 table {

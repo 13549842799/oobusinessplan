@@ -73,6 +73,7 @@ export default {
           let data = response.data
           localStorage.setItem('X-user', data.session.name)
           localStorage.setItem('X-token', data.session.token)
+          window.location.href = response.data.target
         } else {
           Login.errorMess = response.message
         }

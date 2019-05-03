@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import axios from 'axios'
+import {loginUrl} from '@/base_variable'
 
 var headers = {}
 
@@ -64,7 +65,13 @@ class Http {
     }
   }
   then (succ, err) {
-    this.p.success = succ
+    this.p.success = function (res) {
+      if (res.status === 400) {
+        window.location.href = loginUrl
+        return
+      }
+      succ(res)
+    }
     this.p.error = err
     $.ajax(this.p)
   }
@@ -74,10 +81,8 @@ var $http = function (params) {
   return new Http(params)
 }
 
-var axiDel = function () {
-  return axios.create({
-    headers: headers
-  })
+var axiDel = function (url, params) {
+  return axios.delete(url, {params: params, headers: headers})
 }
 
 export default {

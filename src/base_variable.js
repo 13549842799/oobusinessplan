@@ -9,6 +9,8 @@ const classifyUrl = baseUrl + '/api/article/classify'
 const diaryUrl = baseUrl + '/api/article/diary'
 const labelUrl = baseUrl + '/api/article/label'
 
+const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
+
 export {
   baseUrl,
   adminUrl,
@@ -17,5 +19,6 @@ export {
   authUrl,
   classifyUrl,
   diaryUrl,
-  labelUrl
+  labelUrl,
+  loginUrl
 }
