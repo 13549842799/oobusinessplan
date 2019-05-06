@@ -8,6 +8,7 @@ import Article from '@/components/my/article/Article'
 import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
+import Label from '@/components/my/article/label/Label'
 
 Vue.use(Router)
 
@@ -34,14 +35,22 @@ export default new Router({
           component: Article,
           children: [
             {
+              path: 'Label',
+              name: 'label',
+              component: Label,
+              meta: {name: '标签管理'}
+            },
+            {
               path: 'Diary',
               name: 'diary',
               component: Diary
             },
             {
-              path: 'Classify/:type',
+              path: 'Classify',
               name: 'classify',
-              component: Classify
+              component: Classify,
+              props: true,
+              meta: {name: '分类管理'}
             },
             {
               path: '/My/Article/Diary/edit/:diaryOrder?',

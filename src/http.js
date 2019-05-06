@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import axios from 'axios'
 import {loginUrl} from '@/base_variable'
+import {labelUrl} from './base_variable'
 
 var headers = {}
 
@@ -64,7 +65,7 @@ class Http {
       this.p.contentType = p.contentType
     }
   }
-  then (succ, err) {
+  then (succ, err, complete) {
     this.p.success = function (res) {
       if (res.status === 400) {
         window.location.href = loginUrl
@@ -73,6 +74,7 @@ class Http {
       succ(res)
     }
     this.p.error = err
+    this.p.complete = complete
     $.ajax(this.p)
   }
 }
