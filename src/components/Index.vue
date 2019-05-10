@@ -30,11 +30,14 @@
       </div>
     </el-header>
     <el-container>
-      <el-aside width="200px">
-        <div class="left-side">
-          <ul class="ul-item">
-            <side-menu v-for="(menu,index) in leftside.items" v-bind:menu="menu" :key="index" ></side-menu>
-          </ul>
+      <el-aside :width="leftside.width">
+        <div class="left-side-container">
+          <div class="lef-side-icon" :style="{width: leftside.icon}"><el-button type="success" id="displayButton" size="mini" class="el-icon-d-arrow-left" @click="hideOrShow"></el-button></div>
+          <div class="left-side">
+            <ul v-show="leftside.visable" class="ul-item">
+              <side-menu v-for="(menu,index) in leftside.items" v-bind:menu="menu" :key="index" ></side-menu>
+            </ul>
+          </div>
         </div>
       </el-aside>
       <el-container>
@@ -83,7 +86,10 @@ export default {
       loginInfo: {},
       header: {},
       leftside: {
-        items: []
+        items: [],
+        width: "200px",
+        icon: '20%',
+        visable: true
       }
     }
   },
@@ -144,6 +150,21 @@ export default {
       d.animate({
         border: '0 solid #fff'
       }, 'fast')
+    },
+    hideOrShow () {
+      let v = this
+      console.log(v.leftside.width)
+      v.leftside.visable = !v.leftside.visable
+      if (v.leftside.visable) {
+        v.leftside.icon = "20%"
+      }
+      $('.left-side').animate({width: 'toggle'}, 500, function () {
+         $('.left-side-container').toggleClass('left-side-style')
+         v.leftside.width = v.leftside.visable ? '200px' : '40px'
+         if (!v.leftside.visable) {
+           v.leftside.icon = "90%"
+         }
+      })
     }
   }
 }
@@ -234,14 +255,35 @@ export default {
     display: block;
 }
 
+.left-side-container {
+  height: 650px;
+}
+
+.left-side-container > div {
+  float: left;
+  height: 100%;
+  background:rgb(35, 38, 46, 0.9);
+}
+
+.lef-side-icon {
+  position: relative;
+}
+
+.left-side-style {
+}
+
 /**
 *侧边导航栏的样式
 */
 .left-side{
-  background: #23262E;
-  height: 650px;
-  opacity: 0.9;
   font-size: 16px;
+  width: 80%;
+}
+
+#displayButton {
+  position: absolute;
+  left: 0;
+  top: 50%;
 }
 
 .ul-item{
@@ -260,17 +302,18 @@ export default {
 }
 
 .ul-item li a{
-  width: 190px;
+  /* width: 190px; */
+  /* width: 100%; */
   height: 50px;
   display: block;
   line-height: 50px;
-  font-size: 18px;
+  font-size: 16px;
   color: #fff;
   padding: 0 0 0 10px;
 }
 
 .ul-item li dl a{
-  font-size: 15px;
+  font-size: 14px;
   height: 40px;
   line-height: 40px;
   text-align: center;

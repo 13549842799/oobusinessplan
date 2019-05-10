@@ -24,7 +24,7 @@ export default {
             message: fail, type: 'warning'
           })
           break
-        case 400:
+        case 300:
           if (mes) {
             console.log(mes)
             break

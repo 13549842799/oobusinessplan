@@ -97,7 +97,7 @@ export default {
         let param = JSON.stringify({childType: v.page.childType, name: value})
         http.$post(classifyUrl + '/add.do', param).then(res => {
           v.simpleDealResult(res.status, function () {
-            v.page.list.push(res.data)
+            v.page.appendNextLine(res.data)
             return '新增分类: ' + value
           }, '添加失败' + res.message)
           this.$message({

@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Login from '@/Login'
 import IndexPage from '@/components/Index'
 import SystemAuthority from '@/components/system/SystemAuthority'
+import Center from '@/components/my/center/PersonalCenter'
 import Article from '@/components/my/article/Article'
 import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
@@ -23,6 +24,11 @@ export default new Router({
           path: 'Home',
           name: 'home',
           component: Home
+        },
+        {
+          path: 'My/personalCenter',
+          name: 'personalCenter',
+          component: Center
         },
         {
           path: 'System/Authority',
