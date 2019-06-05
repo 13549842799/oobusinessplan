@@ -68,15 +68,13 @@ export default {
     },
     login () {
       let Login = this
-      http.$post(adminUrl + '/loginAsyn.do', Login.params).then(function (response) {
-        if (response.status === 200) {
-          let data = response.data
-          localStorage.setItem('X-user', data.session.name)
-          localStorage.setItem('X-token', data.session.token)
-          window.location.href = response.data.target
-        } else {
-          Login.errorMess = response.message
-        }
+      http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
+        let data = response.data
+        localStorage.setItem('X-user', data.session.name)
+        localStorage.setItem('X-token', data.session.token)
+        window.location.href = response.data.target
+      }).catch(err => {
+        Login.errorMess = err.message
       })
     }
   },

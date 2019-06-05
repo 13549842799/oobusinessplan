@@ -3,8 +3,12 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from '@/Login'
 import IndexPage from '@/components/Index'
-import SystemAuthority from '@/components/system/SystemAuthority'
+// import SystemAuthority from '@/components/system/SystemAuthority'
+import EmployeeSys from '@/components/employee/EmployeeSys'
+import AdminSys from '@/components/employee/AdminSys'
 import Center from '@/components/my/center/PersonalCenter'
+import Admin from '@/components/my/center/admin'
+import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
 import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
@@ -13,7 +17,10 @@ import Label from '@/components/my/article/label/Label'
 
 Vue.use(Router)
 
+const SystemAuthority = () => import('@/components/system/SystemAuthority')
+
 export default new Router({
+  mode: 'hash',
   routes: [
     {
       path: '/',
@@ -26,9 +33,33 @@ export default new Router({
           component: Home
         },
         {
+          path: 'employee/employeesys',
+          name: 'employeesys',
+          component: EmployeeSys
+        },
+        {
+          path: 'employee/adminsys',
+          name: 'adminsys',
+          component: AdminSys
+        },
+        {
           path: 'My/personalCenter',
           name: 'personalCenter',
-          component: Center
+          component: Center,
+          children: [
+            {
+              path: 'Admin',
+              name: 'admin',
+              component: Admin,
+              meta: {name: '账号信息'}
+            },
+            {
+              path: 'Employee',
+              name: 'employee',
+              component: Employee,
+              meta: {name: '职员信息'}
+            }
+          ]
         },
         {
           path: 'System/Authority',
@@ -49,7 +80,8 @@ export default new Router({
             {
               path: 'Diary',
               name: 'diary',
-              component: Diary
+              component: Diary,
+              meta: {name: '所有日记'}
             },
             {
               path: 'Classify',

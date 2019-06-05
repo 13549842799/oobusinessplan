@@ -10,10 +10,13 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import VueQuillEditor from 'vue-quill-editor'
+// import RouterStorage from 'vue-router-storage'
 
 Vue.use(ElementUI)
 
 Vue.use(VueQuillEditor /* { default global options } */)
+
+// Vue.use(RouterStorage, {showLog: false, stayHere: true, instanceName: '$history'})
 
 Vue.config.productionTip = false
 

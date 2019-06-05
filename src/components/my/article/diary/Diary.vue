@@ -1,91 +1,101 @@
 <template>
   <div style="background: rgb(236, 245, 255);margin-top: 15px;position: relative;">
-    <div class="diaryHead">
-      <div>
-        <el-select size="mini" v-model="page.classify" clearable placeholder="分类" style="width:150px;">
-          <el-option
-            v-for="item in options"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
+    <div v-show="state === 0">
+      <div class="diaryHead">
+        <div>
+          <el-select size="mini" v-model="page.classify" clearable placeholder="分类" style="width:150px;">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
+        <div>
+          <el-select v-model="page.status" clearable placeholder="状态" size="mini" style="width:100px;">
+            <el-option
+              v-for="s in statuss"
+              :key="s.val"
+              :label="s.name"
+              :value="s.val">
+            </el-option>
+          </el-select>
+        </div>
+        <div>
+          <el-date-picker
+            size="mini"
+            v-model="timeRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </div>
+        <div>
+          <el-input
+            style="width:100px;"
+            size="mini"
+            placeholder="标题"
+            v-model="page.title"
+            clearable>
+          </el-input>
+        </div>
+        <div>
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="searchDiary"></el-button>
+          <el-tooltip class="item" effect="dark" content="写新日记" placement="top-start">
+            <el-button size="mini" round icon="el-icon-edit" type="success" @click="newDiary"></el-button>
+          </el-tooltip>
+        </div>
       </div>
-      <div>
-        <el-select v-model="page.status" clearable placeholder="状态" size="mini" style="width:100px;">
-          <el-option
-            v-for="s in statuss"
-            :key="s.val"
-            :label="s.name"
-            :value="s.val">
-          </el-option>
-        </el-select>
-      </div>
-      <div>
-        <el-date-picker
-          size="mini"
-          v-model="timeRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-      </div>
-      <div>
-        <el-input
-          style="width:100px;"
-          size="mini"
-          placeholder="标题"
-          v-model="page.title"
-          clearable>
-        </el-input>
-      </div>
-      <div>
-        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchDiary"></el-button>
-        <el-tooltip class="item" effect="dark" content="写新日记" placement="top-start">
-          <el-button size="mini" round icon="el-icon-edit" type="success" @click="newDiary"></el-button>
-        </el-tooltip>
+      <div class="diary_content">
+        <div class="diary_list">
+          <diary-list v-for="d in page.list" :key="d.id" :diary="d" :default-expand="expand">
+            <span style="color: #E4E7ED;">|</span>
+            <el-button type="text" size="mini" @click="readDiary(d)">查看</el-button>
+            <span style="color: #E4E7ED;">|</span>
+            <el-button type="text" size="mini" @click="editDiary(d)">编辑</el-button>
+            <span style="color: #E4E7ED;">|</span>
+            <el-button type="text" size="mini" style="color:red" @click="deleteDiary(d)">删除</el-button>
+          </diary-list>
+        </div>
+        <el-pagination
+          v-if="page.total > 1"
+          style="background: rgb(236, 245, 255);float: right;"
+          :background="true"
+          layout="prev, pager, next"
+          @size-change="page.handleSizeChange"
+          @current-change="page.handleCurrentChange"
+          :current-page.sync="page.pageNum"
+          :page-size="page.pageSize"
+          :total="page.total">
+        </el-pagination>
       </div>
     </div>
-    <div class="diary_content">
-      <div class="diary_list">
-        <diary-list v-for="d in page.list" :key="d.id" :diary="d" :default-expand="expand">
-          <span style="color: #E4E7ED;">|</span>
-          <el-button type="text" size="mini" @click="editDiary(d)">编辑</el-button>
-          <span style="color: #E4E7ED;">|</span>
-          <el-button type="text" size="mini" style="color:red" @click="deleteDiary(d)">删除</el-button>
-        </diary-list>
-      </div>
-      <el-pagination
-        v-if="page.total > 1"
-        style="background: rgb(236, 245, 255);float: right;"
-        :background="true"
-        layout="prev, pager, next"
-        @size-change="page.handleSizeChange"
-        @current-change="page.handleCurrentChange"
-        :current-page.sync="page.pageNum"
-        :page-size="page.pageSize"
-        :total="page.total">
-      </el-pagination>
+    <div v-show="state === 1">
+      <diary-read :diary="currentDiary" v-on:goBack="readGoBack"></diary-read>
     </div>
   </div>
 </template>
 
 <script>
 import diaryList from '@/components/my/article/diary/DiaryList'
+import diaryRead from '@/components/my/article/diary/DiaryRead'
 import {MyPage} from '@/components/common/page'
 import {diaryUrl, classifyUrl} from '@/base_variable'
 import http from '@/http.js'
-import commonM from '@/components/common/commonMixins'
 // import axios from 'axios'
 
 export default {
-  mixins: [commonM],
+  mixins: [],
   components: {
-    diaryList
+    diaryList,
+    diaryRead
   },
   data () {
     return {
+      state: 0,
+      currentDiary: {},
       page: new MyPage(4),
       expand: false,
       options: [],
@@ -126,9 +136,9 @@ export default {
     let v = this
     console.log(v)
     // 获取分类列表
-    http.$get(classifyUrl + '/list.re', {childType: 1}).then(res => {
+    http.$getP(classifyUrl + '/list.re', {childType: 1}).then(res => {
       v.options = res.data !== null && res.data.length > 0 ? res.data : []
-    })
+    }).catch(err => { console.log(err) })
     // 获取日记列表
     this.page.total = 5
     this.page.requestUrl = diaryUrl + '/list.re'
@@ -149,8 +159,19 @@ export default {
       console.log('进入新的路径')
       this.$router.push({name: 'diaryEdit'})
     },
+    readDiary (d) {
+      console.log(11)
+      this.state = 1
+      this.currentDiary = d
+      console.log(d)
+      console.log(this.state)
+    },
     editDiary (d) {
       this.$router.push({name: 'diaryEdit', params: {diaryOrder: d.id}})
+    },
+    readGoBack () {
+      this.state = 0
+      this.currentDiary = {}
     },
     deleteDiary (d) {
       if (!d && d.id == null) {

@@ -106,11 +106,11 @@ import util from '@/components/common/objUtil'
 
 function pageAdminRole (v, param) {
   let p = util.newNotNullObject(param, [null, -1])
-  http.$get(adminUrl + '/adminsys/admins.re', p).then(res => {
-    v.simpleDealResult(res.status, function () {
-      v.adminlist = res.data.list
-      v.page.total = res.data.total
-    }, res.message)
+  http.$getP(adminUrl + '/sys/admins.re', p).then(res => {
+    v.adminlist = res.data.list
+    v.page.total = res.data.total
+  }).catch(err => {
+    v.$message.error(err.message);
   })
 }
 
