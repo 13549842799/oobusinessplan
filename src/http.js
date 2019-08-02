@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import axios from 'axios'
-import {loginUrl} from '@/base_variable'
+// import {loginUrl} from '@/base_variable'
+import router from './router'
 
 var headers = {}
 
@@ -67,7 +68,9 @@ class Http {
   then (succ, err, complete) {
     this.p.success = function (res) {
       if (res.status === 400) {
-        window.location.href = loginUrl
+        console.log('修改后')
+        router.push({name: 'login'})
+        // window.location.href = loginUrl
         return
       }
       succ(res)
@@ -161,6 +164,7 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
       error: config.error,
       context: config.context,
       success: (res) => {
+        console.log(res)
         switch (res.status) {
           case 200:
             resolve(res)
@@ -170,7 +174,8 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
             reject(res)
             break
           case 400:
-            window.location.href = loginUrl
+            // window.location.href = loginUrl
+            //router.push({name: 'login'})
             reject(res)
         }
       }

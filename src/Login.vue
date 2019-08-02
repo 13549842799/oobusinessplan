@@ -17,11 +17,11 @@
         <div class="contentdiv">
           <div class="tip">{{errorMess}}</div>
           <div class="uNameDiv">
-            <i><img src="/static/icons/user.png" width='30px' height='30px'/></i>
+            <i><img src="../static/icons/user.png" width='30px' height='30px'/></i>
             <input @focus="errorMess = ''" v-model="params.userName" type="text" name="username" class="inputClass"/>
           </div>
           <div class="uNameDiv">
-            <i><img src="/static/icons/locked.png" width='30px' height='30px'/></i>
+            <i><img src="../static/icons/locked.png" width='30px' height='30px'/></i>
             <input @focus="errorMess = ''" v-model="params.password"  type="password" name="password" class="inputClass" />
           </div>
           <div class="footdiv">
@@ -70,6 +70,7 @@ export default {
       let Login = this
       http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
         let data = response.data
+        console.log(data)
         localStorage.setItem('X-user', data.session.name)
         localStorage.setItem('X-token', data.session.token)
         window.location.href = response.data.target
@@ -95,7 +96,7 @@ export default {
 
 <style scoped>
 .loginbody{
-  background-image: url(/static/background.jpg);
+  background-image: url(../static/background.jpg);
   background-repeat: no-repeat;
   width: 100%;
   height: 100%;
@@ -130,6 +131,7 @@ li{
   box-shadow: 0 2px 0 2px rgba(34, 25, 25, 0.2);
   line-height: 60px;
   position: relative;
+  background-color:transparent; /* 因为打包后css混合在一起，存在其它得title类对背景色进行冲突，所以使用此属性(使背景色透明)解决 */
 }
 
 .tar_web{

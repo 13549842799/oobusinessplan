@@ -110,7 +110,7 @@ function pageAdminRole (v, param) {
     v.adminlist = res.data.list
     v.page.total = res.data.total
   }).catch(err => {
-    v.$message.error(err.message);
+    v.$message.error(err.message)
   })
 }
 
