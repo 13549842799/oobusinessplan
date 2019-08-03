@@ -83,11 +83,7 @@ export default {
   },
   mounted () {
     let v = this
-    $('.classify_content').on('mousewheel DOMMouseScroll', mouseScroll
-    
-    
-    
-    )
+    $('.classify_content').on('mousewheel DOMMouseScroll', mouseScroll)
     $('.classify_content').scroll(function () {
       let scrollHeight = $(this).eq(0).prop('scrollHeight')
       let divHeight = $('.classify_content').height()
@@ -204,7 +200,7 @@ export default {
 }
 
 let mouseScroll = function (e) {
-
+  
 }
 
 </script>
