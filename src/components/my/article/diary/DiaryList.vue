@@ -13,12 +13,12 @@
           <el-tag size="mini" v-for="(l, index) in diary.labelList" :key="index" style="margin-left: 10px;" type="success">{{l.name}}</el-tag>
         </template>
       </div>
-      <div style="float:right">
+      <div style="float: right">
         <el-button type="text" size="mini" @click="expand = !expand">{{!expand ? '展开' : '收起'}}</el-button>
         <slot></slot>
       </div>
     </div>
-    <div v-if="expand" class="diary_session hasBottomBorder">
+    <div v-if="expand" class="diary_session hasBottomBorder" v-html="diary.content">
     </div>
   </div>
 </template>
@@ -96,5 +96,6 @@ export default {
 
 .diary_session {
   height: 60px;
+  overflow: hidden;
 }
 </style>

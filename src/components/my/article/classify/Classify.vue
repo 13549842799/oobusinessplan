@@ -1,10 +1,6 @@
 <template>
   <!-- <div>{{$route.params.type}}</div> -->
   <div>
-    <el-breadcrumb v-if="name != null" style="margin-top:10px;" separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>{{name}}</el-breadcrumb-item>
-      <el-breadcrumb-item>分类管理</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="classify_head">
       <el-input
         style="width:200px;"
@@ -18,68 +14,65 @@
       </div>
     </div>
     <div class="classify_content">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:10%;">排序</th>
-            <th style="width:60%;text-align:left;">类别</th>
-            <th style="width:20%;">操作</th>
-            <th style="width:10%;">文章数</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in page.list" :key="index">
-            <td>{{index + 1}}</td>
-            <td style="text-align:left;">
-              <template v-if="editStatus != item.id">{{item.name}}</template>
-              <template v-else>
-                <input type="text" v-model="editName" />
-                <el-button size="mini" type="text" @click="saveEdit(item)">保存</el-button>
-                <el-button size="mini" type="text" @click="cancelEdit(item)">取消</el-button>
-              </template>
-            </td>
-            <td>
-              <el-button type="text" @click="edit(item)">编辑</el-button>
-              <el-button type="text" @click="checkArticleCount(item)">删除</el-button>
-            </td>
-            <td>{{item.count}}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr><th colspan=4 style="text-align: right">
-          </th></tr>
-        </tfoot>
-      </table>
+      <page-rolling :downRoll="downR" :speed="8">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:10%;">排序</th>
+              <th style="width:60%;text-align:left;">类别</th>
+              <th style="width:20%;">操作</th>
+              <th style="width:10%;">文章数</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in page.list" :key="index">
+              <td>{{index + 1}}</td>
+              <td style="text-align:left;">
+                <template v-if="editStatus != item.id">{{item.name}}</template>
+                <template v-else>
+                  <input type="text" v-model="editName" />
+                  <el-button size="mini" type="text" @click="saveEdit(item)">保存</el-button>
+                  <el-button size="mini" type="text" @click="cancelEdit(item)">取消</el-button>
+                </template>
+              </td>
+              <td>
+                <el-button type="text" @click="edit(item)">编辑</el-button>
+                <el-button type="text" @click="checkArticleCount(item)">删除</el-button>
+              </td>
+              <td>{{item.count}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr><th colspan=4 style="text-align: right">
+            </th></tr>
+          </tfoot>
+        </table>
+      </page-rolling>
     </div>
   </div>
 </template>
 
 <script>
-import $ from 'jquery'
 import http from '@/http.js'
 import {classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import {MyPage} from '@/components/common/page'
 import util from '@/components/common/objUtil'
-
-const nameArr = ['日记管理', '总结管理', '备忘管理', '灵感管理', '小说管理']
+import pageRolling from '@/components/common/pageRolling'
+import $ from 'jquery'
 
 export default {
+  components: {pageRolling},
   mixins: [commonM],
   data () {
     return {
       page: new MyPage(7),
       editStatus: 0,
-      editName: null,
-      name: null
+      editName: null
     }
   },
   created () {
-    let v = this
-    v.page.childType = v.$route.params.type
-    v.name = nameArr[v.page.childType - 1]
-    v.page.requestUrl = classifyUrl + '/list.re'
-    v.page.searchPage({value: [null]})
+    this.initPage(this.$route.query.type)
   },
   mounted () {
     let v = this
@@ -98,16 +91,28 @@ export default {
     })
   },
   methods: {
+    downR (e) {
+      this.page.appendNextPage()
+    },
+    /**
+     * 初始化page
+     */
+    initPage (type) {
+      let v = this
+      v.page = new MyPage(7)
+      v.page.requestUrl = classifyUrl + '/page.re'
+      v.page.childType = type
+      v.searchPageByCondition()
+    },
     addClassify () {
       let v = this
       this.$prompt('请输入分类名', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        confirmButtonText: '确定', cancelButtonText: '取消'
       }).then(({ value }) => {
         let param = JSON.stringify({childType: v.page.childType, name: value})
         http.$post(classifyUrl + '/add.do', param).then(res => {
           v.simpleDealResult(res.status, function () {
-            v.page.list.push(res.data)
+            v.page.appendNextLine(res.data)
             return '新增分类: ' + value
           }, '添加失败' + res.message)
           this.$message({
@@ -144,6 +149,9 @@ export default {
         }, '编辑失败' + res.message)
       })
     },
+    /**
+     * 取消编辑
+     */
     cancelEdit (item) {
       let v = this
       v.editName = null
@@ -190,17 +198,12 @@ export default {
     }
   },
   beforeRouteUpdate (to, from, next) {
-    let v = this
-    v.page = new MyPage(7)
-    v.page.requestUrl = classifyUrl + '/page.re'
-    v.page.childType = to.params.type
-    v.searchPageByCondition()
-    v.name = nameArr[v.page.childType - 1]
+    this.initPage(to.query.type)
+    next() // 必须要调用next()方法才能刷新域名，如果不调用则会造成路由跳转了但域名不变，重新回到第一个域名时不生效
   }
 }
 
 let mouseScroll = function (e) {
-  
 }
 
 </script>

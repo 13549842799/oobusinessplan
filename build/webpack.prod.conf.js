@@ -71,7 +71,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeAttributeQuotes: true
+        // removeAttributeQuotes: true
+        removeAttributeQuotes: false // 解决打包后引用静态文件路径错误的问题
         // more options:
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
