@@ -53,8 +53,10 @@
           <diary-list v-for="d in page.list" :key="d.id" :diary="d" :default-expand="expand">
             <span style="color: #E4E7ED;">|</span>
             <el-button type="text" size="mini" @click="readDiary(d)">查看</el-button>
-            <span style="color: #E4E7ED;">|</span>
-            <el-button type="text" size="mini" @click="editDiary(d)">编辑</el-button>
+            <template v-if="d.source === 1">
+              <span style="color: #E4E7ED;">|</span>
+              <el-button type="text" size="mini" @click="editDiary(d)">编辑</el-button>
+            </template>
             <span style="color: #E4E7ED;">|</span>
             <el-button type="text" size="mini" style="color:red" @click="deleteDiary(d)">删除</el-button>
           </diary-list>
