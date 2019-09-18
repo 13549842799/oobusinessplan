@@ -39,6 +39,8 @@ function $setHeadersFromLocal () {
     'X-user': localStorage.getItem('X-user'),
     'X-token': localStorage.getItem('X-token')
   }
+  axiosInstance.defaults.headers['X-user'] = headers['X-user']
+  axiosInstance.defaults.headers['X-token'] = headers['X-token']
 }
 
 function $getlocal (key) {
@@ -185,6 +187,87 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
   })
 }
 
+/** axios  */
+var axiosInstance = axios.create({
+  timeout: 3000,
+  headers: headers
+})
+
+/**
+ * 发送请求时拦截处理
+ */
+axiosInstance.interceptors.request.use(config => {
+  return config
+}, err => {
+  return Promise.reject(err)
+})
+
+/**
+ * 接受响应的时候进行处理
+ */
+axiosInstance.interceptors.response.use(response => {
+  switch (response.data.status) {
+    case 200:
+      return response.data.data
+    case 100:
+    case 300:
+      return Promise.reject(response)
+    case 400:
+      router.push({name: 'login'})
+      return Promise.reject(response.data.message)
+  }
+  return response
+}, err => {
+  return Promise.reject(err)
+})
+
+const axiosI = function ({url, data, method, config = {}}) {
+  let obj = {}
+  obj.url = url
+  obj.method = method
+  switch (method) {
+    case 'get':
+    case 'delete':
+      obj.params = data
+      break
+    case 'post':
+    case 'patch':
+      obj.data = data
+  }
+  return new Promise(function (resolve, reject) {
+    axiosInstance(obj).then(res => {
+      exComplete(config)
+      resolve(res)
+    }).catch(err => {
+      exComplete(config)
+      reject(err)
+    })
+  })
+}
+
+function exComplete (config) {
+  if (config && config.complete) {
+    config.complete()
+  }
+}
+
+const $axiosGet = function (url, data, config) {
+  return axiosI({url: url, data: data, config: config, method: 'get'})
+}
+
+const $axiosPost = function (url, data, config) {
+  return axiosI({url: url, data: data, config: config, method: 'post'})
+}
+
+const $axiosPat = function (url, data, config) {
+  return axiosI({url: url, data: data, config: config, method: 'patch'})
+}
+
+const $axiosDel = function (url, data, config) {
+  return axiosI({url: url, data: data, config: config, method: 'delete'})
+}
+/** axios end  */
+
 export default {
   $http,
   $get,
@@ -200,5 +283,9 @@ export default {
   $getP,
   $postP,
   $patchP,
-  $deleteP
+  $deleteP,
+  $axiosGet,
+  $axiosPost,
+  $axiosPat,
+  $axiosDel
 }

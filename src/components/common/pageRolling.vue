@@ -67,6 +67,7 @@ export default {
       }
       // 滚动高度 = div高度 + 滚动条头部离顶部的最大距离
       if ((divHeight + scrollTop) >= scrollHeight) {
+        
         this.downRoll(e)
       }
     }

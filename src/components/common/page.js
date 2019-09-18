@@ -5,7 +5,7 @@ import util from '@/components/common/objUtil'
 import http from '@/http.js'
 
 export class MyPage {
-  constructor (size) {
+  constructor (size, {url, total, params}) {
     this.pages = 1 // 总页数
     this.pageNum = 1
     if (size) {
@@ -13,22 +13,16 @@ export class MyPage {
     } else {
       this.pageSize = 15
     }
-    this.total = 1 // 总条数
+    this.loading = false // 是否正在请求加载列表
+    this.params = util.validObj(params) ? params : {}
+    this.total = util.validObj(total) ? total : 1 // 总条数
     this.list = []
-    this.requestUrl = null
+    this.requestUrl = util.validObj(url) ? url : null
     this.filter = {
       value: [null],
       key: ['requestUrl', 'list', 'pages', 'filter', 'config']
     }
-  }
-  handleSizeChange (val) {
-  }
-  /**
-   * 跳转到目标的页
-   * @param {*} val 页数
-   */
-  handleCurrentChange (val) {
-    this.searchPage(null, null, val)
+    this.searchPage()
   }
   /**
    * 添加下一行, 如果添加后当前页的总条数没有超过最大条数pageSize，则只添加当天的记录，
@@ -65,12 +59,9 @@ export class MyPage {
     if (pageNum > this.pages) {
       return
     }
-    config = config !== null && config !== undefined ? config : {}
+    config = util.validObj(config) ? config : {}
     config.append = true
     this.requestList(filter, params, pageNum, config)
-    if (config.changePage === true) {
-      this.pageNum = pageNum
-    }
   }
   /**
    * 在原本列表的基础上追加下一页的列表，并把页数+1
@@ -78,27 +69,20 @@ export class MyPage {
    * @param {Object} params 查询的条件
    */
   appendNextPage (config) {
-    config = config !== null && config !== undefined ? config : {}
-    config.changePage = true
+    config = util.validObj(config) ? config : {}
     this.appendPage(config.filter, config.params, this.pageNum + 1, config)
   }
   /**
    * 追加模式下的增加一行
+   * 1.判断当前页是否正常： 没有大于最大页 ，错误返回false
+   * 2.如果当前页不是最大页，则直接返回true
+   * 3.当前页为最后一页，则在列表末尾添加val，并且判断当前总条数是否小于最大可容纳条数
+   *   如果超过了，则总页数和当前页自增1
    * @param {Object} val
    */
   appendNextLine (val) {
-    if (this.pageNum > this.pages) {
-      console.log('页数异常')
-      return false
-    }
-    if (this.pageNum < this.pages) {
-      return
-    }
-    if (this.total === this.pageNum * this.pageSize) {
-      this.pages++
-      this.pageNum++
-    }
-    this.list.push(val)
+    this.total++
+    return this.pageNum <= this.pages && (this.pageNum < this.pages || (this.list.push(val) && (this.total < this.pageNum * this.pageSize || (this.pages++ && this.pageNum++))))
   }
   /**
    * 移除一行
@@ -106,7 +90,7 @@ export class MyPage {
    * 2.移除非最后一行
    * @param {*} o
    */
-  removeLine (o) {
+  removeLine (o, type = false) {
     let index = this.list.indexOf(o)
     if (index < 0) {
       return
@@ -130,45 +114,49 @@ export class MyPage {
    * @param {*} config 配置对象  存放配置信息  append:Boolean loading:Boolean
    */
   requestList (filter, params, pageNum, config) {
+    if (this.loading) {
+      return
+    }
+    this.loading = true
     let f = this.filter
     if (filter) {
-      if (filter.key) {
-        filter.key = filter.key.concat(f.key)
-      } else {
-        filter.key = f.key
-      }
+      filter.key = util.validObj(filter.key) ? filter.key.concat(f.key) : f.key
       f = filter
     }
     let p = this
-    let par = p // 参数
-    this.pageNum = pageNum
-    if (params) {
-      par = params
-    }
+    let par = util.validObj(params) ? params : p.params // 参数
+    par.pageNum = pageNum
+    par.pageSize = p.pageSize
     par = util.newNotNullObject(par, f.value, f.key)
     let append = false
+    let changePage = true
     if (config) {
       if (config.loading) {
         config[config.loading] = true // 是否开启加载显示的配置
       }
       append = config.append === true // 是否开启追加的配置
+      changePage = config.changePage === null || config.changePage === undefined || config.changePage === true
     }
-    http.$getP(this.requestUrl, par, {complete: pageComplete(config)}).then(res => {
-      this.list = append === true ? this.list.concat(res.data.list) : res.data.list
-      this.total = res.data.total
-      this.pages = res.data.pages
-    }).catch(res => {})
+    http.$axiosGet(p.requestUrl, par, {complete: pageComplete(config)}).then(res => {
+      p.list = append === true ? p.list.concat(res.list) : res.list
+      p.total = res.total
+      p.pages = res.pages
+      p.pageNum = changePage ? res.pageNum : p.pageNum
+      p.pageSize = res.pageSize
+      p.loading = false
+    }).catch(err => {
+      p.loading = false
+      console.log(err)
+    })
   }
 }
 
 let pageComplete = config => {
   return () => {
-    // console.log(config)
     if (config) {
       if (config.loading) {
         config[config.loading] = false
       }
-      // console.log('page完成')
     }
   }
 }

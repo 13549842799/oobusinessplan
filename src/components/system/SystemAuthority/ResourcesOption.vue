@@ -119,7 +119,7 @@ import pModel from '@/components/common/PageStatusCommon'
 import util from '@/components/common/objUtil'
 
 let commonUrl = {
-  resourceTree (params) { return http.$get(resouUrl + '/tree.re', params) }
+  resourceTree (params) { return http.$axiosGet(resouUrl + '/tree.re', params) }
 }
 
 export default {
@@ -155,9 +155,7 @@ export default {
     let dom = this
     // 获取资源树
     commonUrl.resourceTree().then(res => {
-      dom.simpleDealResult(res.status, function () {
-        dom.tree = res.data ? res.data : [{id: 1, name: '无资源', childs: []}]
-      }, res.message, null)
+      dom.tree = res !== null && res !== undefined ? res : [{id: 1, name: '无资源', childs: []}]
     })
   },
   methods: {
@@ -177,13 +175,14 @@ export default {
     updateState () {
       let v = this
       let n = v.node
-      http.$post(resouUrl + '/state.do', {id: n.id}).then(res => {
-        v.simpleDealResult(res.status, function () {
-          n.state = n.state ? 0 : 1
-          let mess = n.state ? '成功启用' : '成功禁用'
-          return mess + '<' + n.name + '>节点'
-        }, '更新失败', '发生异常')
-      })
+      //这个对象是为了解决在 application/json;charset=utf-8 下后端接收不到get类型的参数的问题
+      let params = new URLSearchParams()
+      params.append('id', n.id)
+      http.$axiosPost(resouUrl + '/state.do', params).then(res => {
+        n.state = n.state ? 0 : 1
+        let mess = n.state ? '成功启用' : '成功禁用'
+        v.$message.success(mess + '<' + n.name + '>节点')
+      }).catch(() => { v.$message.error('更新失败') })
     },
     add () {
       let v = this
@@ -211,13 +210,13 @@ export default {
     remove () {
       let v = this
       v.deleteTip = false
-      http.$post(resouUrl + '/delete.do', {id: v.node.id}).then(res => {
-        v.simpleDealResult(res.status, function () {
-          let name = v.node.name
-          v.$refs.tree.remove(v.node.id)
-          v.node = {}
-          return '<' + name + '>节点删除成功'
-        }, res.message, null)
+      let params = new URLSearchParams()
+      params.append('id', v.node.id)
+      http.$axiosPost(resouUrl + '/delete.do', params).then(res => {
+        let name = v.node.name
+        v.$refs.tree.remove(v.node.id)
+        v.node = {}
+        v.$message.success('<' + name + '>节点删除成功')
       })
     },
     submit () {
@@ -294,9 +293,7 @@ function createPath (node, parentIdArr) {
 function fullModuleTree (v, path) {
   // 设置树
   commonUrl.resourceTree({type: 1}).then(res => {
-    v.simpleDealResult(res.status, function () {
-      v.moduleTree = res.data ? res.data : [{id: 1, name: '无资源', childs: []}]
-    }, null, null, res.message)
+    v.moduleTree = res !== null && res !== undefined ? res : [{id: 1, name: '无资源', childs: []}]
   })
   console.log(path)
   // 设置默认值

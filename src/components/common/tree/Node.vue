@@ -68,6 +68,7 @@ export default {
   },
   created () {
     this.node_ = util.newObj(this.node)
+    console.log(this.node_.delflag)
     this.auth_ = util.newObj(this.node_.authority)
     if (this.auth_.type === null) {
       this.auth_.type = 1
@@ -121,8 +122,6 @@ export default {
       if (!v.auth_.delflag && v.hasChilds) {
         v.operationNode(false, true, 0)
       }
-      console.log(v.auth_.delflag)
-      console.log(v.node.authority.delflag)
     },
     nodes (roleId) {
       let l = []

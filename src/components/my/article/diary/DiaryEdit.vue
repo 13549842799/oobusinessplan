@@ -5,14 +5,14 @@
           <div class="diary_edit_head">
             <el-input
               placeholder="请输入标题"
-              v-model="title"
+              v-model="diary.title"
               clearable>
             </el-input>
           </div>
           <div class="diary_edit_content">
             <quill-editor
               style="height: 90%;"
-              v-model="content"
+              v-model="diary.content"
               :options="editorOption"
               ref="quillEditor"
               @blur="onEditorBlur($event)"
@@ -26,7 +26,7 @@
               <span>标签：</span>
               <el-tag
                 style="margin-right: 10px;"
-                v-for="l in labelSelfs"
+                v-for="l in diary.labelList"
                 :key="l.name"
                 closable
                 type="success">
@@ -58,7 +58,7 @@
             </div>
             <div>
               <span>分类：</span>
-              <el-select v-model="classify" filterable placeholder="请选择">
+              <el-select v-model="diary.classify" filterable placeholder="请选择">
                 <el-option
                   v-for="item in classifies"
                   :key="item.id"
@@ -69,7 +69,7 @@
             </div>
             <div>
               <span>保存类型&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-              <el-radio-group v-model="status" size="small">
+              <el-radio-group v-model="diary.status" size="small">
                 <el-radio :label="0" border>存为草稿</el-radio>
                 <el-radio :label="1" border>私密发布</el-radio>
                 <el-radio :label="2" border>发布</el-radio>
@@ -89,17 +89,23 @@
 import http from '@/http.js'
 import {diaryUrl, labelUrl, classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
-import $ from 'jquery'
 import {arrToStr, dateFormat} from '@/components/common/commonUtil'
+import util from '@/components/common/objUtil'
 
 export default {
   mixins: [commonM],
   props: ['diaryOrder'],
   data () {
     return {
-      id: null,
-      title: null,
-      content: null,
+      diary: {
+        id: null,
+        title: null,
+        content: null,
+        classify: null, // 选中的分类的id
+        labelList: [], // 当前文章被标上的标签
+        source: 1,
+        status: 0
+      },
       editorOption: {
         placeholder: '请输入内容'
       },
@@ -108,10 +114,7 @@ export default {
         labelStatus: false, // 按钮和select的状态
         labels: [] // 当前用户创建过的所有标签内
       },
-      labelSelfs: [], // 当前文章被标上的标签
       classifies: [], // 分类数组
-      classify: null, // 选中的分类的id
-      status: 0,
       pickerOptions1: {
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -164,27 +167,29 @@ export default {
     },
     loadAllLabels () {
       let v = this
-      http.$getP(labelUrl + '/list.re', {status: 1}).then(res => {
-        v.labelEdit.labels = res.data === null ? [] : res.data
+      http.$axiosGet(labelUrl + '/list.re', {status: 1}).then(res => {
+        v.labelEdit.labels = res === null ? [] : res
       })
     },
     handleSelect (item) {
       let v = this
-      console.log(v.labelSelfs.includes(item))
       v.labelEdit.labelStatus = false
       v.labelEdit.labelName = null
     },
     addLabel (e) {
       let v = this
-      if (v.labelEdit.labelName !== null && $.trim(v.labelEdit.labelName) !== '') {
+      if (util.strNotEmpty(v.labelEdit.labelName)) {
         let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
         if (arr.length === 0) {
-          http.$post(labelUrl + '/add.do', JSON.stringify({name: v.labelEdit.labelName})).then(res => {
-            v.labelEdit.labels.push(res.data)
-            v.labelSelfs.push(res.data)
+          http.$axiosPost(labelUrl + '/add.do', {name: v.labelEdit.labelName}).then(res => {
+            v.labelEdit.labels.push(res) && v.diary.labelList.push(res)
           })
+          // http.$post(labelUrl + '/add.do', JSON.stringify({name: v.labelEdit.labelName})).then(res => {
+          //   v.labelEdit.labels.push(res.data)
+          //   v.diary.labelList.push(res.data)
+          // })
         } else {
-          v.labelSelfs.push(arr[0])
+          v.diary.labelList.push(arr[0])
         }
       }
       v.labelEdit.labelStatus = false
@@ -197,26 +202,18 @@ export default {
     },
     saveDiary () {
       let v = this
-      if ($.trim(v.title).length === 0) {
-        v.$message({message: '请输入标题', type: 'warning'})
+      if (v.title && v.title.trim().length === 0) {
+        v.$message.warning('请输入标题')
         return
       }
       // 获取标签id字符串
-      let labelIds = arrToStr(v.labelSelfs, 'id')
-      let params = {
-        id: v.id,
-        title: v.title,
-        content: v.content,
-        classify: v.classify,
-        date: dateFormat('yyyy-MM-dd', v.diaryDate),
-        labels: labelIds,
-        status: v.status,
-        source: 1
-      }
+      let params = util.newNotNullObject(v.diary, [], ['labelList'])
+      params.date = dateFormat('yyyy-MM-dd', v.diaryDate)
+      params.labels = arrToStr(v.diary.labelList, 'id')
       http.$post(diaryUrl + '/addOrUpdate.do', JSON.stringify(params)).then(res => {
         v.simpleDealResult(res.status, () => {
-          if (v.id === null) {
-            v.id = res.data.id
+          if (v.diary.id === null) {
+            v.diary.id = res.data.id
           }
           return '日记保存成功'
         }, res.message)
@@ -234,23 +231,17 @@ export default {
   created () {
     let v = this
     // 获取所有的分类
-    http.$get(classifyUrl + '/list.re', {childType: 1}).then(res => {
-      v.classifies = res.data
+    http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
+      v.classifies = res
     })
-    console.log(v.diaryOrder)
     if (!v.diaryOrder) {
       return
     }
     // 获取日记内容
     http.$get(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
       v.simpleDealResult(res.status, () => {
-        v.id = res.data.id
-        v.title = res.data.title
-        v.labelSelfs = res.data.labelList
-        v.content = res.data.content
+        v.diary = res.data
         v.diaryDate = res.data.date
-        v.classify = res.data.classify
-        v.status = res.data.status
       }, res.message)
     })
   },

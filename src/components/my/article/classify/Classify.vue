@@ -5,7 +5,7 @@
       <el-input
         style="width:200px;"
         placeholder="请输入内容"
-        v-model="page.name"
+        v-model="page.params.name"
         clearable>
       </el-input>
       <el-button style="margin-left: 30px;" icon="el-icon-search" type="primary" @click="searchPageByCondition">搜索</el-button>
@@ -55,7 +55,6 @@
 <script>
 import http from '@/http.js'
 import {classifyUrl} from '@/base_variable'
-import commonM from '@/components/common/commonMixins'
 import {MyPage} from '@/components/common/page'
 import util from '@/components/common/objUtil'
 import pageRolling from '@/components/common/pageRolling'
@@ -63,10 +62,9 @@ import $ from 'jquery'
 
 export default {
   components: {pageRolling},
-  mixins: [commonM],
   data () {
     return {
-      page: new MyPage(7),
+      page: null,
       editStatus: 0,
       editName: null
     }
@@ -98,34 +96,18 @@ export default {
      * 初始化page
      */
     initPage (type) {
-      let v = this
-      v.page = new MyPage(7)
-      v.page.requestUrl = classifyUrl + '/page.re'
-      v.page.childType = type
-      v.searchPageByCondition()
+      this.page = new MyPage(7, {'url': classifyUrl + '/page.re', params: {childType: type}})
+      this.searchPageByCondition()
     },
     addClassify () {
       let v = this
       this.$prompt('请输入分类名', '提示', {
         confirmButtonText: '确定', cancelButtonText: '取消'
       }).then(({ value }) => {
-        let param = JSON.stringify({childType: v.page.childType, name: value})
-        http.$post(classifyUrl + '/add.do', param).then(res => {
-          v.simpleDealResult(res.status, function () {
-            v.page.appendNextLine(res.data)
-            return '新增分类: ' + value
-          }, '添加失败' + res.message)
-          this.$message({
-            type: 'success',
-            message: '新增分类: ' + value
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
+        http.$axiosPost(classifyUrl + '/add.do', {childType: v.page.params.childType, name: value}).then(res => {
+          v.page.appendNextLine(res) && v.$message.success('新增分类: ' + value)
+        }).catch(err => { v.$message.error('添加失败：' + err.data.message) })
+      }).catch(() => { this.$message.info('取消输入') })
     },
     /**
      * 打开编辑模式
@@ -140,14 +122,12 @@ export default {
      */
     saveEdit (item) {
       let v = this
-      let n = util.newNotNullObject(item, [null], ['creator', 'createTime'])
+      let n = util.newNotNullObject(item, [null], ['creator', 'createTime', 'count'])
       n.name = v.editName
-      http.$post(classifyUrl + '/edit.do', JSON.stringify(n)).then(res => {
-        v.simpleDealResult(res.status, function () {
-          item.name = n.name
-          v.cancelEdit(item)
-        }, '编辑失败' + res.message)
-      })
+      http.$axiosPost(classifyUrl + '/edit.do', n).then(res => {
+        item.name = n.name
+        v.cancelEdit(item)
+      }).catch(err => { v.$message.error('编辑失败:' + err.data.message) })
     },
     /**
      * 取消编辑
@@ -178,20 +158,11 @@ export default {
     },
     deleteClassify (item) {
       let v = this
-      // http.$delete(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
-      //   v.simpleDealResult(res.status, function () {
-      //     v.page.list.splice(item, 1)
-      //     v.page.total--
-      //     return '删除成功'
-      //   }, '删除失败' + res.message)
-      // })
       http.axiDel(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
-        v.simpleDealResult(res.status, function () {
-          v.page.list.splice(item, 1)
-          v.page.total--
-          return '删除成功'
-        }, '删除失败' + res.message)
-      })
+        v.page.list.splice(item, 1)
+        v.page.total--
+        v.$message.success('删除成功')
+      }).catch(err => { v.$message.error('删除失败:' + err.data.message) })
     },
     searchPageByCondition () {
       this.page.searchPage({value: [null], key: ['list']})

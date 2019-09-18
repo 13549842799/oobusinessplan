@@ -27,7 +27,25 @@ function newNotNullObject (o, arr, karr) {
   return v
 }
 
+/**
+ * 校验变量是否不为空并被定义
+ * @param {*} obj
+ */
+function validObj (obj) {
+  return obj !== null && obj !== undefined
+}
+
+/**
+ * 校验字符串，判断是否有值
+ * @param {str} str
+ */
+function strNotEmpty (str) {
+  return str !== null && str !== undefined && typeof str === 'string' && str.trim() !== ''
+}
+
 export default {
   newObj,
-  newNotNullObject
+  newNotNullObject,
+  validObj,
+  strNotEmpty
 }

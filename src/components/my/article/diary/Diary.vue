@@ -3,7 +3,7 @@
     <div v-show="state === 0">
       <div class="diaryHead">
         <div>
-          <el-select size="mini" v-model="page.classify" clearable placeholder="分类" style="width:150px;">
+          <el-select size="mini" v-model="page.params.classify" clearable placeholder="分类" style="width:150px;">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -13,7 +13,7 @@
           </el-select>
         </div>
         <div>
-          <el-select v-model="page.status" clearable placeholder="状态" size="mini" style="width:100px;">
+          <el-select v-model="page.params.status" clearable placeholder="状态" size="mini" style="width:100px;">
             <el-option
               v-for="s in statuss"
               :key="s.val"
@@ -37,7 +37,7 @@
             style="width:100px;"
             size="mini"
             placeholder="标题"
-            v-model="page.title"
+            v-model="page.params.title"
             clearable>
           </el-input>
         </div>
@@ -66,8 +66,8 @@
           style="background: rgb(236, 245, 255);float: right;"
           :background="true"
           layout="prev, pager, next"
-          @size-change="page.handleSizeChange"
-          @current-change="page.handleCurrentChange"
+          @size-change="sizeChange"
+          @current-change="currentChange"
           :current-page.sync="page.pageNum"
           :page-size="page.pageSize"
           :total="page.total">
@@ -86,7 +86,6 @@ import diaryRead from '@/components/my/article/diary/DiaryRead'
 import {MyPage} from '@/components/common/page'
 import {diaryUrl, classifyUrl} from '@/base_variable'
 import http from '@/http.js'
-// import axios from 'axios'
 
 export default {
   mixins: [],
@@ -98,7 +97,7 @@ export default {
     return {
       state: 0,
       currentDiary: {},
-      page: new MyPage(4),
+      page: null,
       expand: false,
       options: [],
       statuss: [{name: '草稿', val: 0}, {name: '私密', val: 1}, {name: '发布', val: 2}],
@@ -133,40 +132,40 @@ export default {
     }
   },
   created () {
+    // 获取日记列表
+    this.page = new MyPage(4, {url: diaryUrl + '/list.re', total: 5})
   },
   mounted () {
     let v = this
-    console.log(v)
     // 获取分类列表
-    http.$getP(classifyUrl + '/list.re', {childType: 1}).then(res => {
-      v.options = res.data !== null && res.data.length > 0 ? res.data : []
+    http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
+      v.options = res !== null && res.length > 0 ? res : []
     }).catch(err => { console.log(err) })
-    // 获取日记列表
-    this.page.total = 5
-    this.page.requestUrl = diaryUrl + '/list.re'
-    this.page.searchPage()
   },
   methods: {
+    sizeChange (size) {
+
+    },
+    currentChange (val) {
+      this.page.requestList(null, null, val)
+    },
     searchDiary () {
       let v = this
-      v.page.startTime = v.timeRange[0]
-      v.page.endTime = v.timeRange[1]
+      v.page.params.startTime = v.timeRange[0]
+      v.page.params.endTime = v.timeRange[1]
       this.page.searchPage()
     },
     selectA (v) {
       console.log(v)
-      console.log('model:' + this.page.classify)
+      console.log('model:' + this.page.params.classify)
     },
     newDiary () {
       console.log('进入新的路径')
       this.$router.push({name: 'diaryEdit'})
     },
     readDiary (d) {
-      console.log(11)
       this.state = 1
       this.currentDiary = d
-      console.log(d)
-      console.log(this.state)
     },
     editDiary (d) {
       this.$router.push({name: 'diaryEdit', params: {diaryOrder: d.id}})
@@ -177,26 +176,19 @@ export default {
     },
     deleteDiary (d) {
       if (!d && d.id == null) {
-        this.$message({
-          message: '请选择文章',
-          type: 'warning'
-        })
+        this.$message.warning('请选择文章')
         return
       }
       let v = this
       this.$confirm('是否删除该日记?', '提示', {
         confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'
       }).then(() => {
-        http.$delete(diaryUrl + '/s/' + d.id + '/delete.do').then(res => {
-          v.simpleDealResult(res.status, () => {
-            v.page.removeLine(d)
-            return '删除成功'
-          }, res.message)
-        })
+        http.$axiosDel(diaryUrl + '/s/' + d.id + '/delete.do').then(res => {
+          v.page.removeLine(d)
+          v.$message.success('删除成功')
+        }).catch(err => { v.$message.error(err.message) })
       }).catch(() => {
-        this.$message({
-          type: 'info', message: '已取消删除'
-        })
+        this.$message.info('已取消删除')
       })
     }
   }

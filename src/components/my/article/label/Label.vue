@@ -60,17 +60,15 @@
 <script>
 import http from '@/http.js'
 import {labelUrl} from '@/base_variable'
-import commonM from '@/components/common/commonMixins'
 import {MyPage} from '@/components/common/page'
-// import util from '@/components/common/objUtil'
+
 import pageRolling from '@/components/common/pageRolling'
 
 export default {
-  mixins: [commonM],
   components: {pageRolling},
   data () {
     return {
-      page: new MyPage(6),
+      page: null,
       pageConfig: {loading: 'load', load: false},
       label: {
         name: null,
@@ -80,10 +78,8 @@ export default {
     }
   },
   created () {
-    let v = this
     // 初始化page
-    v.page.requestUrl = labelUrl + '/page.re'
-    v.page.searchPage()
+    this.page = new MyPage(6, {url: labelUrl + '/page.re'})
   },
   methods: {
     downRoll (e) {
@@ -97,12 +93,10 @@ export default {
       if (v.label.name === null || v.label.name === '') {
         return
       }
-      http.$postP(labelUrl + '/add.do', JSON.stringify({name: v.label.name})).then(res => {
-        v.label.name = null
-        v.$message.success('创建成功')
-        v.page.appendNextLine(res.data)
+      http.$axiosPost(labelUrl + '/add.do', {name: v.label.name}).then(res => {
+        v.$message.success('创建成功') && v.page.appendNextLine(res) && (v.label.name = '')
       }).catch(res => {
-        v.$message.warning(res.message)
+        v.$message.warning(res.data.message)
       })
     },
     editLabel (o) {
@@ -116,16 +110,15 @@ export default {
         if (value === o.name) {
           return
         }
-        http.$patchP(labelUrl + '/update.do', JSON.stringify({id: o.id, name: value})).then((res) => {
-          o.name = value
-          v.$message.success('编辑成功')
+        http.$axiosPat(labelUrl + '/update.do', {id: o.id, name: value}).then((res) => {
+          v.$message.success('编辑成功') && (o.name = value)
         }).catch(res => { console.log(res) })
       })
     },
     removeLabel (o) {
       let v = this
-      http.$getP(labelUrl + '/useCount.re', {id: o.id}).then(res => {
-        let count = parseInt(res.data)
+      http.$axiosGet(labelUrl + '/useCount.re', {id: o.id}).then(res => {
+        let count = parseInt(res)
         if (count !== 0) {
           return count
         }
@@ -145,7 +138,7 @@ export default {
     },
     deleteHttp (o) {
       let v = this
-      http.$deleteP(labelUrl + '/s/' + o.id + '/delete.do').then(res => {
+      http.$axiosDel(labelUrl + '/s/' + o.id + '/delete.do').then(res => {
         v.page.removeLine(o)
         v.$message.success('删除成功')
       })

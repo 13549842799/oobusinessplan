@@ -1,9 +1,10 @@
 
-// const baseUrl = 'http://localhost:8081/O.OBusinessPlan'
+const baseUrl = 'http://localhost:8081/O.OBusinessPlan'
 // const baseUrl = 'http://39.97.99.250:8080/O.OBusinessPlan'
 // const baseUrl = 'http://www.caiyangzhi.com/O.OBusinessPlan'
-const baseUrl = 'http://www.caiyangzhi.com/appServer'
+// const baseUrl = 'http://www.caiyangzhi.com/appServer'
 const adminUrl = baseUrl + '/api/admin'
+const employeeUrl = baseUrl + '/api/employee'
 const roleUrl = baseUrl + '/api/authority/roles'
 const resouUrl = baseUrl + '/api/authority/resource'
 const authUrl = baseUrl + '/api/authority/auth'
@@ -17,6 +18,7 @@ const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
 export {
   baseUrl,
   adminUrl,
+  employeeUrl,
   roleUrl,
   resouUrl,
   authUrl,

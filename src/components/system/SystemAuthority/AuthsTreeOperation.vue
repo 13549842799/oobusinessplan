@@ -21,11 +21,9 @@ import http from '@/http.js'
 import node from '@/components/common/tree/Node'
 import myButton from '@/components/common/tree/TreeButton'
 import {authUrl} from '@/base_variable'
-import commonM from '@/components/common/commonMixins'
 
 export default {
   components: {node, myButton},
-  mixins: [commonM],
   props: ['roleId'],
   data () {
     return {
@@ -39,13 +37,11 @@ export default {
   },
   created () {
     let v = this
-    http.$get(authUrl + '/tree.re', {roleId: v.roleId}).then(res => {
-      v.simpleDealResult(res.status, function () {
-        v.tree = []
-        v.tree = res.data
-        console.log('少女祈祷中', v.tree)
-      }, res.message)
-    })
+    http.$axiosGet(authUrl + '/tree.re', {roleId: v.roleId}).then(res => {
+      v.tree = []
+      v.tree = res
+      console.log('少女祈祷中', v.tree)
+    }).catch(err => { v.$message.error(err.data.message) })
   },
   methods: {
     save () {
@@ -59,11 +55,9 @@ export default {
         }
       })
       console.log('少女的数组', arr)
-      http.$post(authUrl + '/add.do', JSON.stringify(arr)).then(res => {
-        v.simpleDealResult(res.status, function () {
-          return '权限操作成功'
-        }, res.message)
-      })
+      http.$axiosPost(authUrl + '/add.do', arr).then(res => {
+        v.$message.success('权限操作成功')
+      }).catch(err => { v.$message.error(err.data.message) })
     }
   }
 }
