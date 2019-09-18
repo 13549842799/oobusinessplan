@@ -175,7 +175,7 @@ export default {
     updateState () {
       let v = this
       let n = v.node
-      //这个对象是为了解决在 application/json;charset=utf-8 下后端接收不到get类型的参数的问题
+      // 这个对象是为了解决在 application/json;charset=utf-8 下后端接收不到get类型的参数的问题
       let params = new URLSearchParams()
       params.append('id', n.id)
       http.$axiosPost(resouUrl + '/state.do', params).then(res => {
