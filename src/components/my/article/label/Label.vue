@@ -5,7 +5,7 @@
         <el-input
           placeholder="请输入名称"
           prefix-icon="el-icon-search"
-          v-model="page.name">
+          v-model="page.params.name">
         </el-input>
       </div>
       <div>

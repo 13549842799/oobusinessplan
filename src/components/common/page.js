@@ -22,7 +22,7 @@ export class MyPage {
       value: [null],
       key: ['requestUrl', 'list', 'pages', 'filter', 'config']
     }
-    this.searchPage()
+    util.strNotEmpty(this.requestUrl) ? this.searchPage() : null
   }
   /**
    * 添加下一行, 如果添加后当前页的总条数没有超过最大条数pageSize，则只添加当天的记录，
@@ -102,6 +102,12 @@ export class MyPage {
     // 如果当页的条数大于1则刷新页面，如果等于1则向前翻一页
     let pn = this.list.length === 1 ? this.pageNum - 1 : this.pageNum
     this.requestList(null, null, pn)
+  }
+  removeAppendLine(o) {
+    let index = this.list.indexOf(o)
+    this.list.splice(index, 1)
+    this.total--
+    this.pages = Math.ceil(this.total/this.pageSize)
   }
   /**
    *请求一页，如果传入了过滤器，则过滤发送请求中包含的字段

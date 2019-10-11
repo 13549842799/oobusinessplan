@@ -1,8 +1,14 @@
 <template>
   <!-- <div>{{$route.params.type}}</div> -->
-  <div>
+  <div class="divContiner">
     <div class="classify_head">
-      <el-input
+      <el-radio-group v-model="classifyType" size="small" @change="selClassify">
+        <el-radio :label="1" border>日记</el-radio>
+        <el-radio :label="3" border>备忘</el-radio>
+        <el-radio :label="4" border>灵感</el-radio>
+        <el-radio :label="5" border>小说</el-radio>
+      </el-radio-group>
+      <!-- <el-input
         style="width:200px;"
         placeholder="请输入内容"
         v-model="page.params.name"
@@ -11,10 +17,24 @@
       <el-button style="margin-left: 30px;" icon="el-icon-search" type="primary" @click="searchPageByCondition">搜索</el-button>
       <div style="float:right;">
         <el-button type="text" @click="addClassify">添加分类</el-button>
-      </div>
+      </div> -->
+    </div>
+    <div class="classify_head">
+      文章数：
+      <el-input  size="small" style="width:70px;" v-model="realPage.params.minCount" clearable></el-input>&nbsp; &lt; &nbsp;
+      <el-input size="small" style="width:70px;" v-model="realPage.params.maxCount" clearable></el-input>&nbsp;&nbsp;
+      <el-input
+        size="small"
+        style="width:200px;"
+        placeholder="请输入内容"
+        v-model="realPage.params.name"
+        clearable>
+      </el-input>
+      <el-button style="margin-left: 30px;" icon="el-icon-search" type="primary" size="small" @click="searchPageByCondition">搜索</el-button>
+      <el-button type="text" @click="addClassify">添加分类</el-button>
     </div>
     <div class="classify_content">
-      <page-rolling :downRoll="downR" :speed="8">
+      <page-rolling ref="pRoll" :downRoll="downR" :speed="2">
         <table>
           <thead>
             <tr>
@@ -25,7 +45,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in page.list" :key="index">
+            <tr v-for="(item, index) in realPage.list" :key="index">
               <td>{{index + 1}}</td>
               <td style="text-align:left;">
                 <template v-if="editStatus != item.id">{{item.name}}</template>
@@ -37,7 +57,7 @@
               </td>
               <td>
                 <el-button type="text" @click="edit(item)">编辑</el-button>
-                <el-button type="text" @click="checkArticleCount(item)">删除</el-button>
+                <el-button v-if="item.type !== 1" type="text" @click="checkArticleCount(item)">删除</el-button>
               </td>
               <td>{{item.count}}</td>
             </tr>
@@ -58,7 +78,6 @@ import {classifyUrl} from '@/base_variable'
 import {MyPage} from '@/components/common/page'
 import util from '@/components/common/objUtil'
 import pageRolling from '@/components/common/pageRolling'
-import $ from 'jquery'
 
 export default {
   components: {pageRolling},
@@ -66,46 +85,42 @@ export default {
     return {
       page: null,
       editStatus: 0,
-      editName: null
+      editName: null,
+      pages: {1: null, 3: null, 4: null, 5: null},
+      classifyType: 1
     }
   },
   created () {
-    this.initPage(this.$route.query.type)
+    this.selClassify(this.classifyType)
   },
   mounted () {
-    let v = this
-    $('.classify_content').on('mousewheel DOMMouseScroll', mouseScroll)
-    $('.classify_content').scroll(function () {
-      let scrollHeight = $(this).eq(0).prop('scrollHeight')
-      let divHeight = $('.classify_content').height()
-      let scrollTop = $('.classify_content').scrollTop()
-      if (scrollTop === 0) {
-        console.log('滚动到顶部了')
-      }
-      // 滚动高度 = div高度 + 滚动条头部离顶部的最大距离
-      if ((divHeight + scrollTop) >= scrollHeight) {
-        v.page.appendNextPage()
-      }
-    })
+  },
+  computed: {
+    curPage () {
+      return this.pages[this.classifyType]
+    },
+    realPage () {
+      return util.validObj(this.curPage) ? this.curPage : new MyPage(null, {})
+    }
   },
   methods: {
     downR (e) {
-      this.page.appendNextPage()
+      this.realPage.appendNextPage()
     },
-    /**
-     * 初始化page
-     */
-    initPage (type) {
-      this.page = new MyPage(7, {'url': classifyUrl + '/page.re', params: {childType: type}})
-      this.searchPageByCondition()
+    selClassify (type) {
+      let v = this
+      if (util.validObj(v.curPage)) {
+        return
+      }
+      v.pages[type] = new MyPage(7, {'url': classifyUrl + '/page.re', params: {childType: type}})
     },
     addClassify () {
       let v = this
       this.$prompt('请输入分类名', '提示', {
         confirmButtonText: '确定', cancelButtonText: '取消'
       }).then(({ value }) => {
-        http.$axiosPost(classifyUrl + '/add.do', {childType: v.page.params.childType, name: value}).then(res => {
-          v.page.appendNextLine(res) && v.$message.success('新增分类: ' + value)
+        http.$axiosPost(classifyUrl + '/add.do', {childType: v.realPage.params.childType, name: value}).then(res => {
+          v.realPage.appendNextLine(res) && v.$message.success('新增分类: ' + value)
         }).catch(err => { v.$message.error('添加失败：' + err.data.message) })
       }).catch(() => { this.$message.info('取消输入') })
     },
@@ -159,31 +174,29 @@ export default {
     deleteClassify (item) {
       let v = this
       http.axiDel(classifyUrl + '/s/' + item.id + '/delete.do').then(res => {
-        v.page.list.splice(item, 1)
-        v.page.total--
+        v.searchPageByCondition()
         v.$message.success('删除成功')
-      }).catch(err => { v.$message.error('删除失败:' + err.data.message) })
+      }).catch(err => { v.$message.error('删除失败:' + err) })
     },
     searchPageByCondition () {
-      this.page.searchPage({value: [null], key: ['list']})
+      this.$refs.pRoll.backTop()
+      this.realPage.searchPage({value: [null], key: ['list']})
     }
   },
-  beforeRouteUpdate (to, from, next) {
-    this.initPage(to.query.type)
+  beforeRouteUpdate (to, from, next) { // 已被弃用, 只作为知识点案例保留
+    // this.initPage(to.query.type)
     next() // 必须要调用next()方法才能刷新域名，如果不调用则会造成路由跳转了但域名不变，重新回到第一个域名时不生效
   }
-}
-
-let mouseScroll = function (e) {
 }
 
 </script>
 
 <style scoped>
+
 .classify_head {
   width: 100%;
-  height: 80px;
   margin-top: 20px;
+  text-align: center;
 }
 
 .classify_content {

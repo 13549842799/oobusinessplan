@@ -20,4 +20,8 @@ export default {
   height: 1200px;
   margin: 0 auto;
 }
+
+.divContiner {
+  padding: 10px 10px;
+}
 </style>

@@ -88,7 +88,7 @@ export default new Router({
               name: 'classify',
               component: Classify,
               props: true,
-              meta: {name: '分类管理'}
+              meta: {name: '分类列表'}
             },
             {
               path: '/My/Article/Diary/edit/:diaryOrder?',

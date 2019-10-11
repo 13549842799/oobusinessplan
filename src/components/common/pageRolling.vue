@@ -1,11 +1,10 @@
 <template>
-  <div class="roll_Container" v-bind:style="{width:width, height: height}">
+  <div ref="pageRoll" class="roll_Container" v-bind:style="{width:width, height: height}">
     <slot></slot>
   </div>
 </template>
 
 <script>
-import $ from 'jquery'
 
 export default {
   name: 'pageRolling',
@@ -20,7 +19,7 @@ export default {
     },
     speed: { // 当前容器上下滚动的速度
       type: Number,
-      default: 5
+      default: 1
     },
     upRoll: {
       type: Function,
@@ -36,37 +35,43 @@ export default {
     }
   },
   mounted () {
-    $('.roll_Container').on('mousewheel DOMMouseScroll', this.mouseScroll)
-    $('.roll_Container').scroll(this.srollingEvent)
+    this.$refs.pageRoll.addEventListener('mousewheel', this.mouseScroll, false) // 鼠标滚轮滚动事件
+    this.$refs.pageRoll.addEventListener('scroll', this.srollingEvent, true) // 滚动轴滚动事件
   },
   methods: {
+    backTop () {
+      this.$refs.pageRoll.scrollTop = 0
+    },
     /**
-     * 滚轮滚动事件函数
+     * 滚轮滚动事件函数，鼠标滚动轮每滚动一格触发一次
      */
     mouseScroll (e) {
       e.preventDefault()
-      let wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail
-      let delta = Math.max(-1, Math.min(1, wheel)) // 负数表示向下滚动，正数表示向上滚动
-      let currentTop = $('.roll_Container').scrollTop() // 当前滚动轴离容器顶部的距离
-      let distance = delta * this.speed
+      let dire = e.deltaY > 0 // > 0: 向下 <0: 向上
+      let delta = Math.max(-1, Math.min(1, e.deltaY)) // 负数表示向上滚动，正数表示向下滚动
+      let dom = this.$refs.pageRoll
+      let currentTop = dom.scrollTop // 当前滚动轴离容器顶部的距离
+      let distance = delta * this.speed * 10
       if (!this.rolling(e, distance)) {
         return
       }
-      $('.roll_Container').scrollTop(currentTop - distance)
+      dom.scrollTop = currentTop + distance
     },
     /**
      * 滚动轴滚动时出发的事件
      */
     srollingEvent (e) {
-      let scrollHeight = $('.roll_Container').prop('scrollHeight')
-      let divHeight = $('.roll_Container').height()
-      let scrollTop = $('.roll_Container').scrollTop()
+      let dom = this.$refs.pageRoll
+      let scrollHeight = dom.scrollHeight, divHeight = dom.clientHeight // 元素可见高度
+      let scrollTop = dom.scrollTop
       if (scrollTop === 0) {
         console.log('滚动到顶部了')
         this.upRoll(e)
+        return
       }
       // 滚动高度 = div高度 + 滚动条头部离顶部的最大距离
       if ((divHeight + scrollTop) >= scrollHeight) {
+        console.log('滚动到底部了')
         this.downRoll(e)
       }
     }

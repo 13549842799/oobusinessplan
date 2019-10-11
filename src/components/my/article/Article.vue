@@ -5,27 +5,27 @@
         <el-submenu index="1">
           <template slot="title">{{getSupName(1)}}</template>
           <el-menu-item index="1-1"><router-link :to="{name: 'diary'}">所有日记</router-link></el-menu-item>
-          <el-menu-item index="1-2"><router-link :to="{name: 'classify', query: {type: '1'}}">分类管理</router-link></el-menu-item>
+          <!-- <el-menu-item index="1-2"><router-link :to="{name: 'classify', query: {type: '1'}}">分类管理</router-link></el-menu-item> -->
         </el-submenu>
-        <el-submenu index="2">
+        <!-- <el-submenu index="2">
           <template slot="title">{{getSupName(2)}}</template>
           <el-menu-item index="2-1">所有总结</el-menu-item>
-          <el-menu-item index="2-2"><router-link :to="{name: 'classify', query: {type: '2'}}">分类管理</router-link></el-menu-item>
-        </el-submenu>
+        </el-submenu> -->
         <el-submenu index="3">
           <template slot="title">{{getSupName(3)}}</template>
           <el-menu-item index="3-1">所有备忘</el-menu-item>
-          <el-menu-item index="3-2"><router-link :to="{name: 'classify', query: {type: '3'}}">分类管理</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="4">
           <template slot="title">{{getSupName(4)}}</template>
           <el-menu-item index="4-1">所有灵感</el-menu-item>
-          <el-menu-item index="4-2"><router-link :to="{name: 'classify', query: {type: '4'}}">分类管理</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="5">
           <template slot="title">{{getSupName(5)}}</template>
           <el-menu-item index="5-1">所有小说</el-menu-item>
-          <el-menu-item index="5-2"><router-link :to="{name: 'classify', query: {type: '5'}}">分类管理</router-link></el-menu-item>
+        </el-submenu>
+        <el-submenu index="7">
+          <template slot="title">{{getSupName(7)}}</template>
+          <el-menu-item index="7-1"><router-link :to="{name: 'classify'}">分类列表</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="6">
           <template slot="title">{{getSupName(6)}}</template>
@@ -34,7 +34,7 @@
       </el-menu>
     </div>
     <div>
-      <el-breadcrumb style="margin-top:10px;" separator-class="el-icon-arrow-right">
+      <el-breadcrumb style="margin-top:10px;margin-left:20px;" separator-class="el-icon-arrow-right">
         <el-breadcrumb-item>{{superName}}</el-breadcrumb-item>
         <el-breadcrumb-item>{{currentTag}}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-const nameArr = ['日记管理', '总结管理', '备忘管理', '灵感管理', '小说管理', '标签管理']
+const nameArr = ['日记管理', '总结管理', '备忘管理', '灵感管理', '小说管理', '标签管理', '分类管理']
 
 export default {
   data () {
@@ -55,7 +55,7 @@ export default {
     }
   },
   created () {
-    this.$router.push({name: 'classify', query: {type: '1'}})
+    this.$router.push({name: 'diary'})
   },
   computed: {
     superName () {
