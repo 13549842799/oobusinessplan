@@ -47,7 +47,7 @@ export default {
      */
     mouseScroll (e) {
       e.preventDefault()
-      let dire = e.deltaY > 0 // > 0: 向下 <0: 向上
+      // let dire = e.deltaY > 0 // > 0: 向下 <0: 向上
       let delta = Math.max(-1, Math.min(1, e.deltaY)) // 负数表示向上滚动，正数表示向下滚动
       let dom = this.$refs.pageRoll
       let currentTop = dom.scrollTop // 当前滚动轴离容器顶部的距离
@@ -62,7 +62,8 @@ export default {
      */
     srollingEvent (e) {
       let dom = this.$refs.pageRoll
-      let scrollHeight = dom.scrollHeight, divHeight = dom.clientHeight // 元素可见高度
+      let scrollHeight = dom.scrollHeight
+      let divHeight = dom.clientHeight // 元素可见高度
       let scrollTop = dom.scrollTop
       if (scrollTop === 0) {
         console.log('滚动到顶部了')

@@ -14,6 +14,7 @@ import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
 import Label from '@/components/my/article/label/Label'
+import SystemQuartz from '@/components/system/SystemQuartz'
 
 Vue.use(Router)
 
@@ -65,6 +66,11 @@ export default new Router({
           path: 'System/Authority',
           name: 'systemAuthority',
           component: SystemAuthority
+        },
+        {
+          path: 'System/quartz',
+          name: 'systemQuartz',
+          component: SystemQuartz
         },
         {
           path: 'My/Article',
