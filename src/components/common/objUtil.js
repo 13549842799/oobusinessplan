@@ -35,6 +35,15 @@ function validObj (obj) {
   return obj !== null && obj !== undefined
 }
 
+function coryObjText(o) {
+  for (const key in o) {
+    // if (object.hasOwnProperty(key)) {
+      // const element = object[key];      
+    // }
+    console.log(key +':' + o[key])
+  }
+}
+
 /**
  * 校验字符串，判断是否有值
  * @param {str} str
@@ -47,5 +56,6 @@ export default {
   newObj,
   newNotNullObject,
   validObj,
-  strNotEmpty
+  strNotEmpty,
+  coryObjText
 }
