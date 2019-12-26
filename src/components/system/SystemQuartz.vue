@@ -34,7 +34,7 @@
             label="状态"
             width="150">
             <template slot-scope="scope">
-              <el-tag size="medium" :type="scope.row.enabled ? 'success' : 'warning'">{{ scope.row.jobStatus}}</el-tag>
+              <el-tag size="medium" :type="scope.row.enabled ? 'success' : 'warning'">{{ scope.row.enabled ? '运行' : '停止'}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -48,7 +48,7 @@
         </el-table>
       </page-rolling>
     </div>
-    <el-dialog :title="formMess.title" :visible.sync="formVisible">
+    <el-dialog :title="formMess.title" :visible.sync="formVisible" :disabled="formAble">
       <el-form :model="form">
         <el-form-item label="时钟名称" :label-width="formLabelWidth">
           <el-input v-model="form.jobName" autocomplete="off"></el-input>
@@ -75,13 +75,13 @@
           <el-input-number v-model="form.jobNumber" :min="1"></el-input-number>
         </el-form-item>
         <el-form-item label="是否启用" :label-width="formLabelWidth">
-          <el-switch v-model="form.enabled" active-color="#13ce66" inactive-color="#ff4949" active-text="运行" inactive-text="停止" :active-value="1" :inactive-value="0">
+          <el-switch v-model="form.enabled" active-color="#13ce66" inactive-color="#ff4949" active-text="运行" inactive-text="停止" :active-value="true" :inactive-value="false">
           </el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="formVisible = false">取 消</el-button>
-        <el-button type="primary" @click="formVisible = false">确 定</el-button>
+        <el-button type="primary" @click="saveQuartz">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -113,11 +113,9 @@ export default {
       loading: false,
       formType: 1,
       formVisible: false,
-      form: {
-        id: null,
-        jobName: ''
-      },
-      formLabelWidth: '170px'
+      form: initQuartz(),
+      formLabelWidth: '170px',
+      formAble: true
     }
   },
   created () {
@@ -144,6 +142,7 @@ export default {
      */
     createQuartz () {
       let v = this
+      v.form = initQuartz()
       v.formVisible = true
       v.formType = 1
     },
@@ -152,10 +151,31 @@ export default {
      */
     editQuartz (quartz) {
       let v = this
-      //v.formVisible = true
-      //v.formType = 2
-      //v.form = util
-      util.coryObjText(quartz)
+      v.formVisible = true
+      v.formType = 2
+      v.form = util.newNotNullObject(quartz)
+    },
+    /**
+     * 保存时钟的表单信息
+     */
+    saveQuartz () {
+      let v = this
+      v.formAble = false
+      http.$axiosPost(quartzUrl + '/save.do', v.form).then(res => {
+        v.$message.success('保存成功')
+        if (v.form.id) { // 更新
+          let index = v.list.findIndex(o => { return o.id === v.form.id })
+          v.list.splice(index, 1, v.form)
+          console.log(v.list)
+        } else { // 添加
+          v.list.push(res)
+        }
+        v.formVisible = false
+        v.formAble = true
+      }).catch(err => {
+        v.$message.error('保存失败:' + err.data.message)
+        v.formAble = true
+      })
     },
     /**
      * 删除时钟任务
@@ -176,6 +196,18 @@ export default {
         console.log('error', res)
       })
     }
+  }
+}
+
+/**
+ * 初始化表单实体
+ */
+function initQuartz () {
+  return {
+    id: null,
+    jobName: '',
+    jobNumber: 1,
+    enabled: false
   }
 }
 </script>

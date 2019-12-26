@@ -23,11 +23,13 @@
           </div>
           <div class="diary_edit_foot">
             <div>
-              <span>标签：</span>
+              <span >标签：</span>
               <el-tag
                 style="margin-right: 10px;"
                 v-for="l in diary.labelList"
                 :key="l.name"
+                v-show="l.delflag === 1"
+                @close="removeLabel(l)"
                 closable
                 type="success">
                 {{l.name}}
@@ -89,7 +91,7 @@
 import http from '@/http.js'
 import {diaryUrl, labelUrl, classifyUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
-import {arrToStr, dateFormat} from '@/components/common/commonUtil'
+import {dateFormat} from '@/components/common/commonUtil'
 import util from '@/components/common/objUtil'
 
 export default {
@@ -167,8 +169,13 @@ export default {
     },
     loadAllLabels () {
       let v = this
-      http.$axiosGet(labelUrl + '/list.re', {status: 1}).then(res => {
-        v.labelEdit.labels = res === null ? [] : res
+      http.$axiosGet(labelUrl + '/frequently-used.re', {'type': 1}).then(res => {
+        res = res === null ? [] : res
+        let temp = []
+        res.forEach(o => {
+          temp.push({'name': o})
+        })
+        v.labelEdit.labels = temp
       })
     },
     handleSelect (item) {
@@ -179,25 +186,33 @@ export default {
     addLabel (e) {
       let v = this
       if (util.strNotEmpty(v.labelEdit.labelName)) {
-        let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
-        if (arr.length === 0) {
-          http.$axiosPost(labelUrl + '/add.do', {name: v.labelEdit.labelName}).then(res => {
-            v.labelEdit.labels.push(res) && v.diary.labelList.push(res)
-          })
-          // http.$post(labelUrl + '/add.do', JSON.stringify({name: v.labelEdit.labelName})).then(res => {
-          //   v.labelEdit.labels.push(res.data)
-          //   v.diary.labelList.push(res.data)
-          // })
-        } else {
-          v.diary.labelList.push(arr[0])
+        // let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
+        // if (arr.length === 0) {
+        // http.$axiosPost(labelUrl + '/add.do', {name: v.labelEdit.labelName}).then(res => {
+        //    v.labelEdit.labels.push(res) && v.diary.labelList.push(res)
+        //  })
+        // } else {
+        //  v.diary.labelList.push(arr[0])
+        // }
+        let index = v.diary.labelList.findIndex(o => { return o.name === v.labelEdit.labelName })
+        if (index > -1) {
+          v.$message.warning('已经存在同名的标签')
+          return
         }
+        v.diary.labelList.push({'name': v.labelEdit.labelName, 'delflag': 1})
       }
       v.labelEdit.labelStatus = false
       v.labelEdit.labelName = null
     },
-    checkLabelExists (name) {
-      return (l) => {
-        return l.name === name
+    /**
+     * 移除标签，如果是新增加的标签则直接移除，如果是已有标签，则设置delflag 为 0
+     */
+    removeLabel (label) {
+      if (label.id) {
+        label.delflag = 0
+      } else {
+        let index = this.diary.labelList.findIndex(o => { return o.name === label.name })
+        this.diary.labelList.splice(index, 1)
       }
     },
     saveDiary () {
@@ -207,16 +222,16 @@ export default {
         return
       }
       // 获取标签id字符串
-      let params = util.newNotNullObject(v.diary, [], ['labelList'])
+      let params = util.newNotNullObject(v.diary)
       params.date = dateFormat('yyyy-MM-dd', v.diaryDate)
-      params.labels = arrToStr(v.diary.labelList, 'id')
-      http.$post(diaryUrl + '/addOrUpdate.do', JSON.stringify(params)).then(res => {
-        v.simpleDealResult(res.status, () => {
-          if (v.diary.id === null) {
-            v.diary.id = res.data.id
-          }
-          return '日记保存成功'
-        }, res.message)
+      // params.labels = arrToStr(v.diary.labelList, 'id')
+      http.$axiosPost(diaryUrl + '/addOrUpdate.do', params).then(res => {
+        v.diary.id = res.id
+        v.diary.labelList = util.validObjDef(res.labelList, [])
+        v.$message.success('日记保存成功')
+      }).catch(err => {
+        console.log(err)
+        if (err.message) { v.$message.error(err.message) }
       })
     },
     goBack () {

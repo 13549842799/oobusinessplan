@@ -1,13 +1,15 @@
 /**
  * 工具类
  */
-import $ from 'jquery'
 
 function newObj (o) {
   let v = {}
-  $.each(o, k => {
-    v[k] = o[k]
-  })
+  // $.each(o, k => {
+  //   v[k] = o[k]
+  // })
+  for (const key in o) {
+    v[key] = o[key]
+  }
   return v
 }
 
@@ -19,11 +21,16 @@ function newObj (o) {
  */
 function newNotNullObject (o, arr, karr) {
   let v = {}
-  $.each(o, k => {
-    if ($.inArray(o[k], arr) < 0 && $.inArray(k, karr) < 0) {
-      v[k] = o[k]
+  for (const key in o) {
+    if ((!arr || !arr.includes(o[key])) && (!karr || !karr.includes(key))) {
+      v[key] = o[key]
     }
-  })
+  }
+  // $.each(o, k => {
+  //   if ($.inArray(o[k], arr) < 0 && $.inArray(k, karr) < 0) {
+  //     v[k] = o[k]
+  //   }
+  // })
   return v
 }
 
@@ -35,13 +42,16 @@ function validObj (obj) {
   return obj !== null && obj !== undefined
 }
 
-function coryObjText(o) {
-  for (const key in o) {
-    // if (object.hasOwnProperty(key)) {
-      // const element = object[key];      
-    // }
-    console.log(key +':' + o[key])
-  }
+function validObjDef (obj, def) {
+  return validObj(obj) ? obj : def
+}
+
+function coryObjText (o) {
+  // for (const key in o) {
+  // if (object.hasOwnProperty(key)) {
+  // const element = object[key];
+  // }
+  // }
 }
 
 /**
@@ -57,5 +67,6 @@ export default {
   newNotNullObject,
   validObj,
   strNotEmpty,
-  coryObjText
+  coryObjText,
+  validObjDef
 }

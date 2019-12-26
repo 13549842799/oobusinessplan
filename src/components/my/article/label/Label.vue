@@ -12,7 +12,7 @@
         <el-button icon="el-icon-search" clearable circle @click="searchLabel"></el-button>
       </div>
       <div style="width:300px;float:right;">
-        <div style="width:60%;display:inline-block;"><el-input v-model="label.name" placeholder="请输入内容"></el-input></div>
+        <!-- <div style="width:60%;display:inline-block;"><el-input v-model="label.name" placeholder="请输入内容"></el-input></div>
         <el-popover
           placement="bottom"
           width="200"
@@ -20,7 +20,7 @@
           v-model="label.visible"
           :content="label.content">
           <el-button slot="reference" type="primary" @click="addLabel">添加标签</el-button>
-        </el-popover>
+        </el-popover> -->
       </div>
     </div>
     <div class="label_content">
@@ -30,24 +30,32 @@
         style="width: 100%">
           <el-table-column
             type="index"
-            width="50">
+            width="100">
           </el-table-column>
           <el-table-column
             prop="name"
             label="名称"
-            width="200">
+            width="250">
           </el-table-column>
           <el-table-column
-            prop="createTime"
-            label="创建时间"
-            width="450">
+            label="所属分类"
+            width="200">
+            <template slot-scope="scope">
+              <el-tag size="medium" :type="getTypeMap(scope.row.targetType)['sign']">{{ getTypeMap(scope.row.targetType)['name'] }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="count"
+            label="使用次数"
+            width="200">
           </el-table-column>
           <el-table-column
             label="操作"
             width="250">
             <template slot-scope="scope">
-              <el-button @click="editLabel(scope.row)" type="text" size="small">编辑</el-button>
-              <el-button @click="removeLabel(scope.row)" type="text" size="small">删除</el-button>
+              <!-- <el-button @click="editLabel(scope.row)" type="text" size="small">编辑</el-button>
+              <el-button @click="removeLabel(scope.row)" type="text" size="small">删除</el-button> -->
+              <el-button @click="editLabel(scope.row.name, scope.row.targetType)" type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,6 +71,8 @@ import {labelUrl} from '@/base_variable'
 import {MyPage} from '@/components/common/page'
 
 import pageRolling from '@/components/common/pageRolling'
+
+const typeMap = {1: {'name': '日记', 'sign': ''}, 4: {'name': '小说', 'sign': 'success'}}
 
 export default {
   components: {pageRolling},
@@ -142,6 +152,9 @@ export default {
         v.page.removeLine(o)
         v.$message.success('删除成功')
       })
+    },
+    getTypeMap (type) {
+      return typeMap[type]
     }
   }
 }

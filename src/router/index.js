@@ -69,7 +69,7 @@ export default new Router({
         },
         {
           path: 'System/quartz',
-          name: 'systemQuartz',
+          name: 'sysTaskCronJob',
           component: SystemQuartz
         },
         {
