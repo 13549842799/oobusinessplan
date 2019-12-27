@@ -10,7 +10,7 @@
             </el-input>
           </div>
           <div class="diary_edit_content">
-            <quill-editor
+            <!-- <quill-editor
               style="height: 90%;"
               v-model="diary.content"
               :options="editorOption"
@@ -19,7 +19,8 @@
               @focus="onEditorFocus($event)"
               @ready="onEditorReady($event)"
             >
-            </quill-editor>
+            </quill-editor> -->
+            <div ref="editor" style="text-align:left"></div>
           </div>
           <div class="diary_edit_foot">
             <div>
@@ -94,6 +95,8 @@ import commonM from '@/components/common/commonMixins'
 import {dateFormat} from '@/components/common/commonUtil'
 import util from '@/components/common/objUtil'
 
+import E from 'wangeditor'
+
 export default {
   mixins: [commonM],
   props: ['diaryOrder'],
@@ -145,6 +148,40 @@ export default {
       diaryDate: null
     }
   },
+  created () {
+    let v = this
+
+    // 获取所有的分类
+    http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
+      v.classifies = res
+    })
+    if (!v.diaryOrder) {
+      return
+    }
+    // 获取日记内容
+    http.$axiosGet(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
+      v.diary = res
+      v.diaryDate = res.date
+    })
+  },
+  mounted () {
+    let v = this
+    // 创建编辑器,必须等待dom已经生成
+    var editor = new E(v.$refs.editor)
+    editor.customConfig.onchange = (html) => {
+      v.diary.content = html
+    }
+    editor.create()
+    editor.txt.html('<p>用 JS 设置的内容</p>')
+
+    console.log('this is current quill instance object', this.editor)
+    v.loadAllLabels()
+  },
+  computed: {
+    // editor () {
+    //   return this.$refs.quillEditor.quill
+    // }
+  },
   methods: {
     onEditorBlur (e) {
       console.log(e)
@@ -186,14 +223,6 @@ export default {
     addLabel (e) {
       let v = this
       if (util.strNotEmpty(v.labelEdit.labelName)) {
-        // let arr = v.labelEdit.labels.filter(v.checkLabelExists(v.labelEdit.labelName))
-        // if (arr.length === 0) {
-        // http.$axiosPost(labelUrl + '/add.do', {name: v.labelEdit.labelName}).then(res => {
-        //    v.labelEdit.labels.push(res) && v.diary.labelList.push(res)
-        //  })
-        // } else {
-        //  v.diary.labelList.push(arr[0])
-        // }
         let index = v.diary.labelList.findIndex(o => { return o.name === v.labelEdit.labelName })
         if (index > -1) {
           v.$message.warning('已经存在同名的标签')
@@ -237,32 +266,6 @@ export default {
     goBack () {
       this.$router.go(-1)
     }
-  },
-  computed: {
-    editor () {
-      return this.$refs.quillEditor.quill
-    }
-  },
-  created () {
-    let v = this
-    // 获取所有的分类
-    http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
-      v.classifies = res
-    })
-    if (!v.diaryOrder) {
-      return
-    }
-    // 获取日记内容
-    http.$get(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
-      v.simpleDealResult(res.status, () => {
-        v.diary = res.data
-        v.diaryDate = res.data.date
-      }, res.message)
-    })
-  },
-  mounted () {
-    console.log('this is current quill instance object', this.editor)
-    this.loadAllLabels()
   }
 }
 </script>

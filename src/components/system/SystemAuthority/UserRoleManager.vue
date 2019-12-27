@@ -101,7 +101,6 @@ import http from '@/http.js'
 import {adminUrl, roleUrl} from '@/base_variable'
 import commonM from '@/components/common/commonMixins'
 import Dialog from '@/components/common/Dialog'
-import $ from 'jquery'
 import util from '@/components/common/objUtil'
 
 function pageAdminRole (v, param) {
@@ -141,13 +140,11 @@ export default {
   created () {
     let v = this
     pageAdminRole(v, v.page)
-    http.$get(roleUrl + '/list.re').then(res => {
-      v.simpleDealResult(res.status, function () {
-        $.each(res.data, (i, val) => {
-          v.dialog.hasRoles.push({rid: val.id, state: val.state, name: val.name})
-        })
-      }, res.message)
-    })
+    http.$axiosGet(roleUrl + '/list.re').then(data => {
+      data.forEach(val => {
+        v.dialog.hasRoles.push({rid: val.id, state: val.state, name: val.name})
+      })
+    }).catch(err => { console.log(err) })
   },
   methods: {
     searchList () {
@@ -173,13 +170,13 @@ export default {
       let cl = v.dialog.checkList
       let newr = [] // 需要提交的数组
       let temp = {}
-      $.each(v.dialog.hasRoles, (i, r) => {
-        temp[r.name] = r
+      v.dialog.hasRoles.forEach(val => {
+        temp[val.name] = val
       })
       // 获取增加的角色
       let flag = true
       if (cl != null && cl.length > 0) {
-        $.each(cl, (i, c) => {
+        cl.forEach((c, i) => {
           for (let j = 0; j < or.length; j++) {
             if (c === or[j].name) {
               flag = false
@@ -192,7 +189,7 @@ export default {
           flag = true
         })
       }
-      $.each(or, (i, c) => {
+      or.forEach((c, i) => {
         for (let j = 0; j < cl.length; j++) {
           console.log(c.name + ',' + cl[j])
           if (c.name === cl[j]) {
@@ -209,12 +206,12 @@ export default {
         v.$refs.mydialog.visable = false
         return
       }
-      http.$post(roleUrl + '/addToUser.do', JSON.stringify(newr)).then(res => {
-        v.simpleDealResult(res.status, function () {
-          row.roles = res.data
-          v.$refs.mydialog.visable = false
-          return '角色分配成功'
-        }, res.message)
+      http.$axiosPost(roleUrl + '/addToUser.do', newr).then(data => {
+        row.roles = data
+        v.$refs.mydialog.visable = false
+        v.$message.success('角色分配成功')
+      }).catch(err => {
+        console.log(err)
       })
     },
     cancelrSelected () {

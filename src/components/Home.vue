@@ -17,10 +17,16 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: ''
+      msg: '',
+      editorContent: ''
     }
   },
+  mounted () {
+  },
   methods: {
+    getContent: function () {
+      alert(this.editorContent)
+    }
   },
   components: {
     radioItem

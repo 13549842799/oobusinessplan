@@ -111,7 +111,7 @@ import authsTree from '@/components/system/SystemAuthority/AuthsTreeOperation'
 import Dialog from '@/components/common/Dialog'
 
 const commonUrl = {
-  roleList (params) { return http.$get(roleUrl + '/list.re', params) }
+  roleList (params) { return http.$axiosGet(roleUrl + '/list.re', params) }
 }
 
 export default {
@@ -155,13 +155,11 @@ export default {
       let v = this
       let n = v.node
       console.log('少女祈祷中', n.id)
-      http.$patch(roleUrl + '/' + n.id + '/state.do', null).then(res => {
-        v.simpleDealResult(res.status, function () {
-          n.state = n.state ? 0 : 1
-          let mess = n.state ? '成功启用' : '成功禁用'
-          return mess + '<' + n.name + '>节点'
-        }, res.message)
-      })
+      http.$axiosPat(roleUrl + '/' + n.id + '/state.do').then(data => {
+        n.state = n.state ? 0 : 1
+        let mess = n.state ? '成功启用' : '成功禁用'
+        v.$message.success(mess + '<' + n.name + '>节点')
+      }).catch(err => { console.log(err) })
     },
     add () {
       let v = this
@@ -191,31 +189,24 @@ export default {
       let v = this
       let params = util.newObj(v.form)
       if (v.canAdd) {
-        http.$post(roleUrl + '/add.do', JSON.stringify(params)).then(res => {
-          v.simpleDealResult(res.status, function () {
-            let n = res.data
-            let mes = '<' + n.name + '>角色创建成功'
-            v.form = {}
-            v.node = n
-            v.setReadStatus()
-            v.$refs.tree.append(n, null)
-            return mes
-          }, null, null, res.message)
-        }, res => {
-          console.log(res)
-        })
+        http.$axiosPost(roleUrl + '/add.do', params).then(data => {
+          let n = data
+          v.$message.success('<' + n.name + '>角色创建成功')
+          v.form = {}
+          v.node = n
+          v.setReadStatus()
+          v.$refs.tree.append(n, null)
+        }).catch(err => { console.log(err) })
         return
       }
-      http.$patch(roleUrl + '/edit.do', JSON.stringify(params)).then(res => {
-        let newNode = res.data
-        v.simpleDealResult(res.status, function () {
-          $.each(modelObj, k => {
-            v.node[k] = newNode[k]
-          })
-          v.setReadStatus()
-          v.form = {}
-        })
-      })
+      http.$axiosPat(roleUrl + '/edit.do', params).then(data => {
+        let newNode = data
+        for (const k in modelObj) {
+          v.node[k] = newNode[k]
+        }
+        v.setReadStatus()
+        v.form = {}
+      }).catch(err => { console.log(err) })
     },
     resetForm () {
       if (this.canAdd) {
@@ -230,11 +221,9 @@ export default {
   created () {
     http.$setHeadersFromLocal()
     let dom = this
-    commonUrl.roleList({}).then(res => {
-      dom.simpleDealResult(res.status, function () {
-        dom.list = res.data ? res.data : [{id: 1, name: '暂无数据'}]
-      }, null, null, res.message)
-    })
+    commonUrl.roleList({}).then(data => {
+      dom.list = data !== null || data.length !== 0 ? data : [{id: 1, name: '暂无数据'}]
+    }).catch(err => { console.log(err) })
   }
 }
 

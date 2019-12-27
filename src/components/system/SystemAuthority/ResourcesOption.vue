@@ -112,11 +112,10 @@
 <script>
 import http from '@/http.js'
 import {resouUrl} from '@/base_variable'
-import $ from 'jquery'
 import {formGroup} from '@/components/common/FormJs'
 import commonM from '@/components/common/commonMixins'
 import pModel from '@/components/common/PageStatusCommon'
-import util from '@/components/common/objUtil'
+// import util from '@/components/common/objUtil'
 
 let commonUrl = {
   resourceTree (params) { return http.$axiosGet(resouUrl + '/tree.re', params) }
@@ -188,9 +187,11 @@ export default {
       let v = this
       v.setAddStatus()
       fullModuleTree(v, v.node.path)
-      $.each(modelObj, k => {
-        v.form[k] = modelObj[k]
-      })
+
+      // 初始化表单对象
+      for (const key in modelObj) {
+        v.form[key] = modelObj[key]
+      }
       v.form.type = modelObj.type
     },
     edit () {
@@ -201,15 +202,16 @@ export default {
       console.log('======== edit ===========', p)
       fullModuleTree(v, p.data.path)
       let f = v.form
-      $.each(modelObj, k => {
-        f[k] = n[k]
-      })
+      for (const key in modelObj) {
+        f[key] = n[key]
+      }
       v.type = f.type
       console.log('======== 少女祈祷中 ===========', f)
     },
     remove () {
       let v = this
       v.deleteTip = false
+      // 用于传递查询字符串
       let params = new URLSearchParams()
       params.append('id', v.node.id)
       http.$axiosPost(resouUrl + '/delete.do', params).then(res => {
@@ -221,48 +223,43 @@ export default {
     },
     submit () {
       let v = this
-      let params = util.newObj(v.form)
-      params.type = params.type === null || params.type === '' ? null : parseInt(params.type)
-      params.pid = v.parentIdArr[v.parentIdArr.length - 1]
-      params.order = null
-      if (!params.custom) { // 如果不等于自定义
-        params.key = params.request_url
+      let params = new URLSearchParams()
+      for (const k in v.form) {
+        params.append(k, v.form[k])
+      }
+      params.append('type', v.form.type === null || v.form.type === '' ? null : parseInt(v.form.type))
+      params.append('pid', v.parentIdArr[v.parentIdArr.length - 1])
+      params.delete('order')
+      if (!params.get('custom')) { // 如果不等于自定义
+        params.set('key', params.get('request_url'))
       }
       if (v.canAdd) {
-        http.$post(resouUrl + '/add.do', params).then(res => {
-          v.simpleDealResult(res.status, function () {
-            let n = res.data
-            n.list = n.type === 1 ? n.childs = [] : null
-            createPath(n, v.parentIdArr)
-            let mes = '<' + n.name + '>节点创建成功'
-            v.form = {}
-            v.node = n
-            v.setReadStatus()
-            v.$refs.tree.append(n, n.pid)
-            return mes
-          }, null, null)
-        }, res => {
-          console.log(res)
-        })
+        http.$axiosPost(resouUrl + '/add.do', params).then(data => {
+          let n = data
+          n.list = n.type === 1 ? n.childs = [] : null
+          createPath(n, v.parentIdArr)
+          v.$message.success('<' + n.name + '>节点创建成功')
+          v.form = {}
+          v.node = n
+          v.setReadStatus()
+          v.$refs.tree.append(n, n.pid)
+        }).catch(err => { console.log(err) })
         return
       }
-      http.$post(resouUrl + '/update.do', params).then(res => {
-        let newNode = res.data
-        v.simpleDealResult(res.status, function () {
-          if (v.node.pid === v.parentIdArr[v.parentIdArr.length - 1]) {
-            $.each(modelObj, k => {
-              v.node[k] = newNode[k]
-            })
-          } else {
-            console.log('更新')
-            v.$refs.tree.remove(v.node.id)
-            v.node = newNode
-            v.$refs.tree.append(newNode, v.node.pid)
+      http.$axiosPost(resouUrl + '/update.do', params).then(data => {
+        let newNode = data
+        if (v.node.pid === v.parentIdArr[v.parentIdArr.length - 1]) {
+          for (const k in modelObj) {
+            v.node[k] = newNode[k]
           }
-          v.setReadStatus()
-          v.form = {}
-        })
-      })
+        } else {
+          v.$refs.tree.remove(v.node.id)
+          v.node = newNode
+          v.$refs.tree.append(newNode, v.node.pid)
+        }
+        v.setReadStatus()
+        v.form = {}
+      }).catch(err => { console.log(err) })
     },
     resetForm () {
       if (this.canAdd) {
@@ -299,8 +296,8 @@ function fullModuleTree (v, path) {
   // 设置默认值
   let t = path.split(',')
   v.parentIdArr = []
-  $.each(t, (i, val) => {
-    v.parentIdArr[i] = parseInt(val)
+  t.forEach((val, index) => {
+    v.parentIdArr[index] = parseInt(val)
   })
 }
 
