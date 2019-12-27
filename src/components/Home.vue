@@ -24,9 +24,6 @@ export default {
   mounted () {
   },
   methods: {
-    getContent: function () {
-      alert(this.editorContent)
-    }
   },
   components: {
     radioItem

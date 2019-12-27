@@ -20,7 +20,7 @@
               @ready="onEditorReady($event)"
             >
             </quill-editor> -->
-            <div ref="editor" style="text-align:left"></div>
+            <editor ref="editor" :html="acceptHtml"></editor>
           </div>
           <div class="diary_edit_foot">
             <div>
@@ -91,15 +91,16 @@
 <script>
 import http from '@/http.js'
 import {diaryUrl, labelUrl, classifyUrl} from '@/base_variable'
-import commonM from '@/components/common/commonMixins'
 import {dateFormat} from '@/components/common/commonUtil'
 import util from '@/components/common/objUtil'
 
-import E from 'wangeditor'
+import editor from '@/components/common/form/MyEditor'
 
 export default {
-  mixins: [commonM],
   props: ['diaryOrder'],
+  components: {
+    editor
+  },
   data () {
     return {
       diary: {
@@ -155,6 +156,10 @@ export default {
     http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
       v.classifies = res
     })
+    v.loadAllLabels()
+  },
+  mounted () {
+    let v = this
     if (!v.diaryOrder) {
       return
     }
@@ -162,20 +167,8 @@ export default {
     http.$axiosGet(diaryUrl + '/s/' + v.diaryOrder + '/diary.re').then(res => {
       v.diary = res
       v.diaryDate = res.date
+      v.$refs.editor.initHtml(v.diary.content)
     })
-  },
-  mounted () {
-    let v = this
-    // 创建编辑器,必须等待dom已经生成
-    var editor = new E(v.$refs.editor)
-    editor.customConfig.onchange = (html) => {
-      v.diary.content = html
-    }
-    editor.create()
-    editor.txt.html('<p>用 JS 设置的内容</p>')
-
-    console.log('this is current quill instance object', this.editor)
-    v.loadAllLabels()
   },
   computed: {
     // editor () {
@@ -183,15 +176,8 @@ export default {
     // }
   },
   methods: {
-    onEditorBlur (e) {
-      console.log(e)
-      console.log(this.content)
-    },
-    onEditorFocus (e) {
-      // console.log(e)
-    },
-    onEditorReady (e) {
-      // console.log(e)
+    acceptHtml (html) {
+      this.diary.content = html
     },
     querySearch (queryString, cb) {
       var restaurants = this.labelEdit.labels
