@@ -60,7 +60,7 @@ export default {
 <style>
 .main-container, .left-side-container {
   float: left;
-  height: 650px;
+  height: 1200px;
   transition: width 0.6s;
   -webkit-transition: width 0.6s; /* Safari */
 }

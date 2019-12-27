@@ -89,7 +89,7 @@ export default {
   },
   created () {
     // 初始化page
-    this.page = new MyPage(6, {url: labelUrl + '/page.re'})
+    this.page = new MyPage(15, {url: labelUrl + '/page.re'})
   },
   methods: {
     downRoll (e) {
@@ -169,7 +169,7 @@ export default {
   margin-top: 20px;
 }
 .label_content {
-  height: 350px;
+  height: 750px;
 }
 .label_head > div {
   float: left;

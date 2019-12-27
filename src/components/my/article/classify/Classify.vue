@@ -112,7 +112,7 @@ export default {
       if (util.validObj(v.curPage)) {
         return
       }
-      v.pages[type] = new MyPage(7, {'url': classifyUrl + '/page.re', params: {childType: type}})
+      v.pages[type] = new MyPage(10, {'url': classifyUrl + '/page.re', params: {childType: type}})
     },
     addClassify () {
       let v = this
@@ -201,7 +201,7 @@ export default {
 
 .classify_content {
   width: 100%;
-  height: 350px;
+  height: 750px;
   overflow-y: hidden;
 }
 

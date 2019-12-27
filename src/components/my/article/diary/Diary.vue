@@ -1,5 +1,5 @@
 <template>
-  <div style="background: rgb(236, 245, 255);margin-top: 15px;position: relative;">
+  <div style="background: rgb(236, 245, 255);margin-top: 15px;position: relative; height: 1000px">
     <div v-show="state === 0">
       <div class="diaryHead">
         <div>
@@ -60,8 +60,7 @@
             <span style="color: #E4E7ED;">|</span>
             <el-button type="text" size="mini" style="color:red" @click="deleteDiary(d)">删除</el-button>
           </diary-list>
-        </div>
-        <el-pagination
+          <el-pagination
           v-if="page.total > 1"
           style="background: rgb(236, 245, 255);float: right;"
           :background="true"
@@ -72,6 +71,7 @@
           :page-size="page.pageSize"
           :total="page.total">
         </el-pagination>
+        </div>
       </div>
     </div>
     <div v-show="state === 1">
@@ -133,7 +133,7 @@ export default {
   },
   created () {
     // 获取日记列表
-    this.page = new MyPage(4, {url: diaryUrl + '/list.re', total: 5})
+    this.page = new MyPage(8, {url: diaryUrl + '/list.re', total: 5})
   },
   mounted () {
     let v = this
@@ -209,11 +209,11 @@ export default {
 
 .diary_content {
   width:100%;
-  height: 455px;
+  height: 855px;
 }
 .diary_list {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 400px;
+  height: 800px;
 }
 </style>
