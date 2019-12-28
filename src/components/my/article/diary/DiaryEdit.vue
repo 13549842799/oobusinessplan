@@ -262,6 +262,7 @@ export default {
   left: 0;
   top: 0;
   width: 100%;
+  height: 1400px;
   z-index: 999;
   background: rgb(140, 197, 255);
   padding-top: 10px;

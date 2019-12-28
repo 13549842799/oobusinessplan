@@ -67,12 +67,15 @@ export default {
 
 .main-container-main {
   height: 95%;
+  background: #ffffff;
+  padding: 10px 10px;
 }
 
 .foot-container {
   width: 100%;
   height: 10px;
   text-align: center;
+  background: #ffffff;
 }
 
 </style>
