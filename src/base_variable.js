@@ -12,6 +12,7 @@ const classifyUrl = baseUrl + '/api/article/classify'
 const diaryUrl = baseUrl + '/api/article/diary'
 const labelUrl = baseUrl + '/api/article/label'
 const quartzUrl = baseUrl + '/api/quartz/sysTaskCronJob'
+const novelUrl = baseUrl + '/api/article/novel'
 
 // const loginUrl = 'http://localhost:8082/computer/#/login'
 const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
@@ -27,5 +28,6 @@ export {
   diaryUrl,
   labelUrl,
   loginUrl,
-  quartzUrl
+  quartzUrl,
+  novelUrl
 }

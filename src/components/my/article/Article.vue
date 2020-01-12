@@ -21,7 +21,7 @@
         </el-submenu>
         <el-submenu index="5">
           <template slot="title">{{getSupName(5)}}</template>
-          <el-menu-item index="5-1">所有小说</el-menu-item>
+          <el-menu-item index="5-1"><router-link :to="{name: 'novelList'}">所有小说</router-link></el-menu-item>
         </el-submenu>
         <el-submenu index="7">
           <template slot="title">{{getSupName(7)}}</template>
