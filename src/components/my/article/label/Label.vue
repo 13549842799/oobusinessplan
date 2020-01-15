@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="child-content">
     <div class="label_head">
       <div>
         <el-input

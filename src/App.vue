@@ -24,4 +24,9 @@ export default {
 .divContiner {
   padding: 10px 10px;
 }
+
+.child-content {
+  background: #ffffff;
+  height: 1000px;
+}
 </style>

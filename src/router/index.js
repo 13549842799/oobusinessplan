@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from '@/Login'
 import IndexPage from '@/components/Index'
-// import SystemAuthority from '@/components/system/SystemAuthority'
 import EmployeeSys from '@/components/employee/EmployeeSys'
 import AdminSys from '@/components/employee/AdminSys'
 import Center from '@/components/my/center/PersonalCenter'
@@ -19,6 +18,7 @@ import SystemQuartz from '@/components/system/SystemQuartz'
 Vue.use(Router)
 
 const SystemAuthority = () => import('@/components/system/SystemAuthority')
+const NovelList = () => import('@/components/my/article/novel/NovelList')
 
 export default new Router({
   mode: 'hash',
@@ -101,6 +101,12 @@ export default new Router({
               name: 'diaryEdit',
               component: DiaryEdit,
               props: true
+            },
+            {
+              path: 'NovelList',
+              name: 'novelList',
+              component: NovelList,
+              meta: {name: '小说'}
             }
           ]
         }
