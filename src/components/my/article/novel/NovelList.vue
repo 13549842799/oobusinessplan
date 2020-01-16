@@ -3,7 +3,7 @@
     <div>
       <div class="novelHead">
         <div>
-          <el-select size="mini" v-model="page.params.classify" clearable placeholder="分类" style="width:150px;">
+          <el-select filterable default-first-option size="mini" v-model="page.params.classify" clearable placeholder="分类" style="width:150px;">
             <el-option
               v-for="item in classify"
               :key="item.id"
@@ -13,7 +13,12 @@
           </el-select>
         </div>
         <div>
-          <el-select v-model="page.params.labels" clearable placeholder="标签" size="mini" style="width:100px;">
+          <el-select v-model="page.params.labels"
+            default-first-option
+            filterable
+            allow-create
+            clearable placeholder="标签" size="mini"
+            style="width:100px;">
             <el-option
               v-for="(l, index) in labels"
               :key="index"
@@ -73,15 +78,22 @@
                 label="状态">
               </el-table-column>
             </el-table>
-            <el-pagination
-              v-if="page.total > 1"
-              style="background: rgb(236, 245, 255);float: right;"
-              :background="true"
-              layout="prev, pager, next"
-              :current-page.sync="page.pageNum"
-              :page-size="page.pageSize"
-              :total="page.total">
-            </el-pagination>
+            <div style="margin-top: 20px;position:relative">
+              <div class="novel-list-edit-buttons">
+                <el-button type="primary" size="mini" @click="editNovel">编辑</el-button>
+                <el-button type="warning" size="mini">置顶</el-button>
+                <el-button type="danger" size="mini" @click="deleteNovel">删除</el-button>
+              </div>
+              <el-pagination
+                style="float: right;"
+                :background="true"
+                layout="prev, pager, next"
+                @current-change="goToPage"
+                :current-page.sync="page.pageNum"
+                :page-size="page.pageSize"
+                :total="page.total">
+              </el-pagination>
+            </div>
           </div>
         </div>
       </div>
@@ -130,15 +142,29 @@ export default {
       console.log(selection)
     },
     searchNovel () {
-
+      this.page.searchPage()
+    },
+    /**
+     * 翻页时触发的方法
+     */
+    goToPage (page) {
+      this.page.requestList(null, null, page)
     },
     newNovel () {
       this.$router.push({name: 'novelEdit'})
     },
-    editNovel (n) {
-      this.$router.push({name: 'novelEdit', params: {novelOrder: n.id}})
+    editNovel () {
+      if (this.novel == null) {
+        this.$message.warning('请先选择目标小说')
+        return
+      }
+      this.$router.push({name: 'novelEdit', params: {novelOrder: this.novel.id}})
     },
-    deleteNovel (n) {
+    deleteNovel () {
+      if (this.novel == null) {
+        this.$message.warning('请先选择目标小说')
+        return
+      }
     }
   }
 }
@@ -164,5 +190,15 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: 800px;
+}
+
+.novel-list-edit-buttons {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  left: 0;
+  top:0;
+  width: 300px;
+  height: 28px;
 }
 </style>
