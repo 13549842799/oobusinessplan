@@ -4,9 +4,9 @@
     <div class="classify_head">
       <el-radio-group v-model="classifyType" size="small" @change="selClassify">
         <el-radio :label="1" border>日记</el-radio>
-        <el-radio :label="3" border>备忘</el-radio>
-        <el-radio :label="4" border>灵感</el-radio>
-        <el-radio :label="5" border>小说</el-radio>
+        <el-radio :label="2" border>备忘</el-radio>
+        <el-radio :label="3" border>灵感</el-radio>
+        <el-radio :label="4" border>小说</el-radio>
       </el-radio-group>
       <!-- <el-input
         style="width:200px;"
@@ -86,7 +86,7 @@ export default {
       page: null,
       editStatus: 0,
       editName: null,
-      pages: {1: null, 3: null, 4: null, 5: null},
+      pages: {1: null, 2: null, 3: null, 4: null},
       classifyType: 1
     }
   },

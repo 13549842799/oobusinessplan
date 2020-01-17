@@ -25,6 +25,12 @@ export default {
   padding: 10px 10px;
 }
 
+.child-Continer {
+  margin-top: 15px;
+  position: relative;
+  height: 1000px
+}
+
 .child-content {
   background: #ffffff;
   height: 1000px;

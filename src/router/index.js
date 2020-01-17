@@ -19,6 +19,7 @@ Vue.use(Router)
 
 const SystemAuthority = () => import('@/components/system/SystemAuthority')
 const NovelList = () => import('@/components/my/article/novel/NovelList')
+const NovelEdit = () => import('@/components/my/article/novel/NovelEdit')
 
 export default new Router({
   mode: 'hash',
@@ -107,6 +108,13 @@ export default new Router({
               name: 'novelList',
               component: NovelList,
               meta: {name: '小说'}
+            },
+            {
+              path: '/My/Article/Novel/edit/:novelOrder?',
+              name: 'novelEdit',
+              component: NovelEdit,
+              meta: {name: '小说编辑'},
+              props: true
             }
           ]
         }

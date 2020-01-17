@@ -287,5 +287,8 @@ export default {
   $axiosGet,
   $axiosPost,
   $axiosPat,
+  /**
+   * 删除类型请求
+   */
   $axiosDel
 }

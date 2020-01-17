@@ -1,5 +1,5 @@
 <template>
-  <div class="divContiner" style="margin-top: 15px;position: relative; height: 1000px">
+  <div class="divContiner child-Continer">
     <div>
       <div class="novelHead">
         <div>
@@ -39,11 +39,12 @@
           <div class="novel_list">
             <el-table
               ref="novelList"
+              v-loading="loading"
               :data="page.list"
               tooltip-effect="dark"
               style="width: 99%"
               highlight-current-row
-              @selection-change="handleSelectionChange">
+               @current-change="handleSelectionChange">
               <el-table-column
                 label="书名/最新更新章节"
                 show-overflow-tooltip
@@ -56,10 +57,8 @@
               </el-table-column>
               <el-table-column
                 label="标签"
-                width="290">
-                <template slot-scope="scope">
-                  <span style="margin-left: 2px;" v-for="(l, index) in scope.row.labelList" :key="index">{{l.name}}</span>
-                </template>
+                prop="labels"
+                width="270">
               </el-table-column>
               <el-table-column
                 prop="wordsNumStr"
@@ -68,12 +67,12 @@
                 show-overflow-tooltip>
               </el-table-column>
               <el-table-column
-                width="90"
+                width="100"
                 prop="createNikeName"
                 label="作者">
               </el-table-column>
               <el-table-column
-                width="120"
+                width="130"
                 prop="stateName"
                 label="状态">
               </el-table-column>
@@ -110,6 +109,7 @@ import http from '@/http.js'
 export default {
   data () {
     return {
+      loading: false, // 加载开关
       page: null,
       novel: null, // 当前选择的小说
       classify: null, // 分类列表
@@ -138,21 +138,33 @@ export default {
     /**
      * 表格选择行时出发方法
      */
-    handleSelectionChange (selection) {
-      console.log(selection)
+    handleSelectionChange (row) {
+      this.novel = row
     },
     searchNovel () {
-      this.page.searchPage()
+      let v = this
+      v.novel = null // 清空选择
+      v.loading = true
+      this.page.searchPage(null, null, {'method': () => { v.loading = false }})
     },
     /**
      * 翻页时触发的方法
      */
     goToPage (page) {
-      this.page.requestList(null, null, page)
+      let v = this
+      v.novel = null // 清空选择
+      v.loading = true
+      v.page.requestList(null, null, page, {'method': () => { v.loading = false }})
     },
+    /**
+     * 跳转到新建小说的页面
+     */
     newNovel () {
       this.$router.push({name: 'novelEdit'})
     },
+    /**
+     * 跳转到编辑小说的页面（与新建页面为同一页面，只是初始化逻辑不同）
+     */
     editNovel () {
       if (this.novel == null) {
         this.$message.warning('请先选择目标小说')
@@ -161,10 +173,25 @@ export default {
       this.$router.push({name: 'novelEdit', params: {novelOrder: this.novel.id}})
     },
     deleteNovel () {
-      if (this.novel == null) {
-        this.$message.warning('请先选择目标小说')
+      let v = this
+      if (v.novel == null) {
+        v.$message.warning('请先选择目标小说')
         return
       }
+      v.$confirm('确定要永久删除' + v.novel.title + '这本小说吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        v.loading = true
+        http.$axiosDel(novelUrl + '/s/' + v.novel.id + '/novel.re').then(res => {
+          v.page.requestList(null, null, v.page.pageNum, {'method': () => { v.loading = false }})
+        }).catch(err => {
+          console.log(err)
+          v.loading = false
+          v.$message.error(err)
+        })
+      }).catch(() => { v.$message.info('已取消删除') })
     }
   }
 }

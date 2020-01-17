@@ -46,8 +46,8 @@ export class MyPage {
    * @param {Object} filter 过滤的参数或者值
    * @param {Object} params 查询的条件
    */
-  searchPage (filter, params) {
-    this.requestList(filter, params, 1)
+  searchPage (filter, params, config) {
+    this.requestList(filter, params, 1, config)
   }
   /**
    * 追加一行，不是替换原本的list，而是把新查询出来的一页追加到原本的list后面
@@ -164,6 +164,9 @@ let pageComplete = config => {
     if (config) {
       if (config.loading) {
         config[config.loading] = false
+      }
+      if (config.method) {
+        config.method()
       }
     }
   }
