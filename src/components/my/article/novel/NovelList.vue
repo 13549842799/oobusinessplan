@@ -184,8 +184,9 @@ export default {
         type: 'warning'
       }).then(() => {
         v.loading = true
-        http.$axiosDel(novelUrl + '/s/' + v.novel.id + '/novel.re').then(res => {
-          v.page.requestList(null, null, v.page.pageNum, {'method': () => { v.loading = false }})
+        http.$axiosDel(novelUrl + '/s/' + v.novel.id + '/delete.do').then(res => {
+          v.$message.success('小说 ' + v.novel.title + ' 成功删除')
+          v.page.requestList(null, null, v.page.pageNum, {'method': () => {v.loading = false }})
         }).catch(err => {
           console.log(err)
           v.loading = false

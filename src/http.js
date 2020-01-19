@@ -43,6 +43,13 @@ function $setHeadersFromLocal () {
   axiosInstance.defaults.headers['X-token'] = headers['X-token']
 }
 
+/**
+ * 获取本地存储中的token和user
+ */
+function $getHeadersFromLocal () {
+  return {'X-user': localStorage.getItem('X-user'), 'X-token': localStorage.getItem('X-token')}
+}
+
 function $getlocal (key) {
   return localStorage.getItem(key)
 }
@@ -276,6 +283,7 @@ export default {
   $delete,
   headers,
   $setHeadersFromLocal,
+  $getHeadersFromLocal,
   $getlocal,
   getUser,
   getToken,

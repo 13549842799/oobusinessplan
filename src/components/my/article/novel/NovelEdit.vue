@@ -34,31 +34,37 @@
     <div class="picture-item">
       <span style="display:block;width: 100%;text-align: center;border-bottom: 1px solid lightslategray;">封面图片</span>
       <el-upload
+        style="margin: auto auto;"
         ref="cover"
         name="coverImage"
+        :data="data"
         class="avatar-uploader"
         :headers="header"
-        :data="data"
         :action="action"
         :multiple="false"
         :show-file-list="false"
-        :auto-upload="false"
-        :file-list="fileList"
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload">
-        <img v-if="novel.cover" :src="novel.cover" class="avatar">
+        <img v-if="this.cover !== null || novel.coverPath" :src="coverPath" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
+      <p style="color: red; font-size:13px;">上传图片大小请不要超过150KB，长宽比为124px*172px</p>
+      <el-button @click="resetCover">重置</el-button>
     </div>
-    <div>
-      <el-button @click="submitNovelAndCover">提交</el-button>
-      <el-button @click="show">show</el-button>
+    <div style="width: 100%;margin-top: 500px;text-align: center;border-top: 1px solid #DCDFE6;">
+      <div class="position" v-if="novel.id !== null">
+        分卷管理
+      </div>
+      <div style="margin-top: 35px; text-align: center;width: 100%">
+        <el-button @click="submitNovel" type="success">{{novel.id === null ? '提交' : '保存'}}</el-button>
+        <el-button @click="goBack" type="warning">返回</el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {novelUrl, classifyUrl, labelUrl} from '@/base_variable'
+import {novelUrl, classifyUrl, labelUrl, upLoadUrl, fileUrl} from '@/base_variable'
 import http from '@/http.js'
 
 import util from '@/components/common/objUtil'
@@ -75,9 +81,11 @@ export default {
     }
     return {
       header: {},
-      data: {},
-      action: novelUrl + '/save2.do',
-      fileList: [],
+      data: {
+        name: 'coverImage',
+        relevance: 3
+      },
+      action: upLoadUrl + '/upload.do',
       novel: {
         id: null,
         title: '',
@@ -85,8 +93,9 @@ export default {
         delflag: 1,
         labelList: [],
         stateName: '未开始',
-        cover: null
+        cover: null //存放将要提交的cover文件的id
       },
+      cover: null, // 当前选择的封面图片对象
       classifies: [],
       labelEdit: {
         labelName: '', // 输入的标签名
@@ -103,6 +112,7 @@ export default {
   },
   created () {
     let v = this
+    v.header = http.$getHeadersFromLocal() // 从http中获取本地存储的token值和user值
     // 获取所有的分类
     http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
       v.classifies = res
@@ -120,6 +130,9 @@ export default {
 
   },
   computed: {
+    coverPath () { // 封面图片路径, 首先判断进入当前页面后是否有重新选择封面，然后判断是否存在初始的图片
+      return fileUrl + (this.cover !== null ? this.cover.path : (util.strNotEmpty(this.novel.coverPath) ? this.novel.coverPath : ''))
+    }
   },
   methods: {
     validLabel (name) {
@@ -154,7 +167,13 @@ export default {
       }
     },
     handleAvatarSuccess (res, file) {
-      
+      switch (res.status) {
+        case 200:
+          let oldId = this.cover != null ? this.cover.id : null
+          this.cover = res.data
+          http.$axiosDel(upLoadUrl + '/s/' + oldId + '/del.do').then(res => {}).catch(err => {})
+          break
+      }
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -165,18 +184,32 @@ export default {
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 50k!')
       }
-      this.header = util.newObj(http.headers)
-      this.data = util.newObj(this.novel)
       return isJPG && isLt2M
+    },
+    /**
+     * 重置图片，把服务器中的临时图片也删除掉
+     */
+    resetCover () {
+      let id = this.cover.id
+      http.$axiosDel(upLoadUrl + '/s/' + id + '/del.do').then(res => {}).catch(err => {})
+      this.cover = null
     },
     /**
      * 手动提交
      */
-    submitNovelAndCover () {
-      this.$refs.cover.submit()
+    submitNovel () {
+      let v = this
+      let novel = util.newNotNullObject(v.novel, [null], ['lastetSection', 'portions', 'coverFile', 'cover'])
+      novel.cover = v.cover !== null ? v.cover.id : null
+      http.$axiosPost(novelUrl + '/save2.do', novel).then(res => {
+        v.novel.id = res.id
+        v.novel.labelList = util.validObjDef(res.labelList, [])
+        v.novel.coverFile = res.coverFile
+        v.$message.success('保存成功')
+      }).catch(err => { console.log(err) })
     },
-    show() {
-      console.log(this.fileList)
+    goBack () {
+      this.$router.go(-1)
     }
   }
 }
@@ -208,14 +241,28 @@ export default {
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 200px;
-  height: 200px;
-  line-height: 200px;
+  width: 124px;
+  height: 172px;
+  line-height: 172px;
   text-align: center;
 }
 .avatar {
-  width: 200px;
-  height: 200px;
+  width: 124px;
+  height: 172px;
   display: block;
+}
+
+.position {
+  border-bottom: 1px solid #DCDFE6;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  font-family: "微软雅黑";
+  line-height: 50px;
+}
+
+.position:hover {
+    cursor: pointer;
+    color: dodgerblue;
 }
 </style>
