@@ -52,9 +52,9 @@
       <el-button @click="resetCover">重置</el-button>
     </div>
     <div style="width: 100%;margin-top: 500px;text-align: center;border-top: 1px solid #DCDFE6;">
-      <div class="position" v-if="novel.id !== null">
+      <!-- <div class="position" v-if="novel.id !== null">
         分卷管理
-      </div>
+      </div> -->
       <div style="margin-top: 35px; text-align: center;width: 100%">
         <el-button @click="submitNovel" type="success">{{novel.id === null ? '提交' : '保存'}}</el-button>
         <el-button @click="goBack" type="warning">返回</el-button>
@@ -93,7 +93,7 @@ export default {
         delflag: 1,
         labelList: [],
         stateName: '未开始',
-        cover: null //存放将要提交的cover文件的id
+        cover: null // 存放将要提交的cover文件的id
       },
       cover: null, // 当前选择的封面图片对象
       classifies: [],
@@ -166,15 +166,10 @@ export default {
         list.splice(index, 1)
       }
     },
-    handleAvatarSuccess (res, file) {
-      switch (res.status) {
-        case 200:
-          let oldId = this.cover != null ? this.cover.id : null
-          this.cover = res.data
-          http.$axiosDel(upLoadUrl + '/s/' + oldId + '/del.do').then(res => {}).catch(err => {})
-          break
-      }
-    },
+    /**
+     * 封面图片提交前触发事件方法
+     * 校验图片的文件格式和大小是否符合要求
+     */
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 < 50
@@ -187,11 +182,23 @@ export default {
       return isJPG && isLt2M
     },
     /**
+     * 封面图片提交成功触发事件方法
+     */
+    handleAvatarSuccess (res, file) {
+      switch (res.status) {
+        case 200:
+          let oldId = this.cover != null ? this.cover.id : null
+          this.cover = res.data
+          http.$axiosDel(upLoadUrl + '/s/' + oldId + '/del.do').then(res => {}).catch(err => { console.log(err) })
+          break
+      }
+    },
+    /**
      * 重置图片，把服务器中的临时图片也删除掉
      */
     resetCover () {
       let id = this.cover.id
-      http.$axiosDel(upLoadUrl + '/s/' + id + '/del.do').then(res => {}).catch(err => {})
+      http.$axiosDel(upLoadUrl + '/s/' + id + '/del.do').then(res => {}).catch(err => { console.log(err) })
       this.cover = null
     },
     /**

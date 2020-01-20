@@ -14,6 +14,7 @@ const labelUrl = baseUrl + '/api/article/label'
 const quartzUrl = baseUrl + '/api/quartz/sysTaskCronJob' // 时钟
 const novelUrl = baseUrl + '/api/article/novel' // 小说
 const upLoadUrl = baseUrl + '/api/upload/uploadFile' // 上传文件接口路径
+const portionUrl = baseUrl + '/api/article/portion' // 分卷
 
 // const loginUrl = 'http://localhost:8082/computer/#/login'
 const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
@@ -33,5 +34,6 @@ export {
   quartzUrl,
   novelUrl,
   upLoadUrl,
-  fileUrl
+  fileUrl,
+  portionUrl
 }

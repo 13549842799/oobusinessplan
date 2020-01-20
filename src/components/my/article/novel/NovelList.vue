@@ -80,7 +80,7 @@
             <div style="margin-top: 20px;position:relative">
               <div class="novel-list-edit-buttons">
                 <el-button type="primary" size="mini" @click="editNovel">编辑</el-button>
-                <el-button type="warning" size="mini">置顶</el-button>
+                <el-button type="warning" size="mini" @click="editPortion">分卷管理</el-button>
                 <el-button type="danger" size="mini" @click="deleteNovel">删除</el-button>
               </div>
               <el-pagination
@@ -186,13 +186,21 @@ export default {
         v.loading = true
         http.$axiosDel(novelUrl + '/s/' + v.novel.id + '/delete.do').then(res => {
           v.$message.success('小说 ' + v.novel.title + ' 成功删除')
-          v.page.requestList(null, null, v.page.pageNum, {'method': () => {v.loading = false }})
+          v.page.requestList(null, null, v.page.pageNum, {'method': () => { v.loading = false }})
         }).catch(err => {
           console.log(err)
           v.loading = false
           v.$message.error(err)
         })
       }).catch(() => { v.$message.info('已取消删除') })
+    },
+    editPortion () {
+      let v = this
+      if (v.novel == null) {
+        v.$message.warning('请先选择目标小说')
+        return
+      }
+      this.$router.push({name: 'portionList', params: {novelOrder: this.novel.id, novelTitle: this.novel.title}})
     }
   }
 }
