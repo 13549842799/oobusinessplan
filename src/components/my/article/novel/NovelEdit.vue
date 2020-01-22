@@ -174,7 +174,7 @@ export default {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 < 50
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
+        this.$message.error('上传封面图片只能是 JPG/PNG 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 50k!')
@@ -187,9 +187,11 @@ export default {
     handleAvatarSuccess (res, file) {
       switch (res.status) {
         case 200:
-          let oldId = this.cover != null ? this.cover.id : null
+          let oldId = this.cover != null ? this.cover.id : (util.validObj(this.novel.coverFile) ? this.novel.coverFile.id : null)
           this.cover = res.data
-          http.$axiosDel(upLoadUrl + '/s/' + oldId + '/del.do').then(res => {}).catch(err => { console.log(err) })
+          if (oldId != null) {
+            http.$axiosDel(upLoadUrl + '/s/' + oldId + '/del.do').then(res => {}).catch(err => { console.log(err) })
+          }
           break
       }
     },
