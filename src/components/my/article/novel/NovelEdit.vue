@@ -114,7 +114,7 @@ export default {
     let v = this
     v.header = http.$getHeadersFromLocal() // 从http中获取本地存储的token值和user值
     // 获取所有的分类
-    http.$axiosGet(classifyUrl + '/list.re', {childType: 1}).then(res => {
+    http.$axiosGet(classifyUrl + '/list.re', {childType: 4}).then(res => {
       v.classifies = res
     })
     http.$axiosGet(labelUrl + '/frequently-used.re', {type: 4}).then(res => {
