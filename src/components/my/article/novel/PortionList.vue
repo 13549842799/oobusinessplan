@@ -65,7 +65,7 @@
       <div class="section-image-group">
         <div style="width: 100%; height: 10px;" v-for="(f, index) in section.files" :key="index">
           <el-popover placement="top-start" width="200" trigger="hover">
-            <img :src="f.path" class="avatar">
+            <img :src="furl + f.path" class="avatar">
             <el-button slot="reference" type="text">{{f.name}}</el-button>
           </el-popover>
           <!-- <span style="font-size: 10px;">{{f.name}}</span> -->
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import {portionUrl, upLoadUrl, sectionUrl} from '@/base_variable'
+import {portionUrl, upLoadUrl, sectionUrl, fileUrl} from '@/base_variable'
 import http from '@/http.js'
 import util from '@/components/common/objUtil'
 
@@ -129,6 +129,7 @@ export default {
   props: ['novelOrder', 'novelTitle'],
   data () {
     return {
+      furl: fileUrl,
       action: upLoadUrl + '/upload.do',
       headers: {},
       data: {'name': '', 'relevance': 4, 'objId': null},
