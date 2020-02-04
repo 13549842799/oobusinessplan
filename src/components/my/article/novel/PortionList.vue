@@ -53,7 +53,11 @@
         <el-form-item prop="title">
           <el-input v-model="section.title" placeholder="快起一个有趣的标题吧!"></el-input>
         </el-form-item>
-        <el-input type="textarea" v-model="section.content" :rows="30" placeholder="来开始你新的故事!" style="margin-top: 10px;margin-bottom: 2px;"></el-input>
+        <div style="width: 100%; height: 20px;position: relative;  color: darkgray">
+          <span style="position:absolute; right: 25px; bottom: 5px">{{sNums}}字/20000字</span>
+          <span class="el-icon-refresh-left" style="position:absolute; right: 0; bottom: 5px" @click="culSectionNums"></span>
+        </div>
+        <el-input type="textarea" v-model="section.content" :rows="30" placeholder="来开始你新的故事!" style="margin-bottom: 2px;"></el-input>
         <el-form-item label="备注" label-width="50px" size="mini">
           <el-input v-model="section.remark" class="remak"></el-input>
         </el-form-item>
@@ -72,7 +76,7 @@
       <!-- <p v-show="section.remark" style="color: red">{{section.remark}}</p> -->
       <div class="buttons-group">
         <el-button @click="saveSection">保存</el-button>
-        <el-button @click="imageDialog = true" v-if="section.id">插入图片</el-button>
+        <el-button @click="openImageDialog" v-if="section.id">插入图片</el-button>
         <el-button @click="pageType = 1">取消</el-button>
       </div>
     </div>
@@ -154,6 +158,7 @@ export default {
         remark: '',
         lists: []
       }, // 当前操作的章节对象
+      sNums: 0, // 当前章节的去除特殊符号后的字数
       fileDelIds: [],
       tempFile: {
         url: '',
@@ -237,6 +242,7 @@ export default {
     addNewSection (index) {
       this.section = {'portionTitle': this.portions[index].title, 'portionId': this.portions[index].id, 'novelId': this.novelOrder, 'title': '', 'content': ''}
       this.pageType = sectionPage
+      this.sNums = 0
     },
     editSection (sindex, index) {
       let v = this
@@ -244,10 +250,23 @@ export default {
       http.$axiosGet(sectionUrl + '/s/' + v.portions[index].sections[sindex].id + '/read.re').then(res => {
         res.portionTitle = v.portions[index].title
         v.section = res
+        v.sNums = v.section.wordsNum
       }).catch(err => { v.$message.error(err.message) })
       this.pageType = sectionPage
     },
+    /**
+     * 获取章节正确的字数
+     */
+    culSectionNums () {
+      this.sNums = this.section.content.replace(/\n|\r|\s/g, '').length
+    },
     beforeAvatarUpload (file) {
+    },
+    openImageDialog () {
+      this.tempFile.name = ''
+      this.tempFile.url = ''
+      this.tempFile.error = ''
+      this.imageDialog = true
     },
     /**
      * 成功上传图片触发事件
@@ -255,7 +274,7 @@ export default {
     handleAvatarSuccess (res, file) {
       switch (res.status) {
         case 200:
-          this.section.lists.push(res.data)
+          this.section.files.push(res.data)
           this.$message.success('图片上传成功')
           break
         case 100:
@@ -304,8 +323,8 @@ export default {
       }
     },
     delImage (index) {
-      this.fileDelIds.push(this.section.lists[index].id)
-      this.section.lists.splice(index, 1)
+      this.fileDelIds.push(this.section.files[index].id)
+      this.section.files.splice(index, 1)
     },
     /**
      * 保存章节

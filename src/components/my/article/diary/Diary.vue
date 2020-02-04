@@ -42,6 +42,15 @@
           </el-input>
         </div>
         <div>
+          <el-input
+            style="width:100px;"
+            size="mini"
+            placeholder="标签"
+            v-model="page.params.labels"
+            clearable>
+          </el-input>
+        </div>
+        <div>
           <el-button type="primary" size="mini" icon="el-icon-search" @click="searchDiary"></el-button>
           <el-tooltip class="item" effect="dark" content="写新日记" placement="top-start">
             <el-button size="mini" round icon="el-icon-edit" type="success" @click="newDiary"></el-button>
