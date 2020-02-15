@@ -12,7 +12,7 @@
           <router-view></router-view>
         </div>
         <div class="foot-container">
-          © 2019-2020 聊天鬼才 . All rights reserved.
+          © 2019-2020 聊天鬼才 . All rights reserved. caiyangzhi.com&nbsp;&nbsp;版权所有ICP证&nbsp;&nbsp;<a target="_blank" style="color: blue" href="http://www.beian.miit.gov.cn">粤ICP备19060959号-1</a>
         </div>
       </div>
     </el-main>
