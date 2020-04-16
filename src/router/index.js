@@ -22,6 +22,9 @@ const NovelList = () => import('@/components/my/article/novel/NovelList')
 const NovelEdit = () => import('@/components/my/article/novel/NovelEdit')
 const PortionList = () => import('@/components/my/article/novel/PortionList')
 
+//20200416
+const SystemResources = () => import('@/components/system/resources/SystemResources')
+
 export default new Router({
   mode: 'hash',
   routes: [
@@ -68,6 +71,11 @@ export default new Router({
           path: 'System/Authority',
           name: 'systemAuthority',
           component: SystemAuthority
+        },
+        {
+          path: 'System/Resources',
+          name: 'systemResources',
+          component: SystemResources
         },
         {
           path: 'System/quartz',
