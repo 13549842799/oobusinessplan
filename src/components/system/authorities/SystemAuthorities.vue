@@ -119,7 +119,7 @@ export default {
     deleteAuths () {
       let v = this
       const delMethod = () => {
-        resourcesApi.deleteAuths(v.current.id).then(res => {
+        authsApi.deleteAuths(v.current.id).then(res => {
           v.page.searchPage()
           v.$message({ type: 'success', message: '删除成功!' })
         }).catch(err => {
