@@ -4,9 +4,6 @@
 
 function newObj (o) {
   let v = {}
-  // $.each(o, k => {
-  //   v[k] = o[k]
-  // })
   for (const key in o) {
     v[key] = o[key]
   }
@@ -26,11 +23,6 @@ function newNotNullObject (o, arr, karr) {
       v[key] = o[key]
     }
   }
-  // $.each(o, k => {
-  //   if ($.inArray(o[k], arr) < 0 && $.inArray(k, karr) < 0) {
-  //     v[k] = o[k]
-  //   }
-  // })
   return v
 }
 

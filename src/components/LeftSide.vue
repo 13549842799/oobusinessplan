@@ -53,6 +53,7 @@ export default {
       console.log(res.data)
       // 测试代码
       res.data[0].childs.push({id: 20, pid: 5, name: '资源管理', request_url: 'systemResources'})
+      res.data[0].childs.push({id: 21, pid: 5, name: '权限管理', request_url: 'systemAuthorities'})
       // end
       this.items = res.data
     }).catch(res => {
