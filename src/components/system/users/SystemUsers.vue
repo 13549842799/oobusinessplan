@@ -70,6 +70,7 @@
         </div>
       </el-main>
     </el-container>
+    
     <!-- <ouser-form ref="resForm" :auths="auths" :submitSuccess="formSuccess"></ouser-form> -->
   </div>
 </template>
