@@ -37,7 +37,7 @@
 
 <script>
 import http from './http'
-import {baseUrl, adminUrl} from './base_variable'
+import {baseUrl, ouserUrl} from './base_variable'
 import $ from 'jquery'
 
 export default {
@@ -46,7 +46,8 @@ export default {
       list: [],
       selected: {},
       params: {
-        userName: null,
+        // userName: null,
+        username: null,
         password: null,
         code: null
       },
@@ -71,11 +72,12 @@ export default {
     },
     login () {
       let Login = this
-      http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
-        let data = response.data
+      // http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
+      http.$axiosPost(ouserUrl + '/login.do', Login.params).then(response => {
+        let data = response
         console.log(data)
-        localStorage.setItem('X-user', data.session.name)
-        localStorage.setItem('X-token', data.session.token)
+        localStorage.setItem('X-user', data.username)
+        localStorage.setItem('X-token', data.details.token)
         // window.location.href = response.data.target
         Login.$router.push('home')
       }).catch(err => {

@@ -1,8 +1,8 @@
 
-// const baseUrl = 'http://localhost:8081/O.OBusinessPlan'
+const baseUrl = 'http://localhost:8082/O.OBusinessPlan'
 // const baseUrl = 'http://39.97.99.250:8080/O.OBusinessPlan'
 // const baseUrl = 'http://www.caiyangzhi.com/O.OBusinessPlan'
-const baseUrl = 'http://www.caiyangzhi.com/appServer'
+// const baseUrl = 'http://www.caiyangzhi.com/appServer'
 const adminUrl = baseUrl + '/api/admin'
 const employeeUrl = baseUrl + '/api/employee'
 const roleUrl = baseUrl + '/api/authority/roles'
@@ -16,6 +16,7 @@ const novelUrl = baseUrl + '/api/article/novel' // 小说
 const upLoadUrl = baseUrl + '/api/upload/uploadFile' // 上传文件接口路径
 const portionUrl = baseUrl + '/api/article/portion' // 分卷
 const sectionUrl = baseUrl + '/api/article/section' // 章节
+const ouserUrl = baseUrl + '/api/ouser'
 
 // const loginUrl = 'http://localhost:8082/computer/#/login'
 const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
@@ -37,5 +38,6 @@ export {
   upLoadUrl,
   fileUrl,
   portionUrl,
-  sectionUrl
+  sectionUrl,
+  ouserUrl
 }

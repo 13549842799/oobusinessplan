@@ -3,22 +3,15 @@
     <el-container>
       <el-header height="150px">
         <div style="height:50px">
-          资源管理
+          用户管理
         </div>
         <div>
           <el-form :inline="true" :model="page.params">
-            <el-form-item label="名称">
-              <el-input size="medium" v-model="page.params.name" placeholder="名称" clearable></el-input>
+            <el-form-item label="用户名">
+              <el-input size="medium" v-model="page.params.username" placeholder="用户名" clearable></el-input>
             </el-form-item>
             <el-form-item label="资源真名">
-              <el-input size="medium" v-model="page.params.displayName" placeholder="资源真名" clearable></el-input>
-            </el-form-item>
-            <el-form-item label="类型">
-              <el-select size="medium" v-model="page.params.type" placeholder="资源类型" clearable>
-                <el-option label="一级模块" :value="1"></el-option>
-                <el-option label="二级模块" :value="2"></el-option>
-                <el-option label="接口" :value="3"></el-option>
-              </el-select>
+              <el-input size="medium" v-model="page.params.nikename" placeholder="昵称" clearable></el-input>
             </el-form-item>
             <el-form-item>
               <el-button size="medium" type="primary" @click="page.searchPage()">查询</el-button>
@@ -28,63 +21,40 @@
       </el-header>
       <el-main>
         <el-table
-          ref="resourcesTable"
+          ref="ouserTable"
           :data="page.list"
           highlight-current-row
-          :row-class-name="tableRowClassName"
           @current-change="handleCurrentChange"
           style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="名称">
+                <el-form-item label="用户名">
                   <span>{{ props.row.name }}</span>
                 </el-form-item>
-                <el-form-item label="资源真名">
-                  <span>{{ props.row.displayName }}</span>
-                </el-form-item>
-                <el-form-item label="类型">
-                  <span>{{ props.row.typeStr }}</span>
-                </el-form-item>
-                <el-form-item label="请求路径">
-                  <span>{{ props.row.path }}</span>
-                </el-form-item>
-                <el-form-item label="锁定状态">
-                  <span>{{ props.row.locking == 1 ? '已锁定' : '释放'}}</span>
-                </el-form-item>
-                <el-form-item label="资源状态">
-                  <span>{{ props.row.state == 0 ? '可用' : '禁用'}}</span>
-                </el-form-item>
-                <el-form-item label="资源描述">
-                  <span>{{ props.row.describes }}</span>
+                <el-form-item label="昵称">
+                  <span>{{ props.row.nikename }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column
-            property="name"
-            label="名称"
+            property="username"
+            label="用户名"
             width="170">
           </el-table-column>
           <el-table-column
-            property="displayName"
-            label="资源真名"
+            property="nikename"
+            label="昵称"
             width="170">
-          </el-table-column>
-          <el-table-column
-            property="typeStr"
-            label="类型"
-            width="150">
-          </el-table-column>
-          <el-table-column
-            property="path"
-            label="请求路径">
           </el-table-column>
         </el-table>
         <div style="margin-top: 20px; height: 50px">
           <div style="height: 100%; width: 50%;float: left">
             <el-button size="mini" type="primary" @click="openAddDialog">添加</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改</el-button>
+            <el-button size="mini" type="primary" >角色</el-button>
+            <el-button size="mini" type="primary" >权限</el-button>
             <el-button size="mini" type="danger" @click="deleteResources">删除</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
@@ -100,7 +70,7 @@
         </div>
       </el-main>
     </el-container>
-    <resources-form ref="resForm" :auths="auths" :submitSuccess="formSuccess"></resources-form>
+    <!-- <ouser-form ref="resForm" :auths="auths" :submitSuccess="formSuccess"></ouser-form> -->
   </div>
 </template>
 
@@ -108,47 +78,29 @@
 import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
 
-import resourcesApi from '@/components/system/resources/resourcesApi'
+import ouserApi from '@/components/system/users/usersApi'
 import authsApi from '@/components/system/authorities/authoritiesApi'
 
-import resourcesForm from '@/components/system/resources/SystemResourcesForm'
-
 export default {
-  components: { resourcesForm },
+  components: {},
   mixins: [pageBasic, basicTable],
   data () {
     return {
-      current: null, // 表格当前选择的行对象
-      auths: [{id: 1, name: 'A_TEST', displayName: '测试权限'}]
+      current: null // 表格当前选择的行对象
     }
   },
   created () {
     let v = this
     v.page = v.createPage({url: resourcesApi.listUrl(), pageSize: 8, total: 8})
-    authsApi.getSimpleAuthsList().then(res => {
-      v.auths = res
-    }).catch(err => { console.log(err) })
   },
   computed: {
   },
   methods: {
     /**
-     * 行高亮的判断逻辑
-     */
-    tableRowClassName ({row, rowIndex}) {
-      if (row.state === 0) {
-        return 'warning-row'
-      }
-      if (row.type === 1 || row.type === 2) {
-        return 'success-row'
-      }
-      return ''
-    },
-    /**
      * 打开新增资源的表单弹框
      */
     openAddDialog () {
-      this.$refs.resForm.initAddForm()
+      // this.$refs.resForm.initAddForm()
     },
     /**
      * 打开修改资源的表单弹框
@@ -158,7 +110,7 @@ export default {
         this.$message.warning('请选择目标资源')
         return
       }
-      this.$refs.resForm.initEditForm(this.current)
+      // this.$refs.resForm.initEditForm(this.current)
     },
     /**
      * 当表单保存成功时触发
@@ -166,17 +118,17 @@ export default {
     formSuccess () {
       this.page.searchPage()
     },
-    deleteResources () {
+    deleteOuser () {
       let v = this
       const delMethod = () => {
-        resourcesApi.deleteResources(v.current.id).then(res => {
+        ouserApi.deleteOuser(v.current.id).then(res => {
           v.page.searchPage()
           v.$message({ type: 'success', message: '删除成功!' })
         }).catch(err => {
           v.$message.error(err)
         })
       }
-      v.basicDelete({obj: v.current, objName: 'displayName', delMethod})
+      v.basicDelete({obj: v.current, objName: 'username', delMethod})
     }
   }
 }

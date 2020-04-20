@@ -12,7 +12,7 @@ export default {
     return http.$axiosPost(authUrl + '/add.do', params, config)
   },
   deleteAuths (id) {
-    return http.$axiosDel(authUrl + id + '/delete.do')
+    return http.$axiosDel(authUrl + '/' + id + '/delete.do')
   },
   /**
    * 获取简单的权限列表接口

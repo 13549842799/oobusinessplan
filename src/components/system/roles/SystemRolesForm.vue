@@ -5,7 +5,7 @@
         <el-form-item label="名称" :label-width="formLabelWidth">
           <el-col :span="11">
             <el-form-item>
-              <el-input v-model="form.authName" placeholder="名称"></el-input>
+              <el-input v-model="form.name" placeholder="名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="2">&nbsp;&nbsp;</el-col>
@@ -15,8 +15,8 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input type="textarea" v-model="form.remark" placeholder="如有备注，尽管填写"></el-input>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="form.describes" placeholder="如有描述，尽管填写"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -30,7 +30,7 @@
 <script>
 import util from '@/components/common/objUtil'
 
-import authsApi from '@/components/system/authorities/authoritiesApi'
+import rolesApi from '@/components/system/authorities/rolesApi'
 
 export default {
   name: 'authsForm',
@@ -46,7 +46,7 @@ export default {
   },
   data () {
     return {
-      form: blankAuths(),
+      form: blankRoles(),
       formType: 1, // 表单类型 1-新增 2-修改
       formVisible: false, // 表单显示和隐藏的开关
       formLabelWidth: '80px'
@@ -55,15 +55,15 @@ export default {
   computed: {
     formTitle () {
       switch (this.formType) {
-        case 1: return '新增权限'
-        case 2: return '修改权限'
+        case 1: return '新增角色'
+        case 2: return '修改角色'
         default: return ''
       }
     }
   },
   methods: {
     initAddForm () {
-      this.initForm(blankAuths(), 1)
+      this.initForm(blankRoles(), 1)
     },
     /**
      * 显示修改表单
@@ -86,7 +86,7 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       v.submitSuccess()
-      authsApi.saveAuth(v.form, {complete: () => { loading.close() }}).then(res => {
+      rolesApi.saveRole(v.form, {complete: () => { loading.close() }}).then(res => {
         v.formVisible = false
       }).catch(err => {
         console.log(err)
@@ -95,7 +95,7 @@ export default {
   }
 }
 
-function blankAuths () {
+function blankRoles () {
   return {
     id: null,
     authName: '',
@@ -105,6 +105,6 @@ function blankAuths () {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>
