@@ -13,8 +13,9 @@
 </template>
 
 <script>
-import http from './../http'
-import {adminUrl} from './../base_variable'
+// import http from './../http'
+// import {adminUrl} from './../base_variable'
+import usersApi from '@/components/system/users/usersApi'
 
 export default {
   name: 'headMenu',
@@ -29,9 +30,12 @@ export default {
   mounted () {
     let v = this
     //  初始化个人信息
-    http.$axiosGet(adminUrl + '/admin_main.re', {'accountname': http.getUser()}).then(res => {
-      v.loginInfo = res.data
-    }).catch(err => { console.log(err) })
+    //  http.$axiosGet(adminUrl + '/admin_main.re', {'accountname': http.getUser()}).then(res => {
+    //    v.loginInfo = res.data
+    //  }).catch(err => { console.log(err) })
+     usersApi.getUsers().then(res => {
+       v.loginInfo = res.data
+     }).catch(err => { console.log(err) })
   },
   methods: {
     /**
@@ -39,7 +43,15 @@ export default {
      */
     cancelUser () {
       let v = this
-      http.$axiosGet(adminUrl + '/' + http.getUser() + '/signout.do').then(res => {
+      // http.$axiosGet(adminUrl + '/' + http.getUser() + '/signout.do').then(res => {
+      //   v.$alert('您已成功注销，请重新登录', '', {
+      //     confirmButtonText: '确定',
+      //     callback: action => {
+      //       v.$router.push({name: 'login'})
+      //     }
+      //   })
+      // }).catch(err => { console.log(err) })
+      usersApi.logout().then(res => {
         v.$alert('您已成功注销，请重新登录', '', {
           confirmButtonText: '确定',
           callback: action => {

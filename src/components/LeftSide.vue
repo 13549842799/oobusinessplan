@@ -49,16 +49,16 @@ export default {
     v.sideWidth = v.width
     v.tempWidth = v.width
     // 初始化左侧列表
-    http.$getP(resouUrl + '/resources.re').then(res => {
-      console.log(res.data)
-      // 测试代码
-      res.data[0].childs.push({id: 20, pid: 5, name: '资源管理', request_url: 'systemResources'})
-      res.data[0].childs.push({id: 21, pid: 5, name: '权限管理', request_url: 'systemAuthorities'})
-      // end
-      this.items = res.data
-    }).catch(res => {
-      console.log(res)
-    })
+    // http.$getP(resouUrl + '/resources.re').then(res => {
+    //   console.log(res.data)
+    //   // 测试代码
+    //   res.data[0].childs.push({id: 20, pid: 5, name: '资源管理', request_url: 'systemResources'})
+    //   res.data[0].childs.push({id: 21, pid: 5, name: '权限管理', request_url: 'systemAuthorities'})
+    //   // end
+    //   this.items = res.data
+    // }).catch(res => {
+    //   console.log(res)
+    // })
   },
   methods: {
     hideOrShow () {

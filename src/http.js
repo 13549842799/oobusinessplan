@@ -196,7 +196,7 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
 
 /** axios  */
 var axiosInstance = axios.create({
-  timeout: 3000,
+  timeout: 5000,
   headers: headers
 })
 
@@ -213,13 +213,14 @@ axiosInstance.interceptors.request.use(config => {
  * 接受响应的时候进行处理
  */
 axiosInstance.interceptors.response.use(response => {
+  console.log(response.data.status)
   switch (response.data.status) {
     case 200:
       return response.data.data
     case 100:
     case 300:
       return Promise.reject(response)
-    case 400:
+    case 103:
       router.push({name: 'login'})
       return Promise.reject(response.data.message)
   }
