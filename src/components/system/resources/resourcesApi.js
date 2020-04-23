@@ -29,5 +29,18 @@ export default {
    */
   deleteResources (id) {
     return http.$axiosPost(resouUrl + '/delete.do', {id})
+  },
+  /**
+   * 获取左侧菜单树形列表
+   */
+  resourcesMenu () {
+    return http.$axiosGet(resouUrl + '/resources.re')
+  },
+  /**
+   * 
+   * @param {*} p 
+   */
+  resourcesList (p) {
+    return http.$axiosGet(resouUrl + '/list.re', p)
   }
 }

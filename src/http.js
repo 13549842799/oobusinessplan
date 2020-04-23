@@ -196,7 +196,7 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
 
 /** axios  */
 var axiosInstance = axios.create({
-  timeout: 5000,
+  timeout: 10000,
   headers: headers
 })
 
@@ -257,6 +257,11 @@ function exComplete (config) {
   if (config && config.complete) {
     config.complete()
   }
+}
+
+const $axioslogin = function (url, data, config) {
+
+  return axiosI({url: url, data: data, config: config, method: 'post'})
 }
 
 const $axiosGet = function (url, data, config) {

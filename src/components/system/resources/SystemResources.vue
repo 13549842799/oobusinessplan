@@ -47,7 +47,7 @@
                   <span>{{ props.row.typeStr }}</span>
                 </el-form-item>
                 <el-form-item label="请求路径">
-                  <span>{{ props.row.path }}</span>
+                  <span>{{ props.row.url }}</span>
                 </el-form-item>
                 <el-form-item label="锁定状态">
                   <span>{{ props.row.locking == 1 ? '已锁定' : '释放'}}</span>
@@ -77,7 +77,7 @@
             width="150">
           </el-table-column>
           <el-table-column
-            property="path"
+            property="url"
             label="请求路径">
           </el-table-column>
         </el-table>

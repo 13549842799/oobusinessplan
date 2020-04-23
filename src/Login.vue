@@ -18,7 +18,7 @@
           <div class="tip">{{errorMess}}</div>
           <div class="uNameDiv">
             <i><img src="../static/icons/user.png" width='30px' height='30px'/></i>
-            <input @focus="errorMess = ''" v-model="params.userName" type="text" name="username" class="inputClass"/>
+            <input @focus="errorMess = ''" v-model="params.username" type="text" name="username" class="inputClass"/>
           </div>
           <div class="uNameDiv">
             <i><img src="../static/icons/locked.png" width='30px' height='30px'/></i>
@@ -71,9 +71,14 @@ export default {
       this.params.code = l.code
     },
     login () {
+      console.log('进入登录')
       let Login = this
       // http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
-      http.$axiosPost(ouserUrl + '/login.do', Login.params).then(response => {
+      let param = new URLSearchParams()
+      param.append('username', Login.params.username)
+      param.append('password', Login.params.password)
+      param.append('code', Login.params.code)
+      http.$axiosPost(ouserUrl + '/login', param).then(response => {
         let data = response
         console.log(data)
         localStorage.setItem('X-user', data.username)

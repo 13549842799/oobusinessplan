@@ -80,9 +80,9 @@
 import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
 
-import rolesApi from '@/components/system/authorities/rolesApi'
+import rolesApi from '@/components/system/roles/rolesApi'
 
-import rolesForm from '@/components/system/authorities/SystemRolesForm'
+import rolesForm from '@/components/system/roles/SystemRolesForm'
 
 export default {
   mixins: [pageBasic, basicTable],

@@ -13,6 +13,7 @@
 import sideMenu from './SideMenu'
 import http from './../http'
 import {resouUrl} from './../base_variable'
+import resourcesApi from '@/components/system/resources/resourcesApi'
 
 export default {
   components: {sideMenu},
@@ -48,6 +49,10 @@ export default {
     let v = this
     v.sideWidth = v.width
     v.tempWidth = v.width
+    resourcesApi.resourcesMenu().then(res => {
+      console.log(res)
+      this.items = res
+    }).catch(err => { console.log(err) })
     // 初始化左侧列表
     // http.$getP(resouUrl + '/resources.re').then(res => {
     //   console.log(res.data)
