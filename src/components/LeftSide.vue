@@ -11,8 +11,8 @@
 
 <script>
 import sideMenu from './SideMenu'
-import http from './../http'
-import {resouUrl} from './../base_variable'
+// import http from './../http'
+// import {resouUrl} from './../base_variable'
 
 export default {
   components: {sideMenu},

@@ -29,13 +29,13 @@ export default {
   },
   mounted () {
     let v = this
-    //  初始化个人信息
-    //  http.$axiosGet(adminUrl + '/admin_main.re', {'accountname': http.getUser()}).then(res => {
-    //    v.loginInfo = res.data
-    //  }).catch(err => { console.log(err) })
-     usersApi.getUsers().then(res => {
-       v.loginInfo = res.data
-     }).catch(err => { console.log(err) })
+    // 初始化个人信息
+    // http.$axiosGet(adminUrl + '/admin_main.re', {'accountname': http.getUser()}).then(res => {
+    //   v.loginInfo = res.data
+    // }).catch(err => { console.log(err) })
+    usersApi.getUsers().then(res => {
+      v.loginInfo = res.data
+    }).catch(err => { console.log(err) })
   },
   methods: {
     /**

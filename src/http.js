@@ -196,7 +196,7 @@ const $AjaxPromise = function (url, params, type, dataType, config) {
 
 /** axios  */
 var axiosInstance = axios.create({
-  timeout: 5000,
+  timeout: 10000,
   headers: headers
 })
 
