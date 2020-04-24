@@ -30,7 +30,7 @@
 <script>
 import util from '@/components/common/objUtil'
 
-import rolesApi from '@/components/system/authorities/rolesApi'
+import rolesApi from '@/components/system/roles/rolesApi'
 
 export default {
   name: 'authsForm',

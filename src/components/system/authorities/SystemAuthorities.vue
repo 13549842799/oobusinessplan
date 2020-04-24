@@ -63,6 +63,7 @@
           <div style="height: 100%; width: 50%;float: left">
             <el-button size="mini" type="primary" @click="openAddDialog">添加</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改</el-button>
+            <el-button size="mini" type="primary" @click="openResources">资源</el-button>
             <el-button size="mini" type="danger" @click="deleteAuths">删除</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
@@ -79,6 +80,7 @@
       </el-main>
     </el-container>
     <auths-form ref="authForm" :submitSuccess="formSuccess"></auths-form>
+    <alter-resource-form ref="alterForm"></alter-resource-form>
   </div>
 </template>
 
@@ -89,10 +91,12 @@ import basicTable from '@/components/common/table/basicMethod'
 import authsApi from '@/components/system/authorities/authoritiesApi'
 
 import authsForm from '@/components/system/authorities/SystemAuthoritiesForm'
+import alterResourceForm from '@/components/system/authorities/AlterResourceForm'
 
 export default {
   components: {
-    authsForm
+    authsForm,
+    alterResourceForm
   },
   mixins: [pageBasic, basicTable],
   data () {
@@ -116,6 +120,13 @@ export default {
       }
       this.$refs.authForm.initEditForm(this.current)
     },
+    openResources () {
+      if (!this.current) {
+        this.$message.warning('请选择目标资源')
+        return
+      }
+      this.$refs.alterForm.open(this.current)
+    },
     deleteAuths () {
       let v = this
       const delMethod = () => {
@@ -130,6 +141,7 @@ export default {
     },
     formSuccess () {
       this.page.searchPage()
+      this.$message.success('保存成功')
     }
   }
 }

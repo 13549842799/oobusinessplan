@@ -7,7 +7,7 @@ export default {
   },
   saveAuth (params, config) {
     if (params.id) {
-      return http.$axiosPatch(authUrl + '/edit.do', params, config)
+      return http.$axiosPat(authUrl + '/edit.do', params, config)
     }
     return http.$axiosPost(authUrl + '/add.do', params, config)
   },

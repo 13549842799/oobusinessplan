@@ -25,6 +25,8 @@ const PortionList = () => import('@/components/my/article/novel/PortionList')
 // 20200416
 const SystemResources = () => import('@/components/system/resources/SystemResources')
 const SystemAuthorities = () => import('@/components/system/authorities/SystemAuthorities')
+const SystemRoles = () => import('@/components/system/roles/SystemRoles')
+const SystemUsers = () => import('@/components/system/users/SystemUsers')
 
 export default new Router({
   mode: 'hash',
@@ -82,6 +84,16 @@ export default new Router({
           path: 'System/Authorities',
           name: 'systemAuthorities',
           component: SystemAuthorities
+        },
+        {
+          path: 'System/Roles',
+          name: 'systemRoles',
+          component: SystemRoles
+        },
+        {
+          path: 'System/Users',
+          name: 'systemUsers',
+          component: SystemUsers
         },
         {
           path: 'System/quartz',

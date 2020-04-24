@@ -213,7 +213,6 @@ axiosInstance.interceptors.request.use(config => {
  * 接受响应的时候进行处理
  */
 axiosInstance.interceptors.response.use(response => {
-  console.log(response.data.status)
   switch (response.data.status) {
     case 200:
       return response.data.data

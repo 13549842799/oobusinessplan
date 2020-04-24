@@ -1,9 +1,9 @@
 <template>
   <li :key="menu.id" >
-    <a @click="menuStatus()" ><span>{{menu.name}}</span></a>
+    <a @click="menuStatus()" ><span>{{menu.displayName}}</span></a>
     <dl v-if="menu.childs.length > 0" :style="{'height': dheight + 'px'}">
       <dd v-for="m in menu.childs" :key="m.id">
-        <router-link :to="{name: m.request_url,params: {}}" >{{m.name}}</router-link>
+        <router-link :to="{name: m.url,params: {}}" >{{m.displayName}}</router-link>
       </dd>
     </dl>
   </li>

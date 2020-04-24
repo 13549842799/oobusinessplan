@@ -70,7 +70,6 @@
         </div>
       </el-main>
     </el-container>
-    
     <!-- <ouser-form ref="resForm" :auths="auths" :submitSuccess="formSuccess"></ouser-form> -->
   </div>
 </template>
@@ -80,7 +79,7 @@ import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
 
 import ouserApi from '@/components/system/users/usersApi'
-import authsApi from '@/components/system/authorities/authoritiesApi'
+// import authsApi from '@/components/system/authorities/authoritiesApi'
 
 export default {
   components: {},
@@ -92,7 +91,7 @@ export default {
   },
   created () {
     let v = this
-    v.page = v.createPage({url: resourcesApi.listUrl(), pageSize: 8, total: 8})
+    v.page = v.createPage({url: ouserApi.listUrl(), pageSize: 8, total: 8})
   },
   computed: {
   },
@@ -109,7 +108,7 @@ export default {
     openEditDialog () {
       if (!this.current) {
         this.$message.warning('请选择目标资源')
-        return
+        // return
       }
       // this.$refs.resForm.initEditForm(this.current)
     },

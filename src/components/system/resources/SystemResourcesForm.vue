@@ -20,10 +20,10 @@
               <el-option
                 v-for="item in auths"
                 :key="item.id"
-                :label="item.name"
+                :label="item.displayName"
                 :value="item.id">
                 <span style="float: left">{{ item.displayName }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.authName }}</span>
               </el-option>
           </el-select>
         </el-form-item>
@@ -39,10 +39,8 @@
           <el-col :span="13"></el-col>
         </el-form-item>
         <el-form-item label="上级菜单" :label-width="formLabelWidth" v-show="form.type === 2">
-          <el-select v-model="form.type" placeholder="请选择一级菜单" style="width: 285px">
-            <el-option label="一级菜单" :value="1"></el-option>
-            <el-option label="二级菜单" :value="2"></el-option>
-            <el-option label="接口" :value="3"></el-option>
+          <el-select v-model="form.pid" placeholder="请选择一级菜单" style="width: 285px">
+            <el-option v-for="r in topResources" :key="r.id"  :label="r.displayName" :value="r.id">{{r.displayName}}</el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否带参" :label-width="formLabelWidth" v-show="form.type === 3">
@@ -52,7 +50,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="请求路径" :label-width="formLabelWidth">
-          <el-input v-model="form.path" autocomplete="off" placeholder="请选择请求路径"></el-input>
+          <el-input v-model="form.url" autocomplete="off" placeholder="请选择请求路径"></el-input>
         </el-form-item>
         <el-form-item label="资源描述" :label-width="formLabelWidth">
           <el-input type="textarea" v-model="form.describes" placeholder="请描述资源的内容"></el-input>
@@ -94,10 +92,15 @@ export default {
       form: blankForm(),
       formType: 1, // 表单类型 1-新增 2-修改
       formVisible: false, // 表单显示和隐藏的开关
-      formLabelWidth: '80px'
+      formLabelWidth: '80px',
+      topResources: []
     }
   },
   created () {
+    let v = this
+    resourcesApi.resourcesList({type: 1}).then(res => {
+      v.topResources = res
+    }).catch(err => { console.log(err) })
   },
   computed: {
     formTitle () {
@@ -150,11 +153,12 @@ export default {
 function blankForm () {
   return {
     id: null,
+    pid: null,
     authId: null,
     name: '',
     displayName: '',
     type: 1,
-    path: '',
+    url: '',
     describes: ''
   }
 }
