@@ -37,8 +37,7 @@ export default {
     return http.$axiosGet(resouUrl + '/resources.re')
   },
   /**
-   * 
-   * @param {*} p 
+   * @param {*} p
    */
   resourcesList (p) {
     return http.$axiosGet(resouUrl + '/list.re', p)

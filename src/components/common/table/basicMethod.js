@@ -2,7 +2,7 @@ export default {
   methods: {
     basicDelete ({obj, objName, delMethod}) {
       let v = this
-      if (!v.obj) {
+      if (!obj) {
         v.$message.warning('请选择目标')
         return
       }

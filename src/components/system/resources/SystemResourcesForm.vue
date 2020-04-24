@@ -39,7 +39,7 @@
           <el-col :span="13"></el-col>
         </el-form-item>
         <el-form-item label="上级菜单" :label-width="formLabelWidth" v-show="form.type === 2">
-          <el-select v-model="form.type" placeholder="请选择一级菜单" style="width: 285px">
+          <el-select v-model="form.pid" placeholder="请选择一级菜单" style="width: 285px">
             <el-option v-for="r in topResources" :key="r.id"  :label="r.displayName" :value="r.id">{{r.displayName}}</el-option>
           </el-select>
         </el-form-item>
@@ -97,6 +97,10 @@ export default {
     }
   },
   created () {
+    let v = this
+    resourcesApi.resourcesList({type: 1}).then(res => {
+      v.topResources = res
+    }).catch(err => { console.log(err) })
   },
   computed: {
     formTitle () {
@@ -149,6 +153,7 @@ export default {
 function blankForm () {
   return {
     id: null,
+    pid: null,
     authId: null,
     name: '',
     displayName: '',

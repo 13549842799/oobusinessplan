@@ -7,7 +7,7 @@ export default {
   },
   saveRole (params, config) {
     if (params.id) {
-        return http.$axiosPatch(roleUrl + '/edit.do', params, config)
+      return http.$axiosPatch(roleUrl + '/edit.do', params, config)
     }
     return http.$axiosPost(roleUrl + '/add.do', params, config)
   },

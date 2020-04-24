@@ -213,7 +213,6 @@ axiosInstance.interceptors.request.use(config => {
  * 接受响应的时候进行处理
  */
 axiosInstance.interceptors.response.use(response => {
-  console.log(response.data.status)
   switch (response.data.status) {
     case 200:
       return response.data.data
@@ -257,11 +256,6 @@ function exComplete (config) {
   if (config && config.complete) {
     config.complete()
   }
-}
-
-const $axioslogin = function (url, data, config) {
-
-  return axiosI({url: url, data: data, config: config, method: 'post'})
 }
 
 const $axiosGet = function (url, data, config) {

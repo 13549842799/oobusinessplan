@@ -85,8 +85,8 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      v.submitSuccess()
       authsApi.saveAuth(v.form, {complete: () => { loading.close() }}).then(res => {
+        v.submitSuccess()
         v.formVisible = false
       }).catch(err => {
         console.log(err)
