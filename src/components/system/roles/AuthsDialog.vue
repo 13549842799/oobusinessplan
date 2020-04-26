@@ -60,8 +60,6 @@ export default {
   methods: {
     alterSelect (selection, row) {
       let v = this
-      // console.log(selection)
-      // console.log(row)
       let state = selection.includes(row)
       let a = state ? v.inAuth : v.reAuth
       let b = state ? v.reAuth : v.inAuth
@@ -86,7 +84,10 @@ export default {
       }).catch(err => { console.log(err) })
     },
     submit () {
+      let v = this
+      authsApi.addAuthsToRoles(v.obj.id).then(res => {
 
+      }).catch(err => {  err.data && err.data.message && v.$message.warning(err.data.message) })
     }
   },
   watch: {
