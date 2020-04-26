@@ -1,11 +1,12 @@
 <template>
-  <el-dialog ref="dia" :title="dialogTitle" :visible.sync="formVisible" width="30%">
+  <el-dialog ref="dia" :title="dialogTitle" :visible.sync="formVisible" width="620px">
     <el-table
+    id="resourceCheckTable"
     ref="authResTable"
     :data="resources"
     tooltip-effect="dark"
     style="width: 100%"
-    :max-height="700"
+    max-height="500px"
     @selection-change="handleSelectionChange">
       <el-table-column
       type="selection"
@@ -67,10 +68,6 @@ export default {
     open (auth) {
       let v = this
       v.auth = auth
-      console.log(v.$children)
-      console.log(v.$refs.dia)
-      console.log(v.$refs.dia.$slots.default[0])
-      v.$refs.authResTable.clearSelection()
       v.formVisible = true
       resourcesApi.resourcesList({authId: auth.id}).then(res => {
         v.auRes = res
