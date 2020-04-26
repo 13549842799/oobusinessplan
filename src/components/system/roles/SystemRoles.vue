@@ -10,8 +10,8 @@
             <el-form-item label="名称">
               <el-input size="medium" v-model="page.params.name" placeholder="名称" clearable></el-input>
             </el-form-item>
-            <el-form-item label="权限真名">
-              <el-input size="medium" v-model="page.params.displayName" placeholder="角色真名" clearable></el-input>
+            <el-form-item label="显示名">
+              <el-input size="medium" v-model="page.params.displayName" placeholder="显示名" clearable></el-input>
             </el-form-item>
             <el-form-item>
               <el-button size="medium" type="primary" @click="page.searchPage()">查询</el-button>
@@ -32,7 +32,7 @@
                 <el-form-item label="名称">
                   <span>{{ props.row.authName }}</span>
                 </el-form-item>
-                <el-form-item label="权限真名">
+                <el-form-item label="显示名">
                   <span>{{ props.row.displayName }}</span>
                 </el-form-item>
                 <el-form-item label="描述">
@@ -44,19 +44,24 @@
           <el-table-column
             property="name"
             label="名称"
-            width="170">
+            width="250">
           </el-table-column>
           <el-table-column
             property="displayName"
-            label="角色真名"
-            width="170">
+            label="显示名"
+            width="300">
+          </el-table-column>
+          <el-table-column
+            property="describes"
+            label="描述"
+            width="385">
           </el-table-column>
         </el-table>
         <div style="margin-top: 20px; height: 50px">
           <div style="height: 100%; width: 50%;float: left">
             <el-button size="mini" type="primary" @click="openAddDialog">添加</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改</el-button>
-            <el-button size="mini" type="success" >权限</el-button>
+            <el-button size="mini" type="success" @click="openAuthsDialog" >权限</el-button>
             <el-button size="mini" type="danger" @click="deleteRoles">删除</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
@@ -72,7 +77,8 @@
         </div>
       </el-main>
     </el-container>
-    <auths-form ref="authForm" :submitSuccess="formSuccess"></auths-form>
+    <roles-form ref="roleForm" :submitSuccess="formSuccess"></roles-form>
+    <auths-dialog ref="authsManager" :obj="current"></auths-dialog>
   </div>
 </template>
 
@@ -83,11 +89,13 @@ import basicTable from '@/components/common/table/basicMethod'
 import rolesApi from '@/components/system/roles/rolesApi'
 
 import rolesForm from '@/components/system/roles/SystemRolesForm'
+import authsDialog from '@/components/system/roles/AuthsDialog'
 
 export default {
   mixins: [pageBasic, basicTable],
   components: {
-    rolesForm
+    rolesForm,
+    authsDialog
   },
   data () {
     return {
@@ -124,6 +132,15 @@ export default {
     },
     formSuccess () {
       this.page.searchPage()
+      this.$message.success('保存成功')
+    },
+    openAuthsDialog () {
+      let v = this
+      if (!this.current) {
+        this.$message.warning('请选择目标资源')
+        return
+      }
+      v.$refs.authsManager.open = true
     }
   }
 }

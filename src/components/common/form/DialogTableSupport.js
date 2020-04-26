@@ -7,11 +7,15 @@ export default {
     submitFail: {
       type: Function,
       default: () => {}
+    },
+    obj: {
+      type: Object,
+      default: () => { return {} }
     }
   },
   data () {
     return {
-      formVisible: false
+      open: false
     }
   },
   methods: {

@@ -11,7 +11,7 @@
           <el-col :span="2">&nbsp;&nbsp;</el-col>
           <el-col :span="11">
             <el-form-item>
-              <el-input v-model="form.displayName" placeholder="权限真名"></el-input>
+              <el-input v-model="form.displayName" placeholder="显示名"></el-input>
             </el-form-item>
           </el-col>
         </el-form-item>
@@ -33,7 +33,7 @@ import util from '@/components/common/objUtil'
 import rolesApi from '@/components/system/roles/rolesApi'
 
 export default {
-  name: 'authsForm',
+  name: 'rolesForm',
   props: {
     submitSuccess: {
       type: Function,
@@ -85,11 +85,12 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      v.submitSuccess()
       rolesApi.saveRole(v.form, {complete: () => { loading.close() }}).then(res => {
+        v.submitSuccess()
         v.formVisible = false
       }).catch(err => {
         console.log(err)
+        err.data && err.data.message && v.$message.warning(err.data.message)
       })
     }
   }
