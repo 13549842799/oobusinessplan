@@ -1,5 +1,5 @@
 <template>
-  <el-dialog ref="authDia" :title="title" :visible.sync="open" @open="openEvent" @opened="openFinish" width="1050px">
+  <el-dialog ref="userAuthsDia" :title="title" :visible.sync="open" @open="openEvent" @opened="openFinish" width="1050px">
     <el-table
       ref="authTable"
       :data="auths"
@@ -32,7 +32,7 @@
             :key="r.url"
             :type="r.type === 1 ? 'success' : (r.type === 2 ? 'info' : 'warning')"
             effect="dark">
-            {{ r.displayName + (r.url !== null && r.url !== '' ? '(' + r.url + ')' : '') }}
+            {{ r.displayName + (r.url !== null ? '(' + r.url + ')' : '') }}
           </el-tag>
         </template>
       </el-table-column>
@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     title () {
-      return '权限管理[' + (this.obj !== null ? this.obj.displayName : '') + ']'
+      return '直连权限管理[当前用户：' + (this.obj !== null ? this.obj.username : '') + ']'
     }
   },
   methods: {
@@ -84,7 +84,7 @@ export default {
     },
     openEvent () {
       let v = this
-      authsApi.getSimpleAuthsList({roleId: v.obj.id}).then(res => {
+      authsApi.getSimpleAuthsList({userId: v.obj.id}).then(res => {
         if (v.$refs.authTable && res !== null && res.length > 0) {
           res.forEach(r => {
             let t = v.auths.find((a) => { return r.id === a.id })
@@ -107,7 +107,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      authsApi.addAuthsToRoles(v.obj.id, ar, br, {complete: () => { loading.close() }}).then(res => {
+      authsApi.addAuthsToOuser(v.obj.id, ar, br, {complete: () => { loading.close() }}).then(res => {
         v.$message.success('修改成功')
       }).catch(err => { err.data && err.data.message && v.$message.warning(err.data.message) })
     },

@@ -55,6 +55,9 @@
         <el-form-item label="资源描述" :label-width="formLabelWidth">
           <el-input type="textarea" v-model="form.describes" placeholder="请描述资源的内容"></el-input>
         </el-form-item>
+        <el-form-item label="排序" :label-width="formLabelWidth">
+          <el-input-number v-model="form.sort" :step="1"></el-input-number>
+        </el-form-item>
       </el-form>
     </div>
   <div slot="footer" class="dialog-footer">
@@ -135,8 +138,8 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      v.submitSuccess()
       resourcesApi.saveResource(v.form, {complete: () => { loading.close() }}).then(res => {
+        v.submitSuccess()
         v.formVisible = false
       }).catch(err => {
         console.log(err)
@@ -159,7 +162,8 @@ function blankForm () {
     displayName: '',
     type: 1,
     url: '',
-    describes: ''
+    describes: '',
+    locking: 0
   }
 }
 </script>

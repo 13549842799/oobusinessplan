@@ -64,12 +64,12 @@
           <el-table-column
             property="name"
             label="名称"
-            width="170">
+            width="230">
           </el-table-column>
           <el-table-column
             property="displayName"
             label="资源真名"
-            width="170">
+            width="190">
           </el-table-column>
           <el-table-column
             property="typeStr"
@@ -164,6 +164,7 @@ export default {
      * 当表单保存成功时触发
      */
     formSuccess () {
+      this.$message.success('保存成功')
       this.page.searchPage()
     },
     deleteResources () {

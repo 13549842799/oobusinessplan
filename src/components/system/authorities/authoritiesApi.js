@@ -13,13 +13,23 @@ export default {
   },
   /**
    * 为角色添加权限
-   * @param {*} roleId 
+   * @param {*} roleId
    * @param {*} inAuthIds 新增的权限id字符串
    * @param {*} reAuthIds 移除的权限id字符串
-   * @param {*} config 
+   * @param {*} config
    */
   addAuthsToRoles (roleId, inAuthIds, reAuthIds, config) {
     return http.$axiosPost(authUrl + '/addAuthstoRole.do', {roleId, inAuthIds, reAuthIds}, config)
+  },
+  /**
+   * 为用户添加权限
+   * @param {*} userId 用户id
+   * @param {*} inAuthIds 新增的权限id字符串
+   * @param {*} reAuthIds 移除的权限id字符串
+   * @param {*} config
+   */
+  addAuthsToOuser (userId, inAuthIds, reAuthIds, config) {
+    return http.$axiosPost(authUrl + '/addAuthstoUser.do', {userId, inAuthIds, reAuthIds}, config)
   },
   deleteAuths (id) {
     return http.$axiosDel(authUrl + '/' + id + '/delete.do')

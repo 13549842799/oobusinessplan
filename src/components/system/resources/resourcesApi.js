@@ -19,9 +19,18 @@ export default {
    */
   saveResource (p, config) {
     if (p.id) {
-      return http.$axiosPost(resouUrl + '/add.do', p, config)
+      return http.$axiosPost(resouUrl + '/update.do', p, config)
     }
-    return http.$axiosPost(resouUrl + '/update.do', p, config)
+    return http.$axiosPost(resouUrl + '/add.do', p, config)
+  },
+  /**
+   * 批量修改资源的所属权限
+   * @param {*} authId 目标权限
+   * @param {*} resourceIds 需要修改所属权限的资源id字符串
+   * @param {*} config
+   */
+  alterResourcesAuth (authId, resourceIds, config) {
+    return http.$axiosPat(resouUrl + '/alterAuth', {authId, resourceIds}, config)
   },
   /**
    * 删除资源

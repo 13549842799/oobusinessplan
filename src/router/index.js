@@ -101,6 +101,31 @@ export default new Router({
           component: SystemQuartz
         },
         {
+          path: 'Article/Diary',
+          name: 'articleDiary',
+          component: Diary,
+          meta: {name: '个人日记'}
+        },
+        {
+          path: 'Article/Novel',
+          name: 'articleNovel',
+          component: NovelList,
+          meta: {name: '脑洞小说'}
+        },
+        {
+          path: 'Article/Classofy',
+          name: 'articleClassify',
+          component: Classify,
+          props: true,
+          meta: {name: '分类管理'}
+        },
+        {
+          path: 'Article/Label',
+          name: 'articleLabel',
+          component: Label,
+          meta: {name: '标签管理'}
+        },
+        {
           path: 'My/Article',
           name: 'personalArticle',
           component: Article,

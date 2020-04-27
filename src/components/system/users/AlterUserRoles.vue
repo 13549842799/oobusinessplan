@@ -1,8 +1,8 @@
 <template>
-  <el-dialog ref="authDia" :title="title" :visible.sync="open" @open="openEvent" @opened="openFinish" width="1050px">
+  <el-dialog ref="userRoles" :title="title" :visible.sync="open" @open="openEvent" @opened="openFinish" width="500px">
     <el-table
-      ref="authTable"
-      :data="auths"
+      ref="rolesTable"
+      :data="roles"
       tooltip-effect="dark"
       @select="alterSelect"
       @selection-change="handleSelectionChange"
@@ -13,28 +13,14 @@
         width="55">
       </el-table-column>
       <el-table-column
-        prop="authName"
-        label="权限名"
+        prop="displayName"
+        label="显示名"
         width="200">
       </el-table-column>
       <el-table-column
-        prop="displayName"
-        label="权限真名"
+        prop="name"
+        label="角色名"
         width="205">
-      </el-table-column>
-      <el-table-column
-        label="关联资源"
-        width="550">
-        <template slot-scope="scope">
-          <el-tag
-            style="margin-left: 5px;margin-bottom:5px"
-            v-for="r in scope.row.resources"
-            :key="r.url"
-            :type="r.type === 1 ? 'success' : (r.type === 2 ? 'info' : 'warning')"
-            effect="dark">
-            {{ r.displayName + (r.url !== null && r.url !== '' ? '(' + r.url + ')' : '') }}
-          </el-tag>
-        </template>
       </el-table-column>
     </el-table>
     <div slot="footer" class="dialog-footer">
@@ -47,34 +33,34 @@
 <script>
 import dialogSupport from '@/components/common/form/DialogTableSupport'
 
-import authsApi from '@/components/system/authorities/authoritiesApi'
+import rolesApi from '@/components/system/roles/rolesApi'
 
 export default {
   mixins: [dialogSupport],
   data () {
     return {
-      auths: [],
-      inAuth: new Map(),
-      reAuth: new Map()
+      roles: [],
+      inRole: new Map(),
+      reRole: new Map()
     }
   },
   created () {
     let v = this
-    authsApi.getSimpleAuthsList({withRes: 1}).then(res => {
-      v.auths = res
+    rolesApi.getList().then(res => {
+      v.roles = res
     }).catch(err => { console.log(err) })
   },
   computed: {
     title () {
-      return '权限管理[' + (this.obj !== null ? this.obj.displayName : '') + ']'
+      return '角色管理[当前用户：' + (this.obj !== null ? this.obj.username : '') + ']'
     }
   },
   methods: {
     alterSelect (selection, row) {
       let v = this
       let state = selection.includes(row)
-      let a = state ? v.inAuth : v.reAuth
-      let b = state ? v.reAuth : v.inAuth
+      let a = state ? v.inRole : v.reRole
+      let b = state ? v.reRole : v.inRole
       a.set(row.id, row) && b.has(row.id) && b.delete(row.id)
     },
     handleSelectionChange (val) {
@@ -84,19 +70,19 @@ export default {
     },
     openEvent () {
       let v = this
-      authsApi.getSimpleAuthsList({roleId: v.obj.id}).then(res => {
-        if (v.$refs.authTable && res !== null && res.length > 0) {
+      rolesApi.getList({userId: v.obj.id}).then(res => {
+        if (v.$refs.rolesTable && res !== null && res.length > 0) {
           res.forEach(r => {
-            let t = v.auths.find((a) => { return r.id === a.id })
-            v.$refs.authTable.toggleRowSelection(t, true)
+            let t = v.roles.find((a) => { return r.id === a.id })
+            v.$refs.rolesTable.toggleRowSelection(t, true)
           })
         }
       }).catch(err => { console.log(err) })
     },
     submit () {
       let v = this
-      let ar = [...v.inAuth.keys()].join(',')
-      let br = [...v.reAuth.keys()].join(',')
+      let ar = [...v.inRole.keys()].join(',')
+      let br = [...v.reRole.keys()].join(',')
       if (ar === '' && br === '') {
         v.$message.warning('没有进行修改')
         return
@@ -107,7 +93,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      authsApi.addAuthsToRoles(v.obj.id, ar, br, {complete: () => { loading.close() }}).then(res => {
+      rolesApi.addRolesToOuser(v.obj.id, ar, br, {complete: () => { loading.close() }}).then(res => {
         v.$message.success('修改成功')
       }).catch(err => { err.data && err.data.message && v.$message.warning(err.data.message) })
     },
@@ -117,8 +103,8 @@ export default {
   },
   watch: {
     obj: function (val, old) {
-      if (this.$refs['authTable']) {
-        this.$refs['authTable'].clearSelection()
+      if (this.$refs['rolesTable']) {
+        this.$refs['rolesTable'].clearSelection()
       }
     }
   }

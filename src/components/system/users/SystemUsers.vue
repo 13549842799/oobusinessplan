@@ -35,6 +35,9 @@
                 <el-form-item label="昵称">
                   <span>{{ props.row.nikename }}</span>
                 </el-form-item>
+                <el-form-item label="绑定手机">
+                  <span>{{ props.row.bindPhone }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -48,14 +51,19 @@
             label="昵称"
             width="170">
           </el-table-column>
+          <el-table-column
+            property="bindPhone"
+            label="绑定手机"
+            width="170">
+          </el-table-column>
         </el-table>
         <div style="margin-top: 20px; height: 50px">
           <div style="height: 100%; width: 50%;float: left">
             <el-button size="mini" type="primary" @click="openAddDialog">添加</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改</el-button>
-            <el-button size="mini" type="primary" >角色</el-button>
-            <el-button size="mini" type="primary" >权限</el-button>
-            <el-button size="mini" type="danger" @click="deleteResources">删除</el-button>
+            <el-button size="mini" type="primary" @click="openRoleDialog">角色</el-button>
+            <el-button size="mini" type="primary" @click="openAuthsDialog">权限</el-button>
+            <el-button size="mini" type="danger" @click="deleteOuser">删除</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
             <el-pagination
@@ -70,7 +78,9 @@
         </div>
       </el-main>
     </el-container>
-    <!-- <ouser-form ref="resForm" :auths="auths" :submitSuccess="formSuccess"></ouser-form> -->
+    <ouser-form ref="ouserForm"  :submitSuccess="formSuccess" :obj="current"></ouser-form>
+    <alter-user-roles ref="alterRolesForm" :obj="current"></alter-user-roles>
+    <alter-user-auths ref="alterAuthsForm" :obj="current"></alter-user-auths>
   </div>
 </template>
 
@@ -79,10 +89,17 @@ import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
 
 import ouserApi from '@/components/system/users/usersApi'
-// import authsApi from '@/components/system/authorities/authoritiesApi'
+
+import ouserForm from '@/components/system/users/SystemUsersForm'
+import alterUserRoles from '@/components/system/users/AlterUserRoles'
+import alterUserAuths from '@/components/system/users/AlterUserAuths'
 
 export default {
-  components: {},
+  components: {
+    ouserForm,
+    alterUserRoles,
+    alterUserAuths
+  },
   mixins: [pageBasic, basicTable],
   data () {
     return {
@@ -97,20 +114,20 @@ export default {
   },
   methods: {
     /**
-     * 打开新增资源的表单弹框
+     * 打开新增用户的表单弹框
      */
     openAddDialog () {
-      // this.$refs.resForm.initAddForm()
+      this.$refs.ouserForm.openForm(null)
     },
     /**
-     * 打开修改资源的表单弹框
+     * 打开修改用户的表单弹框
      */
     openEditDialog () {
       if (!this.current) {
-        this.$message.warning('请选择目标资源')
-        // return
+        this.$message.warning('请选择用户')
+        return
       }
-      // this.$refs.resForm.initEditForm(this.current)
+      this.$refs.ouserForm.openForm()
     },
     /**
      * 当表单保存成功时触发
@@ -129,6 +146,20 @@ export default {
         })
       }
       v.basicDelete({obj: v.current, objName: 'username', delMethod})
+    },
+    openRoleDialog () {
+      if (!this.current) {
+        this.$message.warning('请选择用户')
+        return
+      }
+      this.$refs.alterRolesForm.open = true
+    },
+    openAuthsDialog () {
+      if (!this.current) {
+        this.$message.warning('请选择用户')
+        return
+      }
+      this.$refs.alterAuthsForm.open = true
     }
   }
 }

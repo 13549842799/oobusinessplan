@@ -45,9 +45,9 @@
             </template>
           </el-table-column>
           <el-table-column
+            width="170"
             property="authName"
-            label="名称"
-            width="170">
+            label="名称">
           </el-table-column>
           <el-table-column
             property="displayName"
@@ -80,7 +80,7 @@
       </el-main>
     </el-container>
     <auths-form ref="authForm" :submitSuccess="formSuccess"></auths-form>
-    <alter-resource-form ref="alterForm"></alter-resource-form>
+    <alter-resource-form ref="alterForm" :obj="current"></alter-resource-form>
   </div>
 </template>
 
@@ -125,7 +125,7 @@ export default {
         this.$message.warning('请选择目标资源')
         return
       }
-      this.$refs.alterForm.open(this.current)
+      this.$refs.alterForm.open = true
     },
     deleteAuths () {
       let v = this
