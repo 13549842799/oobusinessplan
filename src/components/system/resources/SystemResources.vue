@@ -119,7 +119,7 @@ export default {
   data () {
     return {
       current: null, // 表格当前选择的行对象
-      auths: [{id: 1, name: 'A_TEST', displayName: '测试权限'}]
+      auths: []
     }
   },
   created () {

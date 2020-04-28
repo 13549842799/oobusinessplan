@@ -9,7 +9,7 @@ import Center from '@/components/my/center/PersonalCenter'
 import Admin from '@/components/my/center/admin'
 import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
-import Diary from '@/components/my/article/diary/Diary'
+// import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
 import Label from '@/components/my/article/label/Label'
@@ -27,6 +27,8 @@ const SystemResources = () => import('@/components/system/resources/SystemResour
 const SystemAuthorities = () => import('@/components/system/authorities/SystemAuthorities')
 const SystemRoles = () => import('@/components/system/roles/SystemRoles')
 const SystemUsers = () => import('@/components/system/users/SystemUsers')
+
+const Diary = () => import('@/components/article/diary/Diary')
 
 export default new Router({
   mode: 'hash',
