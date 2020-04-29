@@ -9,7 +9,6 @@ import Center from '@/components/my/center/PersonalCenter'
 import Admin from '@/components/my/center/admin'
 import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
-// import Diary from '@/components/my/article/diary/Diary'
 import Classify from '@/components/my/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
 import Label from '@/components/my/article/label/Label'
@@ -29,6 +28,7 @@ const SystemRoles = () => import('@/components/system/roles/SystemRoles')
 const SystemUsers = () => import('@/components/system/users/SystemUsers')
 
 const Diary = () => import('@/components/article/diary/Diary')
+const DiaryEditor = () => import('@/components/article/diary/DiaryEditor')
 
 export default new Router({
   mode: 'hash',
@@ -107,6 +107,12 @@ export default new Router({
           name: 'articleDiary',
           component: Diary,
           meta: {name: '个人日记'}
+        },
+        {
+          path: 'Article/Diary/edit/:diaryOrder?',
+          name: 'diaryEditor',
+          component: DiaryEditor,
+          props: true
         },
         {
           path: 'Article/Novel',

@@ -11,7 +11,13 @@ export default {
   listUrl () {
     return diaryUrl + '/page.re'
   },
-  saveDiary () {
+  /**
+   * 保存日记
+   * @param {Object} p
+   * @param {Object} config
+   */
+  saveDiary (p, config) {
+    return http.$axiosPost(diaryUrl + '/save.do', p, config)
   },
   /**
    * 删除日记
@@ -19,5 +25,13 @@ export default {
    */
   deleteDiary (id) {
     return http.$axiosDel(diaryUrl + '/' + id + '/delete.do')
+  },
+  /**
+   * 获取指定的日志
+   * @param {Number} id
+   * @param {*} config
+   */
+  getDiary (id, config) {
+    return http.$axiosGet(diaryUrl + '/' + id + '/diary.re', {}, config)
   }
 }

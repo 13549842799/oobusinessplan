@@ -1,4 +1,4 @@
-import {MyPage} from '@/components/common/page/page'
+import {MyPage, pageMap} from '@/components/common/page/page'
 
 export default {
   data () {
@@ -12,7 +12,9 @@ export default {
      * @param {*} param0
      */
     createPage ({url, pageSize, total}) {
-      return new MyPage(pageSize, {url, total})
+      !pageMap.has(url) && pageMap.set(url, new MyPage(pageSize, {url, total}))
+      // return new MyPage(pageSize, {url, total})
+      return pageMap.get(url).searchDefPage()
     },
     /**
      * 调换页

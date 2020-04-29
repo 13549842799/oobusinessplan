@@ -3,7 +3,7 @@
     <el-container>
       <el-header height="150px">
         <div style="height:50px">
-          我的日记
+          分类管理
         </div>
         <div>
           <el-form :inline="true" :model="page.params">
@@ -106,7 +106,6 @@ import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
 import {dateFormat} from '@/components/common/commonUtil'
 
-import diaryApi from '@/components/article/diary/diaryApi'
 import classifyApi from '@/components/article/classify/classifyApi'
 
 export default {

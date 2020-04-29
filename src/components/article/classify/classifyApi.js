@@ -12,6 +12,6 @@ export default {
     return classifyUrl + '/page.re'
   },
   simpleList (p, config) {
-    return http.$axiosGet(classifyUrl + '/simples.re', p , config)
+    return http.$axiosGet(classifyUrl + '/simples.re', p, config)
   }
 }

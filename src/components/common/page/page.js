@@ -4,10 +4,12 @@
 import util from '@/components/common/objUtil'
 import http from '@/http.js'
 
+export var pageMap = new Map()
+
 export class MyPage {
-  constructor (size, {url, total, params}) {
+  constructor (size, {url, total, params, pageNum = 1}) {
     this.pages = 1 // 总页数
-    this.pageNum = 1
+    this.pageNum = pageNum
     if (size) {
       this.pageSize = size
     } else {
@@ -22,9 +24,9 @@ export class MyPage {
       value: [null],
       key: ['requestUrl', 'list', 'pages', 'filter', 'config']
     }
-    if (util.strNotEmpty(this.requestUrl)) {
-      this.searchPage()
-    }
+    // if (util.strNotEmpty(this.requestUrl)) {
+    //   this.searchPage()
+    // }
   }
   searchRow (index) {
     return this.list[index]
@@ -51,6 +53,10 @@ export class MyPage {
    */
   searchPage (filter, params, config) {
     this.requestList(filter, params, 1, config)
+  }
+  searchDefPage (filter, params, config) {
+    this.requestList(filter, params, this.pageNum, config)
+    return this
   }
   /**
    * 追加一行，不是替换原本的list，而是把新查询出来的一页追加到原本的list后面
