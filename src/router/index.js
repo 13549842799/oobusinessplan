@@ -9,9 +9,11 @@ import Center from '@/components/my/center/PersonalCenter'
 import Admin from '@/components/my/center/admin'
 import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
-import Classify from '@/components/my/article/classify/Classify'
+// import Classify from '@/components/my/article/classify/Classify'
+import Classify from '@/components/article/classify/Classify'
 import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
-import Label from '@/components/my/article/label/Label'
+// import Label from '@/components/my/article/label/Label'
+import Label from '@/components/article/label/Label'
 import SystemQuartz from '@/components/system/SystemQuartz'
 
 Vue.use(Router)

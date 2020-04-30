@@ -11,9 +11,8 @@ export default {
      * 创建page对象
      * @param {*} param0
      */
-    createPage ({url, pageSize, total}) {
-      !pageMap.has(url) && pageMap.set(url, new MyPage(pageSize, {url, total}))
-      // return new MyPage(pageSize, {url, total})
+    createPage ({url, pageSize, total, params}) {
+      !pageMap.has(url) && pageMap.set(url, new MyPage(pageSize, {url, total, params}))
       return pageMap.get(url).searchDefPage()
     },
     /**

@@ -24,9 +24,6 @@ export class MyPage {
       value: [null],
       key: ['requestUrl', 'list', 'pages', 'filter', 'config']
     }
-    // if (util.strNotEmpty(this.requestUrl)) {
-    //   this.searchPage()
-    // }
   }
   searchRow (index) {
     return this.list[index]

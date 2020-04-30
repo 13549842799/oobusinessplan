@@ -8,29 +8,25 @@
         <div>
           <el-form :inline="true" :model="page.params">
             <el-form-item label="标题">
-              <el-input size="medium" v-model="page.params.title" placeholder="标题" clearable></el-input>
+              <el-input size="medium" v-model="page.params.name" placeholder="标题" clearable></el-input>
             </el-form-item>
-            <el-form-item label="分类">
-              <el-select size="medium" v-model="page.params.classify" placeholder="请选择分类" clearable>
-                <el-option v-for="c in classifies" :key="c.id" :label="c.name" :value="c.id"></el-option>
-              </el-select>
+            <el-form-item label="最小文章数">
+              <el-input-number size="medium" v-model="page.params.minCount" controls-position="right"  :min="0" style="width: 100px"></el-input-number>
             </el-form-item>
-            <el-form-item label="状态">
-              <el-select size="medium" v-model="page.params.status" placeholder="请选择状态" clearable>
-                <el-option label="草稿" :value="0"></el-option>
-                <el-option label="私密" :value="1"></el-option>
-                <el-option label="发布" :value="2"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="标签">
-              <el-input size="medium" v-model="page.params.labels" placeholder="标签" clearable></el-input>
-            </el-form-item>
-            <el-form-item label="时间">
-              <el-date-picker size="mini" v-model="timeRange" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" @change="timeSearch">
-              </el-date-picker>
+            <el-form-item label="最大文章数">
+              <el-input-number size="medium" v-model="page.params.maxCount" controls-position="right"  :min="1" style="width: 100px"></el-input-number>
             </el-form-item>
             <el-form-item>
               <el-button size="medium" type="primary" @click="page.searchPage()">查询</el-button>
+            </el-form-item>
+            <el-form-item label="类别">
+              <el-radio-group v-model="page.params.childType" size="medium">
+                <el-radio border label="">所有</el-radio>
+                <el-radio border :label="1">日记</el-radio>
+                <el-radio border :label="2">备忘</el-radio>
+                <el-radio border :label="3">灵感</el-radio>
+                <el-radio border :label="4">小说</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-form>
         </div>
@@ -39,51 +35,34 @@
         <el-table
           ref="diaryPageTable"
           :data="page.list"
-          highlight-current-row
-          :row-class-name="tableRowClassName"
-          @current-change="handleCurrentChange"
           style="width: 100%">
-          <el-table-column type="expand" fixed>
-            <template slot-scope="props">
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="标题">
-                  <span>{{ props.row.title }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
           <el-table-column
-            fixed
-            label="标题"
+            property="name"
+            label="分类名"
             width="350">
-            <template slot-scope="scope">
-              [{{scope.row.classifyName}}]{{' ' + scope.row.title}}
-            </template>
           </el-table-column>
           <el-table-column
-            label="状态"
+            label="类别"
             width="190">
             <template slot-scope="scope">
-            <el-tag :type="scope.row.status === 2 ? 'success' : (scope.row.status === 1 ? 'danger' : 'info')" effect="dark" size="mini"> {{ scope.row.statusName }} </el-tag>
+            <el-tag :type="scope.row.childType === 1 ? 'success' : (scope.row.childType === 4 ? '' : 'info')" effect="dark" size="mini"> {{ scope.row.childTypeName }} </el-tag>
             </template>
           </el-table-column>
           <el-table-column
-            property="dateStr"
-            label="日期"
+            property="count"
+            label="文章数"
             width="150">
           </el-table-column>
-          <el-table-column
-            label="标签">
+          <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-tag v-for="(l, index) in scope.row.simpleLabls" :key="index" effect="plain" size="mini" style="margin-right: 10px">{{l}}</el-tag>
+              <el-button size="mini" @click="openAddClass(scope.row)">编辑</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
-          </el-table-column>
+            </el-table-column>
         </el-table>
         <div style="margin-top: 20px; height: 50px">
           <div style="height: 100%; width: 50%;float: left">
-            <el-button size="mini" type="primary" @click="goToAdd">添加</el-button>
-            <el-button size="mini" type="primary" @click="goToEdit">修改</el-button>
-            <el-button size="mini" type="danger" @click="deleteDiary">删除</el-button>
+            <el-button size="mini" type="primary" @click="openAddClass">添加</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
             <el-pagination
@@ -104,7 +83,6 @@
 <script>
 import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
-import {dateFormat} from '@/components/common/commonUtil'
 
 import classifyApi from '@/components/article/classify/classifyApi'
 
@@ -113,74 +91,57 @@ export default {
   mixins: [pageBasic, basicTable],
   data () {
     return {
-      current: null, // 表格当前选择的行对象
-      classifies: [],
-      timeRange: ''
+      current: null // 表格当前选择的行对象
     }
   },
   created () {
     let v = this
-    v.page = v.createPage({url: diaryApi.listUrl(), pageSize: 12, total: 12})
-    classifyApi.simpleList({childType: 1}).then(res => {
-      v.classifies = res
-    }).catch(err => { console.log(err) })
+    v.page = v.createPage({url: classifyApi.listUrl(), pageSize: 12, total: 12, params: {childType: 1}})
   },
   computed: {
   },
   methods: {
-    timeSearch (val) {
-      val = val !== null ? val.map((a) => { return dateFormat('yyyy-MM-dd', a) }) : [null, null]
-      console.log(val[0])
-      this.page.params.startTime = val[0]
-      this.page.params.endTime = val[1]
-    },
-    /**
-     * 行高亮的判断逻辑
-     */
-    tableRowClassName ({row, rowIndex}) {
-      if (row.status === 1) {
-        return 'warning-row'
-      }
-      if (row.status === 2) {
-        return 'success-row'
-      }
-      return ''
-    },
-    /**
-     * 跳转到新增日记页面
-     */
-    goToAdd () {
-      this.$router.push({name: 'diaryEditor'})
-    },
-    /**
-     * 跳转到编辑日记页面
-     */
-    goToEdit () {
-      if (!this.current) {
-        this.$message.warning('请选择日记')
-        return
-      }
-      this.$router.push({name: 'diaryEditor', params: {diaryOrder: this.current.id}})
-    },
-    /**
-     * 当表单保存成功时触发
-     */
-    formSuccess () {
-      this.$message.success('保存成功')
-      this.page.searchPage()
-    },
-    deleteDiary () {
+    openAddClass (row) {
       let v = this
-      const delMethod = () => {
-        diaryApi.deleteDiary(v.current.id).then(res => {
+      let id = row.id !== undefined ? row.id : null
+      let initValue = id !== undefined ? row.name : ''
+      let showTitle = id !== undefined ? '修改' : '创建'
+      this.$prompt('请' + showTitle + '[' + childTypeMap[v.page.params.childType] + ']分类名', '提示', {
+        confirmButtonText: '确定', cancelButtonText: '取消', inputValue: initValue
+      }).then(({ value }) => {
+        classifyApi.saveClassify({childType: v.page.params.childType, name: value, id}).then(res => {
           v.page.searchPage()
-          v.$message({ type: 'success', message: '删除成功!' })
-        }).catch(err => { v.$message.error(err) })
+          v.$message.success(showTitle + '成功')
+        }).catch(err => { v.$message.error('添加失败：' + err.data.message) })
+      }).catch(() => { this.$message.info('取消输入') })
+    },
+    handleDelete (index, row) {
+      let v = this
+      if (row.count === 0) {
+        deleteClassify(v, row.id)
+      } else {
+        v.$confirm('此分类还存在' + row.count + '篇日记, 是否继续? 删除后原文章将转到默认分类中', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteClassify(v, row.id)
+        }).catch(() => {
+          v.$message({ type: 'info', message: '已取消删除' })
+        })
       }
-      v.basicDelete({obj: v.current, objName: 'title', delMethod})
     }
   }
 }
+
+function deleteClassify (v, id) {
+  classifyApi.deleteClassify(id).then(res => {
+    v.page.searchPage()
+    v.$message.success('删除成功')
+  }).catch(err => { v.$message.error('删除失败:' + err.data.message) })
+}
+
+const childTypeMap = {1: '日记', 2: '备忘', 3: '灵感', 4: '备注'}
 </script>
 
 <style>
