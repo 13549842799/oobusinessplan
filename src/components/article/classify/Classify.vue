@@ -33,7 +33,7 @@
       </el-header>
       <el-main>
         <el-table
-          ref="diaryPageTable"
+          ref="classifyPageTable"
           :data="page.list"
           style="width: 100%">
           <el-table-column

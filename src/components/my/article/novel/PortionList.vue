@@ -282,7 +282,7 @@ export default {
           this.$message.error(res.message)
           break
       }
-      this.tempFile = {name: '', url: '', error: ''} // 重新初始化图片设置
+      this.img.file = {name: '', url: '', error: ''} // 重新初始化图片设置
     },
     /**
      * 文件状态修改触发事件，通过此方法可以在文件未上传时获取到临时的图片路径，实现预览功能

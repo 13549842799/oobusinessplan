@@ -32,7 +32,7 @@
       </el-header>
       <el-main>
         <el-table
-          ref="diaryPageTable"
+          ref="LabelPageTable"
           :data="page.list"
           style="width: 100%">
           <el-table-column
@@ -44,7 +44,7 @@
             label="类别"
             width="190">
             <template slot-scope="scope">
-            <el-tag :type="scope.row.targetType === 1 ? 'success' : (scope.row.targetType === 4 ? '' : 'info')" effect="dark" size="mini"> {{ scope.row.childTypeName }} </el-tag>
+            <el-tag :type="scope.row.targetType === 1 ? 'success' : (scope.row.targetType === 4 ? '' : 'info')" effect="dark" size="mini"> {{ scope.row.targetTypeName }} </el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -80,6 +80,7 @@
 <script>
 import pageBasic from '@/components/common/page/pagerequireBasic'
 import basicTable from '@/components/common/table/basicMethod'
+import util from '@/components/common/objUtil'
 
 import labelApi from '@/components/article/label/labelApi'
 
@@ -99,8 +100,7 @@ export default {
   },
   methods: {
     alterTargetTypes (val) {
-      this.page.params.targetTypes = val.join()
-      console.log(this.page.params.targetTypes)
+      this.page.params.targetTypes = util.strDef(val.join())
     }
   }
 }

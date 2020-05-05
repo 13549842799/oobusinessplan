@@ -6,7 +6,7 @@ export default {
         v.$message.warning('请选择目标')
         return
       }
-      v.$confirm('确定删除' + v.current[objName] + '?', '提示', {
+      v.$confirm('确定删除' + obj[objName] + '?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

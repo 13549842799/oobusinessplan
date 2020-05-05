@@ -51,7 +51,16 @@ function coryObjText (o) {
  * @param {str} str
  */
 function strNotEmpty (str) {
-  return str !== null && str !== undefined && typeof str === 'string' && str.trim() !== ''
+  return validObj(str) && str.trim() !== ''
+}
+
+/**
+ * 判断str是否有值，如果没有值则用默认值代替
+ * @param {String} str 校验值
+ * @param {String} def 默认值
+ */
+function strDef (str, def) {
+  return strNotEmpty(str) ? str : (def !== undefined ? def : null)
 }
 
 export default {
@@ -60,5 +69,6 @@ export default {
   validObj,
   strNotEmpty,
   coryObjText,
-  validObjDef
+  validObjDef,
+  strDef
 }

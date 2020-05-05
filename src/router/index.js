@@ -32,6 +32,10 @@ const SystemUsers = () => import('@/components/system/users/SystemUsers')
 const Diary = () => import('@/components/article/diary/Diary')
 const DiaryEditor = () => import('@/components/article/diary/DiaryEditor')
 
+const Novel = () => import('@/components/article/novel/Novel')
+const Portion = () => import('@/components/article/novel/portion/Portion')
+const Section = () => import('@/components/article/novel/section/Section')
+
 export default new Router({
   mode: 'hash',
   routes: [
@@ -119,7 +123,7 @@ export default new Router({
         {
           path: 'Article/Novel',
           name: 'articleNovel',
-          component: NovelList,
+          component: Novel,
           meta: {name: '脑洞小说'}
         },
         {
@@ -134,6 +138,27 @@ export default new Router({
           name: 'articleLabel',
           component: Label,
           meta: {name: '标签管理'}
+        },
+        {
+          path: '/My/Article/Novel/:novelTitle/:novelOrder/portion',
+          name: 'portionList',
+          component: PortionList,
+          meta: {name: '分卷列表'},
+          props: true
+        },
+        {
+          path: 'Article/Novel/:novelTitle/:novelOrder/portion',
+          name: 'novelPortions',
+          component: Portion,
+          meta: {name: '分卷管理'},
+          props: true
+        },
+        {
+          path: 'Article/Novel/:novelTitle/:portionOrder/section/:id?',
+          name: 'portionSection',
+          component: Section,
+          meta: {name: '章节编辑'},
+          props: true
         },
         {
           path: 'My/Article',
