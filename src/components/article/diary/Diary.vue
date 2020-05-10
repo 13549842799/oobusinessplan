@@ -57,7 +57,9 @@
             label="标题"
             width="350">
             <template slot-scope="scope">
-              [{{scope.row.classifyName}}]{{' ' + scope.row.title}}
+              <router-link :to="{name: 'diaryReader', params: {id: scope.row.id}}">
+                [{{scope.row.classifyName}}]{{' ' + scope.row.title}}
+              </router-link>
             </template>
           </el-table-column>
           <el-table-column
@@ -168,7 +170,7 @@ export default {
      */
     formSuccess () {
       this.$message.success('保存成功')
-      this.page.searchPage()
+      this.page.searchDefPage()
     },
     deleteDiary () {
       let v = this

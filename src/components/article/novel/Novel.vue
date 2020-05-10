@@ -157,7 +157,7 @@ export default {
     },
     submitNovel () {
       this.$message.success('保存成功')
-      this.page.searchPage()
+      this.page.searchDefPage()
     },
     /**
      * 跳转到小说编辑页

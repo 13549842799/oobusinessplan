@@ -15,6 +15,7 @@ import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
 // import Label from '@/components/my/article/label/Label'
 import Label from '@/components/article/label/Label'
 import SystemQuartz from '@/components/system/SystemQuartz'
+import DiaryReader from '@/components/article/diary/DiaryReader'
 
 Vue.use(Router)
 
@@ -118,6 +119,12 @@ export default new Router({
           path: 'Article/Diary/edit/:diaryOrder?',
           name: 'diaryEditor',
           component: DiaryEditor,
+          props: true
+        },
+        {
+          path: 'Article/Diary/reader/:id',
+          name: 'diaryReader',
+          component: DiaryReader,
           props: true
         },
         {

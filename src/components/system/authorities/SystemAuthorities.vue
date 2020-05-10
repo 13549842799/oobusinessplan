@@ -140,7 +140,7 @@ export default {
       v.basicDelete({obj: v.current, objName: 'displayName', delMethod})
     },
     formSuccess () {
-      this.page.searchPage()
+      this.page.searchDefPage()
       this.$message.success('保存成功')
     }
   }

@@ -165,7 +165,7 @@ export default {
      */
     formSuccess () {
       this.$message.success('保存成功')
-      this.page.searchPage()
+      this.page.searchDefPage()
     },
     deleteResources () {
       let v = this

@@ -110,7 +110,7 @@ export default {
         confirmButtonText: '确定', cancelButtonText: '取消', inputValue: initValue
       }).then(({ value }) => {
         classifyApi.saveClassify({childType: v.page.params.childType, name: value, id}).then(res => {
-          v.page.searchPage()
+          v.page.searchDefPage()
           v.$message.success(showTitle + '成功')
         }).catch(err => { v.$message.error('添加失败：' + err.data.message) })
       }).catch(() => { this.$message.info('取消输入') })
