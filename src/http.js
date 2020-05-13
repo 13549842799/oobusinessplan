@@ -219,7 +219,7 @@ axiosInstance.interceptors.response.use(response => {
     case 100:
     case 300:
       return Promise.reject(response)
-    case 103:
+    case 103:case 105:
       router.push({name: 'login'})
       return Promise.reject(response.data.message)
   }
