@@ -68,6 +68,7 @@
 
 <script>
 import util from '@/components/common/objUtil'
+import {dateFormat} from '@/components/common/commonUtil'
 
 import diaryApi from '@/components/article/diary/diaryApi'
 import classifyApi from '@/components/article/classify/classifyApi'
@@ -208,7 +209,7 @@ function blankDiary () {
     labelList: [], // 当前文章被标上的标签
     source: 1,
     status: 0,
-    date: new Date()
+    date: dateFormat('yyyy-MM-dd', new Date())
   }
 }
 

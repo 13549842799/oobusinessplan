@@ -211,9 +211,9 @@ export default {
     handleAvatarSuccess (res, file) {
       switch (res.status) {
         case 200:
-          let oldId = this.file.cover != null ? this.file.cover.id : (util.validObj(this.form.cover) ? this.form.cover : null)
+          let oldId = this.file.cover != null ? this.file.cover.id : null
           this.file.cover = res.data
-          if (util.strNotEmpty(oldId)) {
+          if (util.validObj(oldId)) {
             uploadApi.deleteFile(oldId).then(res => {}).catch(err => { console.log(err) })
           }
           break
