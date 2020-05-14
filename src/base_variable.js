@@ -1,12 +1,13 @@
 
-// const baseUrl = 'http://localhost:8082/O.OBusinessPlan'
-const baseUrl = 'http://106.53.102.49:80/app/O.OBusinessPlan'
+const baseUrl = 'http://localhost:8082/O.OBusinessPlan'
+// const baseUrl = 'http://106.53.102.49:80/app/O.OBusinessPlan'
 const adminUrl = baseUrl + '/api/admin'
 const employeeUrl = baseUrl + '/api/employee'
 const roleUrl = baseUrl + '/api/authority/roles'
 const resouUrl = baseUrl + '/api/authority/resource'
 const authUrl = baseUrl + '/api/authority/auth'
 const classifyUrl = baseUrl + '/api/article/classify'
+const memoUrl = baseUrl + '/api/article/memo'
 const diaryUrl = baseUrl + '/api/article/diary'
 const labelUrl = baseUrl + '/api/article/label'
 const quartzUrl = baseUrl + '/api/quartz/sysTaskCronJob' // 时钟
@@ -16,7 +17,6 @@ const portionUrl = baseUrl + '/api/article/portion' // 分卷
 const sectionUrl = baseUrl + '/api/article/section' // 章节
 const ouserUrl = baseUrl + '/api/ouser'
 const accountUrl = baseUrl + '/api/account'
-const memoUrl = baseUrl + '/api/memo'
 
 // const loginUrl = 'http://localhost:8082/computer/#/login'
 const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
