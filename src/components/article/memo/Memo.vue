@@ -21,7 +21,7 @@
             <el-divider content-position="right" :key="name">{{name}}</el-divider>
             <div class="memo-card" v-for="(v, index) in m" :key="name+index" @click="addMemo(v)">
               <div class="memo-card-content">{{v.content}}</div>
-              <div class="memo-card-date">{{v.date}}</div>
+              <div class="memo-card-date">{{v.dateStr}}</div>
               <el-popconfirm title="确定删除吗？" @onConfirm="delMemo(v)">
                 <el-button  slot="reference" type="info" icon="el-icon-close" class="memo-card-del" size="mini" circle></el-button>
               </el-popconfirm>
