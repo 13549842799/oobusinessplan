@@ -9,19 +9,15 @@ import Center from '@/components/my/center/PersonalCenter'
 import Admin from '@/components/my/center/admin'
 import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
-// import Classify from '@/components/my/article/classify/Classify'
 import Classify from '@/components/article/classify/Classify'
-import DiaryEdit from '@/components/my/article/diary/DiaryEdit'
-// import Label from '@/components/my/article/label/Label'
 import Label from '@/components/article/label/Label'
 import SystemQuartz from '@/components/system/SystemQuartz'
 import DiaryReader from '@/components/article/diary/DiaryReader'
+import Memo from '@/components/article/memo/Memo'
 
 Vue.use(Router)
 
 const SystemAuthority = () => import('@/components/system/SystemAuthority')
-const NovelList = () => import('@/components/my/article/novel/NovelList')
-const NovelEdit = () => import('@/components/my/article/novel/NovelEdit')
 const PortionList = () => import('@/components/my/article/novel/PortionList')
 
 // 20200416
@@ -122,6 +118,11 @@ export default new Router({
           props: true
         },
         {
+          path: 'Article/Memo',
+          name: 'articleMemo',
+          component: Memo
+        },
+        {
           path: 'Article/Diary/reader/:id',
           name: 'diaryReader',
           component: DiaryReader,
@@ -167,56 +168,11 @@ export default new Router({
           meta: {name: '章节编辑'},
           props: true
         },
-        {
+        { // 留作学习用
           path: 'My/Article',
           name: 'personalArticle',
           component: Article,
           children: [
-            {
-              path: 'Label',
-              name: 'label',
-              component: Label,
-              meta: {name: '标签管理'}
-            },
-            {
-              path: 'Diary',
-              name: 'diary',
-              component: Diary,
-              meta: {name: '所有日记'}
-            },
-            {
-              path: 'Classify',
-              name: 'classify',
-              component: Classify,
-              props: true,
-              meta: {name: '分类列表'}
-            },
-            {
-              path: '/My/Article/Diary/edit/:diaryOrder?',
-              name: 'diaryEdit',
-              component: DiaryEdit,
-              props: true
-            },
-            {
-              path: 'NovelList',
-              name: 'novelList',
-              component: NovelList,
-              meta: {name: '小说'}
-            },
-            {
-              path: '/My/Article/Novel/edit/:novelOrder?',
-              name: 'novelEdit',
-              component: NovelEdit,
-              meta: {name: '小说编辑'},
-              props: true
-            },
-            {
-              path: '/My/Article/Novel/:novelTitle/:novelOrder/portion',
-              name: 'portionList',
-              component: PortionList,
-              meta: {name: '分卷列表'},
-              props: true
-            }
           ]
         }
       ]
