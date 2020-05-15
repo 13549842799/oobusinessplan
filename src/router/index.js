@@ -11,6 +11,7 @@ import DiaryReader from '@/components/article/diary/DiaryReader'
 import Memo from '@/components/article/memo/Memo'
 import KnowdgeArticle from '@/components/knowledge/article/KnowledgeArticle'
 import KnowdgeArticleEditor from '@/components/knowledge/article/KnowledgeArticleEditor'
+import KnowdgeArticleReader from '@/components/knowledge/article/KnowledgeArticleReader'
 
 Vue.use(Router)
 
@@ -147,6 +148,12 @@ export default new Router({
           name: 'knowledgeArticleEditor',
           component: KnowdgeArticleEditor,
           meta: {name: '编辑文章'},
+          props: true
+        },
+        {
+          path: 'Knowledge/Article/read/:id?',
+          name: 'knowledgeArticleReader',
+          component: KnowdgeArticleReader,
           props: true
         },
         { // 留作学习用
