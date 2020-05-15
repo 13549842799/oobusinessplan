@@ -19,17 +19,17 @@
         <div class="memo-conainer">
           <template v-for="(m, name) in memos">
             <el-divider content-position="right" :key="name">{{name}}</el-divider>
-            <div class="memo-card" v-for="(v, index) in m" :key="name+index" @click="addMemo(v)">
-              <div class="memo-card-content">{{v.content}}</div>
-              <div class="memo-card-date">{{v.dateStr}}</div>
-              <el-popconfirm title="确定删除吗？" @onConfirm="delMemo(v)">
-                <el-button  slot="reference" type="info" icon="el-icon-close" class="memo-card-del" size="mini" circle></el-button>
-              </el-popconfirm>
+            <div class="memo-card" v-for="(v, index) in m" :key="name+index">
+              <div style="width: 97%" @click="addMemo(v)">
+                <p class="memo-card-content">{{v.content}}</p>
+                <p class="memo-card-date">{{v.dateStr}}</p>
+              </div>
+              <div>
+                <el-popconfirm title="确定删除吗？" @onConfirm="delMemo(v)">
+                  <el-button  slot="reference" type="info" icon="el-icon-close" size="mini" circle></el-button>
+                </el-popconfirm>
+              </div>
             </div>
-            <!-- <el-card class="memo-card" shadow="hover" v-for="(v, index) in m" :key="name+index">
-              <div>{{v.content}}</div>
-              <div>{{v.date}}</div>
-            </el-card> -->
           </template>
         </div>
       </el-main>
@@ -147,12 +147,18 @@ function blankMemo () {
   border-radius: 10px;
   padding: 10px 20px;
   position: relative;
+  display: flex;
+  flex-direction: row;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+.memo-card-content {
+  font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
 }
 
 .memo-card-date {
   font-size: 15px;
   color: gray;
-  margin-top: 10px;
 }
 
 .memo-card-del {

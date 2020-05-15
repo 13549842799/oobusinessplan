@@ -1,6 +1,6 @@
 
-// const baseUrl = 'http://localhost:8082/O.OBusinessPlan'
-const baseUrl = 'http://106.53.102.49:80/app/O.OBusinessPlan'
+const baseUrl = 'http://localhost:8082/O.OBusinessPlan'
+// const baseUrl = 'http://106.53.102.49:80/app/O.OBusinessPlan'
 const adminUrl = baseUrl + '/api/admin'
 const employeeUrl = baseUrl + '/api/employee'
 const roleUrl = baseUrl + '/api/authority/roles'

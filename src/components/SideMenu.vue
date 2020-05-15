@@ -66,6 +66,7 @@ li dl {
   transition: height 0.6s;
   -webkit-transition: height 0.6s; /* Safari */
   overflow: hidden;
+  margin: 0;
 }
 
 li dl a {
