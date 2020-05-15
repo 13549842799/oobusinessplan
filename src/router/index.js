@@ -3,17 +3,14 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from '@/Login'
 import IndexPage from '@/components/Index'
-import EmployeeSys from '@/components/employee/EmployeeSys'
-import AdminSys from '@/components/employee/AdminSys'
-import Center from '@/components/my/center/PersonalCenter'
-import Admin from '@/components/my/center/admin'
-import Employee from '@/components/my/center/employee'
 import Article from '@/components/my/article/Article'
 import Classify from '@/components/article/classify/Classify'
 import Label from '@/components/article/label/Label'
 import SystemQuartz from '@/components/system/SystemQuartz'
 import DiaryReader from '@/components/article/diary/DiaryReader'
 import Memo from '@/components/article/memo/Memo'
+import KnowdgeArticle from '@/components/knowledge/article/KnowledgeArticle'
+import KnowdgeArticleEditor from '@/components/knowledge/article/KnowledgeArticleEditor'
 
 Vue.use(Router)
 
@@ -45,35 +42,6 @@ export default new Router({
           path: 'Home',
           name: 'home',
           component: Home
-        },
-        {
-          path: 'employee/employeesys',
-          name: 'employeesys',
-          component: EmployeeSys
-        },
-        {
-          path: 'employee/adminsys',
-          name: 'adminsys',
-          component: AdminSys
-        },
-        {
-          path: 'My/personalCenter',
-          name: 'personalCenter',
-          component: Center,
-          children: [
-            {
-              path: 'Admin',
-              name: 'admin',
-              component: Admin,
-              meta: {name: '账号信息'}
-            },
-            {
-              path: 'Employee',
-              name: 'employee',
-              component: Employee,
-              meta: {name: '职员信息'}
-            }
-          ]
         },
         {
           path: 'System/Authority',
@@ -166,6 +134,19 @@ export default new Router({
           name: 'portionSection',
           component: Section,
           meta: {name: '章节编辑'},
+          props: true
+        },
+        {
+          path: 'Knowledge/Article',
+          name: 'knowledgeArticle',
+          component: KnowdgeArticle,
+          meta: {name: '技术文章'}
+        },
+        {
+          path: 'Knowledge/Article/edit/:id?',
+          name: 'knowledgeArticleEditor',
+          component: KnowdgeArticleEditor,
+          meta: {name: '编辑文章'},
           props: true
         },
         { // 留作学习用

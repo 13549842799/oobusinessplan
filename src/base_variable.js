@@ -17,6 +17,7 @@ const portionUrl = baseUrl + '/api/article/portion' // 分卷
 const sectionUrl = baseUrl + '/api/article/section' // 章节
 const ouserUrl = baseUrl + '/api/ouser'
 const accountUrl = baseUrl + '/api/account'
+const articleUrl = baseUrl + '/api/knowledge/article'
 
 // const loginUrl = 'http://localhost:8082/computer/#/login'
 const loginUrl = 'http://localhost:8082/oobusinessplan/#/login'
@@ -41,5 +42,6 @@ export {
   sectionUrl,
   ouserUrl,
   accountUrl,
-  memoUrl
+  memoUrl,
+  articleUrl
 }
