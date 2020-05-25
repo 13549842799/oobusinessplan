@@ -10,5 +10,8 @@ export default {
   },
   deleteAccount (id) {
     return http.$axiosDel(accountUrl + '/' + id + '/delete.do')
+  },
+  readP (id, key) {
+    return http.$axiosGet(accountUrl + '/getP.re', {id, key})
   }
 }

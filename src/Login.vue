@@ -158,19 +158,18 @@ export default {
           console.log('websocket发生了错误')
         }
       }
-    },
-
+    }
   }
 }
 
-function sendMessage () {
-  if (typeof (WebSocket) === 'undefined') {
-    console.log('您的浏览器不支持WebSocket')
-  } else {
-    console.log('您的浏览器支持WebSocket')
-    socket.send('{"toUserId":"111","contentText":"22ddds"}')
-  }
-}
+// function sendMessage () {
+//   if (typeof (WebSocket) === 'undefined') {
+//     console.log('您的浏览器不支持WebSocket')
+//   } else {
+//     console.log('您的浏览器支持WebSocket')
+//     socket.send('{"toUserId":"111","contentText":"22ddds"}')
+//   }
+// }
 </script>
 
 <style scoped>

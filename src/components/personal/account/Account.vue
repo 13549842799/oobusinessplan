@@ -59,6 +59,7 @@
             <el-button size="mini" type="primary" @click="openAddDialog">添加</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改</el-button>
             <el-button size="mini" type="primary" @click="openEditDialog">修改密码</el-button>
+            <el-button size="mini" type="primary" @click="readPass">获取</el-button>
             <el-button size="mini" type="danger" @click="deleteAccount">删除</el-button>
           </div>
           <div style="height: 100%; width: 50%;float: left;display: flex;flex-direction: row-reverse">
@@ -125,8 +126,24 @@ export default {
       v.basicDelete({obj: v.current, objName: 'source', delMethod})
     },
     formSuccess () {
+      console.log(111)
       this.page.searchPage()
       this.$message.success('保存成功')
+    },
+    readPass () {
+      let v = this
+      v.$prompt('请输入密匙', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        accountApi.readP(v.current.id, value).then(res => {
+          v.$alert(res.password, '请确认', {
+            confirmButtonText: '确定'
+          })
+        }).catch(err => { v.$message.warning(err.data.message) })
+      }).catch(() => {
+        v.$message({ type: 'info', message: '取消输入' })
+      })
     }
   }
 }
