@@ -16,7 +16,7 @@ const upLoadUrl = baseUrl + '/api/upload/uploadFile' // 上传文件接口路径
 const portionUrl = baseUrl + '/api/article/portion' // 分卷
 const sectionUrl = baseUrl + '/api/article/section' // 章节
 const ouserUrl = baseUrl + '/api/ouser'
-const accountUrl = baseUrl + '/api/account'
+const accountUrl = baseUrl + '/api/accountManager'
 const articleUrl = baseUrl + '/api/knowledge/article'
 const qrCodeUrl = baseUrl + '/api/qrcode'
 

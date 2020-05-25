@@ -12,6 +12,7 @@ import Memo from '@/components/article/memo/Memo'
 import KnowdgeArticle from '@/components/knowledge/article/KnowledgeArticle'
 import KnowdgeArticleEditor from '@/components/knowledge/article/KnowledgeArticleEditor'
 import KnowdgeArticleReader from '@/components/knowledge/article/KnowledgeArticleReader'
+import Account from '@/components/personal/account/Account'
 
 Vue.use(Router)
 
@@ -73,6 +74,11 @@ export default new Router({
           path: 'System/quartz',
           name: 'sysTaskCronJob',
           component: SystemQuartz
+        },
+        {
+          path: 'Personal/account',
+          name: 'personalAccount',
+          component: Account
         },
         {
           path: 'Article/Diary',

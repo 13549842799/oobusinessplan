@@ -45,22 +45,13 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="170"
+            width="550"
             property="source"
             label="来源">
           </el-table-column>
           <el-table-column
             property="username"
-            label="用户名"
-            width="170">
-          </el-table-column>
-          <el-table-column
-            property="bind_email"
-            label="绑定邮箱">
-          </el-table-column>
-          <el-table-column
-            property="bind_phone"
-            label="绑定手机">
+            label="用户名">
           </el-table-column>
         </el-table>
         <div style="margin-top: 20px; height: 50px">
@@ -112,7 +103,7 @@ export default {
   computed: {},
   methods: {
     openAddDialog () {
-      this.$refs.accountForm.openForm()
+      this.$refs.accountForm.openForm(null)
     },
     openEditDialog () {
       if (!this.current) {
