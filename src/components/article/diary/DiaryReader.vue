@@ -10,8 +10,8 @@
         <page-roll height="820px" :downRoll="dr" :speed="6"><div v-html="obj.content"></div></page-roll>
         <el-divider content-position="left">标签</el-divider>
         <div>
-          <template v-if="obj.labels">
-            <el-tag v-for="(l, index) in obj.labels" :key="index" effect="plain" size="mini" style="margin-right: 10px">{{l}}</el-tag>
+          <template v-if="obj.labelList">
+            <el-tag v-for="(l, index) in obj.labelList" :key="index" effect="plain" size="mini" style="margin-right: 10px">{{l}}</el-tag>
           </template>
           <template v-else>
             <span>暂无标签</span>
