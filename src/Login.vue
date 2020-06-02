@@ -13,20 +13,28 @@
               {{o.name}}
             </option>
           </select> -->
+          <div class="loginSwitch" @click="changeLoginType"><i class="el-icon-full-screen"></i></div>
         </div>
         <div class="contentdiv">
           <div class="tip">{{errorMess}}</div>
-          <div class="uNameDiv">
-            <i><img src="../static/icons/user.png" width='30px' height='30px'/></i>
-            <input @focus="errorMess = ''" v-model="params.username" type="text" name="username" class="inputClass"/>
-          </div>
-          <div class="uNameDiv">
-            <i><img src="../static/icons/locked.png" width='30px' height='30px'/></i>
-            <input @focus="errorMess = ''" v-model="params.password"  type="password" name="password" class="inputClass" />
-          </div>
-          <div class="footdiv">
-            <a @click="login" class="button small blue">&nbsp;登&nbsp;&nbsp;陆&nbsp;</a>
-          </div>
+          <template v-if="loginType">
+            <div class="uNameDiv">
+              <i><img src="../static/icons/user.png" width='30px' height='30px'/></i>
+              <input @focus="errorMess = ''" v-model="params.username" type="text" name="username" class="inputClass"/>
+            </div>
+            <div class="uNameDiv">
+              <i><img src="../static/icons/locked.png" width='30px' height='30px'/></i>
+              <input @focus="errorMess = ''" v-model="params.password"  type="password" name="password" class="inputClass" />
+            </div>
+            <div class="footdiv">
+              <a @click="login" class="button small blue">&nbsp;登&nbsp;&nbsp;陆&nbsp;</a>
+            </div>
+          </template>
+          <template v-else>
+            <div class="qrCodeDiv">
+               <el-image style="width: 150px; height: 150px" :src="url" fit="fill"></el-image>
+            </div>
+          </template>
         </div>
       </div>
       <div style="position: absolute; bottom: 600px;width: 100%;padding: 0 100px;">
@@ -37,8 +45,10 @@
 
 <script>
 import http from './http'
-import {baseUrl, ouserUrl} from './base_variable'
+import {baseUrl, ouserUrl, qrCodeUrl} from './base_variable'
 import $ from 'jquery'
+
+var socket
 
 export default {
   data () {
@@ -46,14 +56,27 @@ export default {
       list: [],
       selected: {},
       params: {
-        // userName: null,
         username: null,
         password: null,
         code: null
       },
       selectStatus: false,
-      errorMess: ''
+      errorMess: '',
+      loginType: true,
+      url: ''
     }
+  },
+  mounted () {
+  },
+  created () {
+    let Login = this
+    http.$get(baseUrl + '/api/webMessage/weblist.do').then(function (response) {
+      Login.list = response.data
+      if (Login.list[0]) {
+        Login.selected = Login.list[0]
+        Login.params.code = Login.selected.code
+      }
+    })
   },
   methods: {
     changeStatus () {
@@ -71,7 +94,6 @@ export default {
       this.params.code = l.code
     },
     login () {
-      console.log('进入登录')
       let Login = this
       // http.$postP(adminUrl + '/loginAsyn.do', JSON.stringify(Login.params)).then(response => {
       let param = new URLSearchParams()
@@ -88,19 +110,65 @@ export default {
       }).catch(err => {
         Login.errorMess = err.message
       })
-    }
-  },
-  mounted () {
-  },
-  created () {
-    let Login = this
-    http.$get(baseUrl + '/api/webMessage/weblist.do').then(function (response) {
-      Login.list = response.data
-      if (Login.list[0]) {
-        Login.selected = Login.list[0]
-        Login.params.code = Login.selected.code
+    },
+    changeLoginType () {
+      this.loginType = !this.loginType
+      this.openSocket()
+    },
+    openSocket () {
+      let v = this
+      if (typeof (WebSocket) === 'undefined') {
+        console.log('您的浏览器不支持WebSocket')
+      } else {
+        console.log('您的浏览器支持WebSocket')
+        // 实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+        // 等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
+        // var socketUrl="${request.contextPath}/im/"+$("#userId").val();
+        let socketUrl = baseUrl + '/qrcode/login'
+        socketUrl = socketUrl.replace('https', 'ws').replace('http', 'ws')
+        console.log(socketUrl)
+        if (socket != null) {
+          socket.close()
+          socket = null
+        }
+        socket = new WebSocket(socketUrl)
+        // 打开事件
+        socket.onopen = function () {
+          console.log('websocket已打开')
+          // socket.send("这是来自客户端的消息" + location.href + new Date());
+        }
+        // 获得消息事件
+        socket.onmessage = function (msg) {
+          let data = JSON.parse(msg.data)
+          console.log(data)
+          // 发现消息进入    开始处理前端触发逻辑
+          if (data.type === '1') {
+            v.url = qrCodeUrl + '/loginCode?userId=' + data.data
+            console.log('二维码链接：', v.url)
+          } else {
+
+          }
+        }
+        // 关闭事件
+        socket.onclose = function () {
+          console.log('websocket已关闭')
+        }
+        // 发生了错误事件
+        socket.onerror = function () {
+          console.log('websocket发生了错误')
+        }
       }
-    })
+    },
+
+  }
+}
+
+function sendMessage () {
+  if (typeof (WebSocket) === 'undefined') {
+    console.log('您的浏览器不支持WebSocket')
+  } else {
+    console.log('您的浏览器支持WebSocket')
+    socket.send('{"toUserId":"111","contentText":"22ddds"}')
   }
 }
 </script>
@@ -241,5 +309,22 @@ i{
   left: 10px;
   color: red;
   font-size: 16px;
+}
+
+.loginSwitch {
+  position: absolute;
+  right: 0;
+  bottom: -50px;
+
+}
+
+.qrCodeDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.qrCodeDiv .el-image {
+  margin-top: 100px;
 }
 </style>
