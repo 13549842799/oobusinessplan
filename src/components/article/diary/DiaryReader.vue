@@ -11,7 +11,7 @@
         <el-divider content-position="left">标签</el-divider>
         <div>
           <template v-if="obj.labelList">
-            <el-tag v-for="(l, index) in obj.labelList" :key="index" effect="plain" size="mini" style="margin-right: 10px">{{l}}</el-tag>
+            <el-tag v-for="(l, index) in obj.labelList" :key="index" effect="plain" size="mini" style="margin-right: 10px">{{l.name}}</el-tag>
           </template>
           <template v-else>
             <span>暂无标签</span>

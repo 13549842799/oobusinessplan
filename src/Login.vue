@@ -38,7 +38,7 @@
         </div>
       </div>
       <div style="position: absolute; bottom: 600px;width: 100%;padding: 0 100px;">
-        caiyangzhi.com&nbsp;&nbsp;版权所有ICP证&nbsp;&nbsp;<a target="_blank" style="color: blue" href="http://www.beian.miit.gov.cn">粤ICP备19060959号-1</a>
+        caiyangzhigod.xyz&nbsp;&nbsp;版权所有ICP证&nbsp;&nbsp;<a target="_blank" style="color: blue" href="http://www.beian.miit.gov.cn">粤ICP备19060959号-1</a>
       </div>
     </div>
 </template>
